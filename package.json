@@ -1,0 +1,17 @@
+{
+  "name": "dragonfly-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "gaojun@git.limei.com:/opt/server/git/repositories/dragonfly-server.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
