@@ -7,23 +7,42 @@
 
 import expressModule = require("express");
 import config = require("app/config");
+import webRouter = require("./router/web");
+import dataRouter = require("./router/data");
+import coreRouter = require("./router/core");
 
-class app{
+class app {
 
     express:expressModule.Application;
 
-    constructor(){
+    constructor() {
         this.express = expressModule();
     }
 
-    public dataInit():void{
-        this.express.listen(80);
+    private errorHandle():void {
+        this.express.use(function(req, res, next){
+            res.status(404).send('Sorry cant find that!');
+        });
+        this.express.use(function(err, req, res, next){
+            res.status(500).send('Something broke!');
+        });
     }
 
-    public coreInit():void{
-        this.express.listen(80);
+    public dataInit():void {
+        this.express.use([dataRouter]);
+        this.errorHandle();
+        this.express.listen(config['DATA_CONFIG']['PORT'], function () {
+            console.log("data init");
+        });
     }
 
+    public coreInit():void {
+        this.express.use([webRouter,coreRouter]);
+        this.errorHandle();
+        this.express.listen(config['CORE_CONFIG']['PORT'], function () {
+            console.log("core init");
+        });
+    }
 }
 
 export = app

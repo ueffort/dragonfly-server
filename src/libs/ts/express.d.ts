@@ -102,15 +102,7 @@ import * as serveStatic from "serve-static";
 
             route(path: string): IRoute;
 
-            use(...handler: RequestHandler[]): T;
-            use(handler: ErrorRequestHandler): T;
-            use(path: string, ...handler: RequestHandler[]): T;
-            use(path: string, handler: ErrorRequestHandler): T;
-            use(path: string[], ...handler: RequestHandler[]): T;
-            use(path: string[], handler: ErrorRequestHandler): T;
-            use(path: RegExp, ...handler: RequestHandler[]): T;
-            use(path: RegExp, handler: ErrorRequestHandler): T;
-            use(path:string, router:Router): T;
+            use(...any:any[]): T;
         }
 
         export function Router(options?: any): Router;

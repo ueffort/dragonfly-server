@@ -1,3 +1,9 @@
 {
-    "PATH": "app"
+    "PATH": "src",
+    "DATA_CONFIG": {
+        "PORT": 80
+    },
+    "CORE_CONFIG": {
+        "PORT": 79
+    }
 }

@@ -11,7 +11,7 @@ gulp.task('default', function () {
             noImplicitAny: true,
             outFile: '.',
             module: "commonjs",
-            target: "es6"
+            target: "es5"
         }))
         .pipe(gulp.dest('/'));
 });
