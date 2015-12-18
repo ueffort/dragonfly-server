@@ -4,4 +4,5 @@
 var config = require("app/config");
 var app = require(config['PATH']+"/index");
 var thisApp = new app;
-thisApp.init();
+thisApp.dataInit();
+thisApp.coreInit();

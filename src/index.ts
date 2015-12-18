@@ -1,6 +1,10 @@
 /**
  * Created by tutu on 15-12-17.
  */
+
+/// <reference path="libs/ts/config.d.ts" />
+/// <reference path="libs/ts/express.d.ts" />
+
 import expressModule = require("express");
 import config = require("app/config");
 
@@ -12,11 +16,12 @@ class app{
         this.express = expressModule();
     }
 
-    public init():void{
-        this.express.listen(80, function() {
+    public dataInit():void{
+        this.express.listen(80);
+    }
 
-        });
-        console.log(config)
+    public coreInit():void{
+        this.express.listen(80);
     }
 
 }
