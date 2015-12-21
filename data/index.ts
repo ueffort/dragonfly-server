@@ -19,6 +19,7 @@ class dataApp extends app{
         this.express.use([dataRouter]);
         super.errorHandle();
         this.express.listen(config['DATA_CONFIG']['PORT'], function () {
+            console.log("data api listen port:", config['DATA_CONFIG']['PORT']);
         });
     }
 }

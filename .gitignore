@@ -3,4 +3,7 @@
 node_modules
 core/**/*.js
 data/**/*.js
+module/**/*.js
+index.js
+app/config.json
 npm-debug.log

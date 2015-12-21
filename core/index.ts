@@ -20,6 +20,7 @@ class coreApp extends app{
         this.express.use([webRouter,coreRouter]);
         this.errorHandle();
         this.express.listen(config['CORE_CONFIG']['PORT'], function () {
+            console.log("core listen port:", config['DATA_CONFIG']['PORT']);
         });
     }
 }
