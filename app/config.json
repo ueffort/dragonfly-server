@@ -1,4 +1,5 @@
 {
+    "DEBUG": true,
     "DATA_CONFIG": {
         "PORT": 80
     },

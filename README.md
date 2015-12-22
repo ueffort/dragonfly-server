@@ -21,4 +21,8 @@
 3. express 目前node主流的sever框架,80%以上的node框架都是基于express开发的,因此有很好的技术支持,相关文档也比较全面
 4. gulp node自动构建工具 node主流的构建工具有grunt和gulp,gulp相对来说更好的使用了node的异步特性,构建效率上有明显优势,相关构建插件也已经越来越丰富
 > web端
-
+1. ejs 模板
+2. react 组建化ui
+3. webpack 前端资源打包工具
+4. sass css扩展工具,引入了一些新的概念如，变量，混合，嵌套和选择器继承。
+5. material-ui 基于react和material design的开源组件包

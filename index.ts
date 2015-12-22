@@ -3,11 +3,11 @@
  */
 /// <reference path="libs/ts/config.d.ts" />
 
-import config = require("app/config");
-import core = require("./core/index");
-import data = require("./data/index");
+import * as config from "app/config"
+import {coreApp} from "./core/app"
+import {dataApp} from "./data/app"
 
-var coreApp:core = new core;
-coreApp.init();
-var dataApp:data = new data;
-dataApp.init();
+var core:coreApp = new coreApp;
+core.init();
+var data:dataApp = new dataApp;
+data.init();

@@ -5,10 +5,9 @@
 /// <reference path="../libs/ts/config.d.ts" />
 /// <reference path="../libs/ts/express.d.ts" />
 
-import express = require("express");
-import config = require("app/config");
-
-class app {
+import express = require("express")
+import * as config from "app/config"
+export class app {
 
     express:express.Application;
 
@@ -25,6 +24,6 @@ class app {
         });
     }
 }
-export = app
+
 
 

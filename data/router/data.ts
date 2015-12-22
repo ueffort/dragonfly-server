@@ -5,13 +5,13 @@
 /// <reference path="../../libs/ts/config.d.ts" />
 /// <reference path="../../libs/ts/express.d.ts" />
 
-import express = require("express");
-import config = require("app/config");
+import express = require("express")
+import * as config from "app/config"
 
 var data:express.Router = express.Router();
 
-data.get('/data/', function (req:express.Request, res:express.Response, next:any) {
+data.get('/', function(req:express.Request, res:express.Response, next:any){
 
 });
 
-export = data;
+export default data;

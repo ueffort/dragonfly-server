@@ -6,7 +6,11 @@
   "dependencies": {
     "express": "^4.13.3",
     "gulp": "^3.9.0",
-    "gulp-typescript": "^2.10.0"
+    "gulp-typescript": "^2.10.0",
+    "material-ui": "^0.13.4",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-tap-event-plugin": "^0.2.1"
   },
   "devDependencies": {},
   "scripts": {
