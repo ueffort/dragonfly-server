@@ -11,7 +11,8 @@ gulp.task('default', function () {
             noImplicitAny: true,
             outFile: '.',
             module: "commonjs",
-            target: "es5"
+            target: "es5",
+            jsx: "react"
         }))
         .pipe(gulp.dest('/'));
 });

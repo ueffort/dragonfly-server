@@ -1,8 +1,13 @@
 
 .idea
+typings
 node_modules
+
+app/resource.json
+
 core/**/*.js
 data/**/*.js
 module/**/*.js
+
 index.js
 npm-debug.log

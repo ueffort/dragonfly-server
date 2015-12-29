@@ -4,9 +4,9 @@
 
 
 /// <reference path="../../libs/ts/config.d.ts" />
-/// <reference path="../../libs/ts/express.d.ts" />
+/// <reference path="../../typings/express/express.d.ts" />
 
-import express = require("express")
+import * as express from "express"
 import * as config from "app/config"
 
 var core:express.Router = express.Router();

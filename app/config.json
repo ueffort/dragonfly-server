@@ -1,9 +1,9 @@
 {
     "DEBUG": true,
     "DATA_CONFIG": {
-        "PORT": 80
+        "PORT": 8181
     },
     "CORE_CONFIG": {
-        "PORT": 79
+        "PORT": 8080
     }
 }

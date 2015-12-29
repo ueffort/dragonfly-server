@@ -3,7 +3,6 @@
  */
 
 /// <reference path="../libs/ts/config.d.ts" />
-/// <reference path="../libs/ts/express.d.ts" />
 
 import {app} from '../module/app'
 import * as config from "app/config"
@@ -25,9 +24,10 @@ export class dataApp extends app{
     }
 
     public init():void{
-        this.express.use([dataRouter]);
+        this.express.use(dataRouter);
         super.errorHandle();
         this.express.listen(config['DATA_CONFIG']['PORT'], function(){
+            console.log(config);
             console.log("data api listen port:", config['DATA_CONFIG']['PORT']);
         });
         this.listenAgent();
