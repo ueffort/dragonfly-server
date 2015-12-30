@@ -2,34 +2,35 @@
  * Created by tutu on 15-12-17.
  */
 
-/// <reference path="../libs/ts/config.d.ts" />
+import App from "app/App.ts";
+import dataRouter from "./router/data";
+import agentHandle from "./handle/agentHandle";
+import jsonFile from "app/tools/JsonFile.ts";
 
-import {app} from '../module/app'
-import * as config from "app/config"
-import dataRouter from "./router/data"
-import {agentHandle} from "./handle/agentHandle"
+class DataApp extends App {
 
-export class dataApp extends app{
-
-    agentHandle:agentHandle;
+    private agentHandle: agentHandle;
 
     constructor() {
         super();
         this.agentHandle = agentHandle.getInstance();
     }
 
-    private listenAgent():void{
-        this.agentHandle.wait();
-        console.log("agent listen start");
-    }
-
-    public init():void{
+    public init(): void {
         this.express.use(dataRouter);
         super.errorHandle();
-        this.express.listen(config['DATA_CONFIG']['PORT'], function(){
+        let config = jsonFile.read("app/config");
+        this.express.listen(config.DATA_CONFIG.PORT, function(){
             console.log(config);
-            console.log("data api listen port:", config['DATA_CONFIG']['PORT']);
+            console.log("data api listen port:", config.DATA_CONFIG.PORT);
         });
         this.listenAgent();
     }
+
+    private listenAgent(): void {
+        this.agentHandle.wait();
+        console.log("agent listen start");
+    }
 }
+
+export default DataApp

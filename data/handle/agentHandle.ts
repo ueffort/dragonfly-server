@@ -2,26 +2,28 @@
  * Created by tutu on 15-12-21.
  */
 
-export class agentHandle {
+class AgentHandle {
 
-    static handle:agentHandle;
+    private static handle: AgentHandle;
 
     constructor() {
-
+        return;
     }
 
-    static getInstance():agentHandle{
-        if(!this.handle){
-            this.handle = new agentHandle
+    public static getInstance(): AgentHandle {
+        if (!this.handle) {
+            this.handle = new AgentHandle;
         }
-        return this.handle
+        return this.handle;
     }
 
-    public send():void{
-
+    public send(): void {
+        return;
     }
 
-    public wait():void{
-
+    public wait(): void {
+        return;
     }
 }
+
+export default AgentHandle

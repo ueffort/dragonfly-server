@@ -2,16 +2,14 @@
  * Created by tutu on 15-12-18.
  */
 
-/// <reference path="../../libs/ts/config.d.ts" />
-// / <reference path="../../typings/express/express.d.ts" />
+/// <reference path="../../typings/express/express.d.ts" />
 
-import * as express from "express"
-import * as config from "app/config"
+import * as express from "express";
 
-var data:express.Router = express.Router();
+let data: express.Router = express.Router();
 
-data.get('/', function(req:express.Request, res:express.Response, next:any){
-
+data.get("/", function(req: express.Request, res: express.Response, next: any) {
+    return;
 });
 
 export default data;
