@@ -10,7 +10,7 @@ import * as express from "express";
 import * as react from "react";
 import * as reactDomServer from "react-dom/server";
 import {Container} from "../ui/Container";
-import jsonFile from "../../app/tools/JsonFile";
+import jsonFile from "app/tools/JsonFile";
 
 let web: express.Router = express.Router();
 

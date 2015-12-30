@@ -4,7 +4,7 @@
 
 /// <reference path="../typings/node/node.d.ts" />
 
-import App from "app/App.ts";
+import App from "app/App";
 import coreRouter from "./router/core";
 import webRouter from "./router/web";
 import * as path from "path";
