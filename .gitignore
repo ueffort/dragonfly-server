@@ -2,6 +2,7 @@
 .idea
 typings
 node_modules
+static
 
 app/resource.json
 

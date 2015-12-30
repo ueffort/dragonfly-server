@@ -7,18 +7,18 @@
 /// <reference path="../../typings/react/react-dom.d.ts" />
 
 import * as express from "express";
-import * as react from "react";
-import * as reactDomServer from "react-dom/server";
-import {Container} from "../ui/Container";
+import * as React from "react";
+import * as ReactDomServer from "react-dom/server";
+import Container from "../src/ui/Container";
 import jsonFile from "app/tools/JsonFile";
 
 let web: express.Router = express.Router();
 
 web.get("/", function(req: express.Request, res: express.Response, next: any){
-    let props = {};
-    let reactHtml = react.createFactory(Container);
+    let props = {name: "test"};
+    let reactHtml = React.createFactory(Container);
     let resource = jsonFile.read("app/resource");
-    res.render("index", {reactHtml: reactDomServer.renderToString(reactHtml(props)), resource: resource});
+    res.render("index", {reactHtml: ReactDomServer.renderToString(reactHtml(props)), resource: resource});
 });
 
 web.use("/static", express.static("./static"));
