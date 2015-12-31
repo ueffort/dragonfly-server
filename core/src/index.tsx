@@ -11,7 +11,7 @@ import injectTapEventPlugin = require("react-tap-event-plugin");
 
 import * as ReactDom from "react-dom";
 import * as React from "react";
-import Container from "./ui/Container";
+import Container from "./ui/parts/Container";
 
 injectTapEventPlugin();
 

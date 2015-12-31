@@ -9,8 +9,8 @@
 import * as express from "express";
 import * as React from "react";
 import * as ReactDomServer from "react-dom/server";
-import Container from "../src/ui/Container";
-import jsonFile from "app/tools/JsonFile";
+import Container from "../src/ui/parts/Container";
+import jsonFile from "../../app/tools/JsonFile";
 
 let web: express.Router = express.Router();
 

@@ -2,10 +2,10 @@
  * Created by tutu on 15-12-17.
  */
 
-import App from "app/App";
+import App from "../app/App";
 import dataRouter from "./router/data";
 import agentHandle from "./handle/agentHandle";
-import jsonFile from "app/tools/JsonFile";
+import jsonFile from "../app/tools/JsonFile";
 
 class DataApp extends App {
 

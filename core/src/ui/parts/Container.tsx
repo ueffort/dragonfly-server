@@ -2,7 +2,7 @@
  * Created by tutu on 15-12-25.
  */
 
-/// <reference path="../../../typings/react/react.d.ts" />
+/// <reference path="../../../../typings/react/react.d.ts" />
 
 import * as React from "react";
 
@@ -20,7 +20,7 @@ export class Container extends React.Component<ContainerProp, State> {
 
     }
     public render() {
-        return (<h1>hello {this.props.name}</h1>);
+        return (<h2>hello {this.props.name}</h2>);
     }
 }
 
