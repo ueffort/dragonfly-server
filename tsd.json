@@ -6,7 +6,7 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "react/react.d.ts": {
-      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+      "commit": "0d66537e353802f996a3f67ca1b711f63835f9e7"
     },
     "react/react-dom.d.ts": {
       "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
@@ -22,6 +22,18 @@
     },
     "express/express.d.ts": {
       "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+    },
+    "react-redux/react-redux.d.ts": {
+      "commit": "fe563dff3428bac1260d1794e2c2ecf8f097535a"
+    },
+    "redux/redux.d.ts": {
+      "commit": "0d66537e353802f996a3f67ca1b711f63835f9e7"
+    },
+    "redux-thunk/redux-thunk.d.ts": {
+      "commit": "2e354e005f0fc12e18a40546afdab225620f51c9"
+    },
+    "redux-devtools/redux-devtools.d.ts": {
+      "commit": "0d66537e353802f996a3f67ca1b711f63835f9e7"
     }
   }
 }

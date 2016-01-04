@@ -7,8 +7,11 @@ static
 app/resource.json
 
 core/**/*.js
+core/**/*.js.map
 data/**/*.js
+data/**/*.js.map
 app/**/*.js
+app/**/*.js.map
 
 index.js
 npm-debug.log

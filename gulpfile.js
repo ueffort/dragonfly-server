@@ -51,15 +51,17 @@ var WebpackDevServer = require("webpack-dev-server");
 
 gulp.task("webpack-dev-server", function(callback) {
   var compiler = webpack({
-    entry: [
-      'webpack-dev-server/client?http://localhost:9090',
-      'webpack/hot/only-dev-server',
-      './core/src/index.js'
-    ],
+    entry: {
+        "index": [
+            'webpack-dev-server/client?http://localhost:9090',
+            'webpack/hot/only-dev-server',
+            './core/src/index.js'
+        ]
+    },
     output: {
       path: path.join(__dirname, 'static/js'),
-      filename: 'index.js',
-      publicPath: 'http://localhost:9090/static/js/'
+      filename: '[name].js',
+      publicPath: 'http://localhost:9090/static/js'
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin()
@@ -76,7 +78,7 @@ gulp.task("webpack-dev-server", function(callback) {
     }
   });
   new WebpackDevServer(compiler, {
-    publicPath: "http://localhost:9090/static/js/",
+    publicPath: "http://localhost:9090/static/js",
     hot: true,
     historyApiFallback: true
   }).listen(9090, function (err, result) {

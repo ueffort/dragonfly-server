@@ -22,6 +22,10 @@ class App {
             res.status(500).send("Something broke!");
         });
     }
+
+    get app(): express.Application {
+        return this.express;
+    }
 }
 
 export default App
