@@ -8,11 +8,11 @@
 
 # 环境配置
 1. 安装node5.0以上版本
-2. npm安装全局gulp
-3. npm install 自动安装所需依赖
+2. npm install 自动安装所需依赖
+3. npm run tsd 自动安装typescript所需要的申明文件
 
 # 启动方式
-> node index.js 同时开启所有路由
+> npm run start 同时开启所有路由
 
 # 技术范围
 > server端

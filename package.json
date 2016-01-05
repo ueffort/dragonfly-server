@@ -40,7 +40,7 @@
     "test-cov": "node ./node_modules/istanbul-harmony/lib/cli.js cover ./node_modules/mocha/bin/_mocha --recursive test/ --bail",
     "tsd": "./node_modules/tsd/build/cli.js install",
     "dev": "./node_modules/supervisor/lib/cli-wrapper.js index.js",
-    "dev-web": "gulp webpack-dev-server"
+    "dev-web": "./node_modules/gulp/bin/gulp.js webpack-dev-server"
   },
   "author": "",
   "license": "ISC"
