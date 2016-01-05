@@ -12,7 +12,8 @@
 3. npm run tsd 自动安装typescript所需要的申明文件
 
 # 启动方式
-> npm run start 同时开启所有路由
+1. npm run init 初始化项目(编译ts文件,编译sass文件,打包前端js文件)
+2. npm run start 同时开启所有路由
 
 # 技术范围
 > server端

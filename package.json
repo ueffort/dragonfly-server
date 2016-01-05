@@ -36,6 +36,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "node index.js",
+    "init": "./node_modules/gulp/bin/gulp.js ts & ./node_modules/gulp/bin/gulp.js sass & ./node_modules/gulp/bin/gulp.js webpack",
     "test": "./node_modules/mocha/bin/_mocha --recursive test/ --bail",
     "test-cov": "node ./node_modules/istanbul-harmony/lib/cli.js cover ./node_modules/mocha/bin/_mocha --recursive test/ --bail",
     "tsd": "./node_modules/tsd/build/cli.js install",
