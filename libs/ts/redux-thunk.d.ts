@@ -7,14 +7,11 @@
 declare module "redux-thunk" {
     import { Middleware, Dispatch } from "redux";
 
-    export interface Thunk extends Middleware { }
+    interface Thunk extends Middleware { }
 
-    export interface ThunkInterface {
+    interface ThunkInterface {
         <T>(dispatch: Dispatch, getState?: () => T): any;
     }
-
     var thunk: Thunk;
-
     export = thunk;
 }
-
