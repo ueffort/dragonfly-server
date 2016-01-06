@@ -33,7 +33,9 @@
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.14.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "swagger": "^0.7.5"
+  },
   "scripts": {
     "start": "node index.js",
     "init": "./node_modules/gulp/bin/gulp.js ts & ./node_modules/gulp/bin/gulp.js sass & ./node_modules/gulp/bin/gulp.js webpack",

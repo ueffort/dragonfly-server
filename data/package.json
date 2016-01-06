@@ -1,0 +1,10 @@
+{
+  "name": "",
+  "version": "1.0.0",
+  "description": "API",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "dependencies": {}
+}
