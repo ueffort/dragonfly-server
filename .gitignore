@@ -14,4 +14,5 @@ app/**/*.js
 app/**/*.js.map
 
 index.js
+index.js.map
 npm-debug.log

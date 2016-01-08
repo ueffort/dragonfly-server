@@ -9,13 +9,7 @@ var ts = require('gulp-typescript');
 
 gulp.task('ts', function () {
     return gulp.src(['*.ts', 'core/**/*.ts', 'data/**/*.ts', 'module/**/*.ts'])
-        .pipe(ts({
-            noImplicitAny: true,
-            outFile: '.',
-            module: "commonjs",
-            target: "es5",
-            jsx: "react"
-        }))
+        .pipe(ts(require("./tsconfig").compilerOptions))
         .pipe(gulp.dest('/'));
 });
 
