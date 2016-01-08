@@ -29,9 +29,6 @@
     "redux/redux.d.ts": {
       "commit": "0d66537e353802f996a3f67ca1b711f63835f9e7"
     },
-    "redux-thunk/redux-thunk.d.ts": {
-      "commit": "2e354e005f0fc12e18a40546afdab225620f51c9"
-    },
     "redux-devtools/redux-devtools.d.ts": {
       "commit": "0d66537e353802f996a3f67ca1b711f63835f9e7"
     }
