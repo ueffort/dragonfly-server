@@ -3,6 +3,6 @@
  */
 
 declare module "redux-devtools" {
-    export function createDevTools(...any);
-    export function persistState(any);
+    export function createDevTools(...any: any[]): any;
+    export function persistState(any: any): any;
 }

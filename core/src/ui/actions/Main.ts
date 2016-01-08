@@ -4,6 +4,6 @@
 
 import * as ActionTypes from "../constants/ActionTypes";
 
-export function add(text) {
+export function add(text: any) {
   return { type: ActionTypes.ADD, text };
 }

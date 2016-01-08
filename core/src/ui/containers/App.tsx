@@ -17,7 +17,7 @@ interface AppProp {
 
 class App extends React.Component<AppProp, any> {
 
-    constructor(props, context) {
+    constructor(props: any, context: any) {
         super(props, context);
     }
 
@@ -29,13 +29,13 @@ class App extends React.Component<AppProp, any> {
     }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state: any) {
     return {
         playbook: state.PlayBook
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: any) {
     return {
         actions: bindActionCreators(MainAction, dispatch)
     };

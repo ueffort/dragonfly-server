@@ -18,7 +18,7 @@
       "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
     },
     "node/node.d.ts": {
-      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+      "commit": "4639f126d25956b6a7ddf8462dd4e73101983b85"
     },
     "express/express.d.ts": {
       "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
@@ -31,6 +31,18 @@
     },
     "redux-devtools/redux-devtools.d.ts": {
       "commit": "0d66537e353802f996a3f67ca1b711f63835f9e7"
+    },
+    "commander/commander.d.ts": {
+      "commit": "81b951f1ac437d1eb5ff5171a0bfa6c467634b13"
+    },
+    "glob/glob.d.ts": {
+      "commit": "4639f126d25956b6a7ddf8462dd4e73101983b85"
+    },
+    "minimatch/minimatch.d.ts": {
+      "commit": "4639f126d25956b6a7ddf8462dd4e73101983b85"
+    },
+    "bunyan/bunyan.d.ts": {
+      "commit": "4639f126d25956b6a7ddf8462dd4e73101983b85"
     }
   }
 }

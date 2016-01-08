@@ -5,15 +5,26 @@
 /// <reference path="../typings/express/express.d.ts" />
 
 import * as express from "express";
+import jsonFile from "./tools/JsonFile";
+import {Logger, create, middle as loggerMiddle} from "./tools/Log";
+
+const config = jsonFile.read("./config");
+
 class App {
 
     public express: express.Application;
+    public logger: Logger;
 
+    public static config(): any {
+        return config;
+    }
     constructor() {
         this.express = express();
+        this.logger = create("", config.debug);
     }
 
     public errorHandle(): void {
+        this.express.use(loggerMiddle(this.logger));
         this.express.use(function(req: express.Request, res: express.Response, next: any){
             res.status(404).send("Sorry cant find that!");
         });

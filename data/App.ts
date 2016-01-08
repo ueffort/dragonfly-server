@@ -5,7 +5,6 @@
 import App from "../app/App";
 import dataRouter from "./router/data";
 import agentHandle from "./handle/agentHandle";
-import jsonFile from "../app/tools/JsonFile";
 
 class DataApp extends App {
 
@@ -19,7 +18,7 @@ class DataApp extends App {
     public init(): void {
         this.express.use(dataRouter);
         super.errorHandle();
-        let config = jsonFile.read("app/config");
+        let config = App.config();
         this.express.listen(config.DATA_CONFIG.PORT, function(){
             console.log(config);
             console.log("data api listen port:", config.DATA_CONFIG.PORT);

@@ -12,6 +12,6 @@ declare module "redux-thunk" {
     interface ThunkInterface {
         <T>(dispatch: Dispatch, getState?: () => T): any;
     }
-    var thunk: Thunk;
+    let thunk: Thunk;
     export = thunk;
 }

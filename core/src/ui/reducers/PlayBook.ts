@@ -8,7 +8,7 @@ const initialValue = [
     {"name": "test"}
 ];
 
-function PlayBook(state = initialValue, action) {
+function PlayBook(state = initialValue, action: any) {
     switch (action.type) {
         case ActionTypes.ADD:
             return state;

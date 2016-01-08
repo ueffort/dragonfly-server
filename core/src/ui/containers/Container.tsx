@@ -20,7 +20,7 @@ const store = MainStore();
 
 class Container extends React.Component<ContainerProp, any> {
 
-    constructor(props, context) {
+    constructor(props: any, context: any) {
         super(props, context);
     }
 
