@@ -6,25 +6,43 @@
 
 import * as express from "express";
 import jsonFile from "./tools/JsonFile";
-import {Logger, create, middle as loggerMiddle} from "./tools/Log";
+import {create, middle as loggerMiddle} from "./tools/Log";
 
-const config = jsonFile.read("./config");
+const config = jsonFile.read("app/config");
 
 class App {
 
     public express: express.Application;
-    public logger: Logger;
-
-    public static config(): any {
-        return config;
-    }
+    protected name: string;
+    public logger: any;
+    public config: any;
     constructor() {
         this.express = express();
-        this.logger = create("", config.debug);
+        this.config = config;
     }
 
-    public errorHandle(): void {
+    protected init(): void {
+    }
+
+    /**
+     * 启动一个应用,开启生命周期
+     */
+    public start(): void {
+        this.express.set("name", this.name);
+        this.init();
+        this.logger = create(this.express, config.debug);
         this.express.use(loggerMiddle(this.logger));
+        this.errorHandle();
+    }
+
+    protected listen(port: number) {
+        let self = this;
+        this.express.listen(port, function(){
+            self.logger.info(self.name, " listen port:", port);
+        });
+    }
+
+    protected errorHandle(): void {
         this.express.use(function(req: express.Request, res: express.Response, next: any){
             res.status(404).send("Sorry cant find that!");
         });

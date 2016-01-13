@@ -1,60 +1,168 @@
 swagger: "2.0"
 info:
   version: "0.0.1"
-  title: Hello World App
+  title: Limei Data Api
 # during dev, should point to your local machine
-host: localhost:10010
+host: data.inside.ljrtb.cn:8181
 # basePath prefixes all resource paths
 basePath: /
 #
 schemes:
   # tip: remove http to make production-grade
   - http
-  - https
 # format of bodies a client can send (Content-Type)
 consumes:
   - application/json
 # format of the responses to the client (Accepts)
 produces:
   - application/json
+securityDefinitions:
+  token:
+    type: apiKey
+    name: token
+    in: header
 paths:
-  /hello:
-    # binds a127 app logic to a route
-    x-swagger-router-controller: hello_world
+  /auth:
+    x-swagger-router-controller: auth
     get:
-      description: Returns 'Hello' to the caller
-      # used as the method name of the controller
-      operationId: hello
+      description: "获取验证信息"
+      operationId: getAuth
+      security:
+        - token: []
       parameters:
-        - name: name
+        - name: token
           in: query
-          description: The name of the person to whom to say hello
-          required: false
+          description: "token值"
+          required: true
           type: string
       responses:
         "200":
-          description: Success
+          description: "查询成功"
           schema:
-            # a pointer to a definition
-            $ref: "#/definitions/HelloWorldResponse"
-        # responses may fall through to errors
+            $ref: "#/definitions/AuthModel"
         default:
           description: Error
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: "#/definitions/Error"
+    post:
+      description: "注册一个新的验证token"
+      parameters:
+        - name: email
+          in: query
+          description: "新token绑定的email"
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "创建成功"
+          schema:
+            $ref: "#/definitions/AuthModel"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+    put:
+      description: "更新token绑定信息"
+      parameters:
+        - name: token
+          in: query
+          description: "token值"
+          required: true
+          type: string
+        - name: email
+          in: body
+          description: "关联email"
+          required: false
+          type: string
+      response:
+        "200":
+          description: "更新成功"
+          schema:
+            $ref: "#/definitions/AuthModel"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+  /report:
+    x-swagger-router-controller: report
+    post:
+      description: "注册一个报表对象"
+      parameters:
+        - name: name
+          type: string
+          in: body
+          description: "报表名称，唯一标示符，不能重复"
+  /report/info/{item}:
+    x-swagger-router-controller: report
+  /service:
+    x-swagger-router-controller: service
+    post:
+      description: "注册一个服务对象，接入系统"
+      parameters:
+        - name: name
+          type: string
+          in: body
+          description: "服务名称，唯一标示符，不能重复"
+          required: true
+        - name: description
+          type: string
+          in: body
+          description: "服务描述，作用及相关信息"
+        - name: depends
+          type: 
+      responses:
+        "200": 
+          description: Success
+  /service/info/{name}:
+    x-swagger-router-controller: service
+    get:
+      description: "查询该服务当前状态"
+      parameters:
+        - name: name
+          type: string
+          in: path
+          description: "服务名称"
+          required: true
+      responses:
+        "200":
+          description: Success
+  /notice:
+    post:
+      description: "发送通知给指定的用户"
+      parameters:
+        - name: 
   /swagger:
     x-swagger-pipe: swagger_raw
-# complex objects have schema definitions
 definitions:
-  HelloWorldResponse:
-    required:
-      - message
+  AuthModel:
     properties:
+      token:
+        type: string
+        description: "用于用户访问时的验证Token"
+      email:
+        type: string
+        description: "关联该token的Email，用于自动发送相关邮件"
+      state:
+        type: boolen
+        description: "当前状态：true为允许使用，false为不允许使用"
+  ReportModel:
+    properties:
+      name:
+        type: string
+        description: "报表标示符"
+  ServiceModel:
+    properties:
+      name:
+        type: string
+        description: "服务标示符"
+      state:
+        type: boolen
+        description: "当前状态：true为正常，false为异常"
+  Error:
+    properties:
+      status:
+        type: number
+        description: "错误状态码，http status"
       message:
         type: string
-  ErrorResponse:
-    required:
-      - message
-    properties:
-      message:
-        type: string
+        description: "错误的描述信息，和具体业务相关"

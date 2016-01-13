@@ -10,10 +10,7 @@
 1. 安装node5.0以上版本
 2. npm install 自动安装所需依赖
 3. npm run tsd 自动安装typescript所需要的申明文件
-
-# 启动方式
-1. npm run init 初始化项目(编译ts文件,编译sass文件,打包前端js文件)
-2. npm run start 同时开启所有路由
+4. npm run init 初始化项目(编译ts文件,编译sass文件,打包前端js文件)
 
 # 技术范围
 > server端
@@ -27,3 +24,18 @@
 3. webpack 前端资源打包工具
 4. sass css扩展工具,引入了一些新的概念如，变量，混合，嵌套和选择器继承。
 5. material-ui 基于react和material design的开源组件包
+
+# 启动方式
+> 本地开发
+1. npm run start data  单独启动data服务,占用8181端口
+2. npm run api-edit    启动data的swagger-edit服务,占用8182端口
+3. npm run start core  单独启动core服务,占用8080端口,依赖data服务
+> 测试环境/线上环境
+2. npm run start all   同时开启data+core服务
+
+# swagger
+1. 通过swagger-edit编辑data的对外api文档
+    1. npm run api-edit
+    2. 访问http://127.0.0.1:8182
+2. 通过swagger-ui提供对外api文档说明及测试
+    1.

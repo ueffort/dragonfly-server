@@ -11,19 +11,18 @@ import * as path from "path";
 
 class CoreApp extends App {
 
+    protected name = "core";
+
     constructor() {
         super();
     }
 
-    public init(): void {
+    protected init(): void {
         this.express.set("views", path.join(__dirname, "views"));
         this.express.set("view engine", "ejs");
         this.express.use(webRouter, coreRouter);
-        super.errorHandle();
-        let config = App.config();
-        this.express.listen(config.CORE_CONFIG.PORT, function(){
-            console.log("core listen port:", config.CORE_CONFIG.PORT);
-        });
+
+        this.listen(this.config.CORE_CONFIG.PORT);
     }
 }
 

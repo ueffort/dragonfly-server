@@ -43,13 +43,13 @@ program
         if (options.d) {
             return daemon();
         }
-        if (options.instance === "data" || options.instance === "all") {
-            let core: CoreApp = new CoreApp;
-            // core.init();
-        }
-        if (options.instance === "core" || options.instance === "all") {
+        if (instance === "data" || instance === "all") {
             let data: DataApp = new DataApp;
-            // data.init();
+            data.start();
+        }
+        if (instance === "core" || instance === "all") {
+            let core: CoreApp = new CoreApp;
+            core.start();
         }
     }).on("--help", function(){
     console.log("  Examples:");

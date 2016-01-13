@@ -9,7 +9,7 @@ import * as express from "express";
 let data: express.Router = express.Router();
 
 data.get("/", function(req: express.Request, res: express.Response, next: any) {
-    return;
+    res.send("is ok!!");
 });
 
 export default data;
