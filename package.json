@@ -48,6 +48,7 @@
     "dev-web": "gulp webpack-dev-server",
     "test": "mocha --recursive test/ --bail",
     "test-cov": "node ./node_modules/istanbul-harmony/lib/cli.js cover ./node_modules/mocha/bin/_mocha --recursive test/ --bail",
+    "api-ui": "node swagger-ui.js",
     "api-edit": "swagger project edit data -p 8182 -s --host 0.0.0.0"
   },
   "author": "",

@@ -38,4 +38,5 @@
     1. npm run api-edit
     2. 访问http://127.0.0.1:8182
 2. 通过swagger-ui提供对外api文档说明及测试
-    1.
+    1. 会跟随data服务启动
+    2. 访问http://127.0.0.1:8181/docs
