@@ -5,5 +5,24 @@
     },
     "CORE_CONFIG": {
         "PORT": @CORE_CONFIG_PORT@
+    },
+    "SERVICE":{
+        "redis": {
+            "host": "redis",
+            "port": 6379,
+            "password": ""
+        },
+        "mysql": {
+            "host": "",
+            "port": 3306,
+            "user": "",
+            "password": "",
+            "database": "",
+            "charset": "utf8"
+        }
+    },
+    "AGENT":{
+        "prefix": "dragonfly",
+        "master": "master"
     }
 }

@@ -35,8 +35,10 @@
 
 # swagger
 1. 通过swagger-edit编辑data的对外api文档
-    1. npm run api-edit
-    2. 访问http://127.0.0.1:8182
+    1. cd ./node_modules/swagger/
+    2. npm install
+    3. npm run api-edit
+    4. 访问http://127.0.0.1:8182
 2. 通过swagger-ui提供对外api文档说明及测试
     1. 会跟随data服务启动
     2. 访问http://127.0.0.1:8181/docs

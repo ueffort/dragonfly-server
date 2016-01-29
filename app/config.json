@@ -5,5 +5,24 @@
     },
     "CORE_CONFIG": {
         "PORT": 8080
+    },
+    "SERVICE":{
+        "redis": {
+            "host": "redis",
+            "port": 6379,
+            "password": ""
+        },
+        "mysql": {
+            "host": "dsp.corp.limei.com",
+            "port": 3306,
+            "user": "bunny",
+            "password": "DDsMKoB3hLfV",
+            "database": "dragonfly",
+            "charset": "utf8"
+        }
+    },
+    "AGENT":{
+        "prefix": "dragonfly",
+        "master": "master"
     }
 }

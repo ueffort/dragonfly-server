@@ -20,7 +20,7 @@ class CoreApp extends App {
     protected init(): void {
         this.express.set("views", path.join(__dirname, "views"));
         this.express.set("view engine", "ejs");
-        this.express.use(webRouter, coreRouter);
+        this.express.use(webRouter(this), coreRouter(this));
 
         this.listen(this.config.CORE_CONFIG.PORT);
     }

@@ -4,7 +4,7 @@
 import * as express from "express";
 import * as bunyan from "bunyan";
 
-export function create(app: express.Application, debug: boolean) {
+export function create(app: express.Application, debug: boolean) :bunyan.Logger {
     let level = debug ? bunyan.TRACE : bunyan.INFO,
         name = app.get("name") || "express";
 
