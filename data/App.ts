@@ -2,6 +2,7 @@
  * Created by tutu on 15-12-17.
  */
 
+import * as express from "express";
 import App from "../app/App";
 import dataRouter from "./router/data";
 import swaggerRouter from "./router/swagger";
@@ -33,6 +34,20 @@ class DataApp extends App {
 
     private agentHandle(): void {
         this._agent = Agent.getInstance(this).wait();
+    }
+
+    /**
+     * 错误处理handle
+     */
+    protected errorHandle(): void {
+        var self = this;
+        this.express.use(function(req: express.Request, res: express.Response, next: any){
+            res.status(404).json({status:400, message:"not find!"});
+        });
+        this.express.use(function(err: Error, req: express.Request, res: express.Response, next: any){
+            self.logger.error(err);
+            res.status(500).json({status:500, message:err.message});
+        });
     }
 }
 

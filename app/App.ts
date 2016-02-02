@@ -9,6 +9,7 @@ import jsonFile from "./tools/JsonFile";
 import {create as createLogger, middle as loggerMiddle} from "./tools/Log";
 import {Mysql, connect as connectMysql} from "./tools/Mysql";
 import {Redis, connect as connectRedis} from "./tools/Redis";
+import {Email, connect as connectEmail} from "./tools/Email";
 
 const config = jsonFile.read("app/config");
 
@@ -70,6 +71,17 @@ class App {
             return connectRedis(config, app);
         });
     }
+
+    /**
+     * 获取email服务,单例模式
+     * @returns Redis
+     */
+    public email() :Email{
+        return this.make("email", function(config:any, app:App){
+            return connectEmail(config, app);
+        })
+    }
+
 
     /**
      * 单例服务生成器

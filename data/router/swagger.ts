@@ -8,6 +8,7 @@ import * as express from "express";
 import * as swaggerTools from "swagger-tools";
 import * as yaml from "js-yaml";
 import fs = require("fs");
+import path = require("path");
 
 let router: express.Router = express.Router();
 var spec = fs.readFileSync("./data/api/swagger/swagger.yaml", "utf8");
@@ -20,7 +21,8 @@ var options = {
 };
 var uiOptions = {
     apiDocs: '/api-docs',
-    swaggerUi: '/docs'
+    swaggerUi: '/docs',
+    swaggerUiDir: path.join(__dirname, '..', 'swagger-ui')
 };
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware: any) {

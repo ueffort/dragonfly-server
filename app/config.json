@@ -19,6 +19,14 @@
             "password": "DDsMKoB3hLfV",
             "database": "dragonfly",
             "charset": "utf8"
+        },
+        "email": {
+            "host": "smtp.exmail.qq.com",
+            "port": 25,
+            "user": "dsp-admin@limei.com",
+            "pass": "uNQ80NCfGBYa",
+            "from": "Dragonfly <dsp-admin@limei.com>",
+            "sender": "dsp-admin@limei.com"
         }
     },
     "AGENT":{

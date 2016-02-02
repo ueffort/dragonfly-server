@@ -5,7 +5,6 @@ node_modules
 static
 
 app/resource.json
-
 core/**/*.js
 core/**/*.js.map
 data/**/*.js
@@ -16,3 +15,5 @@ app/**/*.js.map
 index.js
 index.js.map
 npm-debug.log
+!data/swagger-ui/*.js
+!data/swagger-ui/*/*.js

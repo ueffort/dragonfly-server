@@ -7,20 +7,21 @@
 import * as express from "express";
 import Dispatch from "../../app/Dispatch";
 import DataApp from "../App";
-import {Mysql} from "../../app/tools/Mysql";
 import {token} from "../handle/mysql";
 
 export default function routerHandle(app: DataApp): express.Router{
 
     let router: express.Router = express.Router();
-    let mysql: Mysql = app.mysql();
+    let mysql = app.mysql();
+    let email = app.email();
+
     /**
      * 验证token
      */
     router.use(Dispatch.token(app, "token", function(tokenStr: string){
         return token(mysql, tokenStr).then(function(auth:any){
             return !!auth;
-        }).catch(function(){
+        }).catch(function(err){
             return false;
         });
     }));
