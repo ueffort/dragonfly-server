@@ -70,11 +70,11 @@ paths:
           required: true
           type: string
         - name: email
-          in: body
+          in: formData
           description: "关联email"
           required: false
           type: string
-      response:
+      responses:
         "200":
           description: "更新成功"
           schema:
@@ -90,10 +90,26 @@ paths:
       parameters:
         - name: name
           type: string
-          in: body
+          in: formData
           description: "报表名称，唯一标示符，不能重复"
-  /report/info/{item}:
+      responses:
+        "200":
+          description: Success
+  /report/info/{name}:
     x-swagger-router-controller: report
+    get:
+      description: "查询该报表当前状态"
+      parameters:
+        - name: name
+          type: string
+          in: path
+          description: "服务名称"
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ReportModel"
   /service:
     x-swagger-router-controller: service
     post:
@@ -101,15 +117,19 @@ paths:
       parameters:
         - name: name
           type: string
-          in: body
+          in: formData
           description: "服务名称，唯一标示符，不能重复"
           required: true
         - name: description
           type: string
-          in: body
+          in: formData
           description: "服务描述，作用及相关信息"
         - name: depends
-          type: 
+          type: array
+          in: formData
+          description: "服务依赖"
+          items:
+            type: string
       responses:
         "200": 
           description: Success
@@ -126,11 +146,18 @@ paths:
       responses:
         "200":
           description: Success
+          schema:
+            $ref: "#/definitions/ServiceModel"
   /notice:
     post:
       description: "发送通知给指定的用户"
       parameters:
-        - name: 
+        - name: name
+          type: string
+          in: query
+      responses:
+        "200":
+          description: Success
   /swagger:
     x-swagger-pipe: swagger_raw
 definitions:
@@ -143,7 +170,7 @@ definitions:
         type: string
         description: "关联该token的Email，用于自动发送相关邮件"
       state:
-        type: boolen
+        type: boolean
         description: "当前状态：true为允许使用，false为不允许使用"
   ReportModel:
     properties:
@@ -156,8 +183,13 @@ definitions:
         type: string
         description: "服务标示符"
       state:
-        type: boolen
+        type: boolean
         description: "当前状态：true为正常，false为异常"
+      depends:
+        type: array
+        description: "依赖服务"
+        items:
+          type: string
   Error:
     properties:
       status:

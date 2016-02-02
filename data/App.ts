@@ -17,7 +17,7 @@ class DataApp extends App {
     }
 
     protected init(): void {
-        //this.express.use(swaggerRouter);
+        this.express.use(swaggerRouter);
         this.express.use(dataRouter(this));
         this.listen(this.config.DATA_CONFIG.PORT);
         this.agentHandle();

@@ -8,7 +8,6 @@
     "commander": "^2.9.0",
     "ejs": "^2.3.4",
     "es6-promise": "^3.0.2",
-    "es6-promises": "^1.0.10",
     "express": "^4.13.3",
     "express-session": "^1.13.0",
     "gulp": "^3.9.0",
@@ -29,8 +28,8 @@
     "redux": "^3.0.5",
     "should": "^8.0.2",
     "supertest": "^1.1.0",
+    "swagger": "^0.7.5",
     "tsd": "^0.6.5",
-    "tslint": "^3.2.1",
     "webpack": "^1.12.9"
   },
   "devDependencies": {
@@ -42,14 +41,14 @@
     "redux-devtools-log-monitor": "^1.0.1",
     "redux-thunk": "^1.0.3",
     "supervisor": "^0.9.1",
-    "swagger": "^0.7.5",
+    "tslint": "^3.2.1",
     "webpack-dev-server": "^1.14.0"
   },
   "scripts": {
     "init": "gulp ts & gulp sass & gulp webpack",
     "tsd": "tsd install && chmod -R +x typings",
     "start": "node index.js start",
-    "dev": "supervisor index.js",
+    "dev": "supervisor 'index.js start core'",
     "dev-web": "gulp webpack-dev-server",
     "test": "mocha --recursive test/ --bail",
     "test-cov": "node ./node_modules/istanbul-harmony/lib/cli.js cover ./node_modules/mocha/bin/_mocha --recursive test/ --bail",

@@ -146,11 +146,12 @@ class Agent {
         // 传输协议是 protobuf, 所以需要redis返回buffers
         this.redisInstance = this.redis.newInstance({return_buffers: true});
         // agent注册监听
-        this.subscribe(register, function(err:Error, message:string){
-            logger.info("register receive:", message);
-            let index = self.agentList.indexOf(message);
+        this.subscribe(register, function(err:Error, message:Buffer){
+            let result = message.toString();
+            logger.info("register receive:", result);
+            let index = self.agentList.indexOf(result);
             if(index === -1){
-                self.agentList.push(message);
+                self.agentList.push(result);
             }
             // 测试
             //self.send(message,"ls").then(function(result){
@@ -158,9 +159,10 @@ class Agent {
             //});
         });
         // agent注销监听
-        this.subscribe(unregister, function(err:Error, message:string){
-            logger.info("unregister receive:", message);
-            let index = self.agentList.indexOf(message);
+        this.subscribe(unregister, function(err:Error, message:Buffer){
+            let result = message.toString();
+            logger.info("unregister receive:", result);
+            let index = self.agentList.indexOf(result);
             if(index !== -1){
                 self.agentList.splice(index, 1);
             }
