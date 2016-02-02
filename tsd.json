@@ -67,6 +67,9 @@
     },
     "protobufjs/protobufjs.d.ts": {
       "commit": "c2939250ec2d1ecdc82fce62afb9354dd14909ea"
+    },
+    "classnames/classnames.d.ts": {
+      "commit": "c2939250ec2d1ecdc82fce62afb9354dd14909ea"
     }
   }
 }

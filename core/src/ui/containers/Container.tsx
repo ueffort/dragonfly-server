@@ -26,14 +26,12 @@ class Container extends React.Component<ContainerProp, any> {
 
     public render() {
         return (
-            <div>
-                <Provider store={store}>
-                    <div>
-                        <App/>
-                        <DevTools/>
-                    </div>
-                </Provider>
-            </div>
+            <Provider store={store}>
+                <div>
+                    <App/>
+                    <DevTools/>
+                </div>
+            </Provider>
         );
     }
 }

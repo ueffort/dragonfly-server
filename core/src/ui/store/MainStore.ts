@@ -11,7 +11,7 @@ import { compose, createStore, applyMiddleware } from "redux";
 import rootReducer from "../reducers/Index";
 import { persistState } from "redux-devtools";
 import DevTools from "../containers/DevTools";
-import thunk = require("redux-thunk");
+import * as thunk from "redux-thunk";
 
 const buildStore = compose(
     applyMiddleware(thunk),

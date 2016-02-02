@@ -7,8 +7,8 @@
 import * as express from "express";
 import * as swaggerTools from "swagger-tools";
 import * as yaml from "js-yaml";
-import fs = require("fs");
-import path = require("path");
+import * as fs from "fs";
+import * as path from "path";
 
 let router: express.Router = express.Router();
 var spec = fs.readFileSync("./data/api/swagger/swagger.yaml", "utf8");

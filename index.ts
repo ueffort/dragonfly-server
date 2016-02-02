@@ -4,10 +4,10 @@
  */
 
 /// <reference path="typings/commander/commander.d.ts" />
-import program = require("commander");
+import * as program from "commander";
 import CoreApp from "./core/App";
 import DataApp from "./data/App";
-import fs = require("fs");
+import * as fs from "fs";
 
 function daemon() {
     let new_argv: string[] = [];

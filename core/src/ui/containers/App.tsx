@@ -10,28 +10,35 @@ import * as React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import * as MainAction from "../actions/Main";
+import Loading from "./Loading";
 
 interface AppProp {
     playbook?: any;
+    loading: any;
+    login: any;
+    actions: any;
 }
 
 class App extends React.Component<AppProp, any> {
 
     constructor(props: any, context: any) {
         super(props, context);
+        this.props.actions.login(true);
     }
 
     public render () {
-        console.log(this.props);
         return (
-            <h2>hello {this.props.playbook[0].name}</h2>
+            <div><h2>hello {this.props.playbook[0].name}</h2><Loading loading={this.props.loading.isLoad}/></div>
+
         );
     }
 }
 
 function mapStateToProps(state: any) {
     return {
-        playbook: state.PlayBook
+        playbook: state.PlayBook,
+        loading: state.Loading,
+        login: state.Login
     };
 }
 

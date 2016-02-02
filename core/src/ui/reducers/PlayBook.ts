@@ -9,12 +9,7 @@ const initialValue = [
 ];
 
 function PlayBook(state = initialValue, action: any) {
-    switch (action.type) {
-        case ActionTypes.ADD:
-            return state;
-        default:
-            return state;
-    }
+    return state;
 }
 
 export default PlayBook
