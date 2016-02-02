@@ -7,28 +7,41 @@ import App from "../app/App";
 import {RequestHandler} from "express";
 class Dispatch{
 
+    private static result(handle:(req: express.Request)=>Promise<any>):RequestHandler{
+        return function(req: express.Request, res: express.Response, next: any) {
+            handle(req).then(function(){
+                next();
+            }).catch(function(err:Error){
+                next(err);
+            });
+        }
+    }
+
     /**
      * 访问验证middle
      * @param app
      * @param tokenKey
      * @param verify
-     * @returns {function(express.Request, express.Response, any): *}
+     * @returns {function(express.Request): *}
      */
-    public static token(app: App, tokenKey: string, verify: (token:string, notice:(result: boolean)=>void) => void):RequestHandler{
-        return function(req: express.Request, res: express.Response, next: any){
-            if(!req.header(tokenKey)){
-                return next(new Error("auth error"));
-            }else{
+    public static token(app: App, tokenKey: string, verify: (token:string) => Promise<any>):RequestHandler{
+
+        function handle(req: express.Request):Promise<any>{
+            if (!req.header(tokenKey)) {
+                return Promise.reject(new Error("auth error"));
+            } else {
                 let token = req.header(tokenKey);
-                verify(token, function(result:boolean){
-                   if(result){
-                       next();
-                   }else{
-                       next(new Error("auth fail"));
-                   }
+                return Promise.resolve(verify(token)).then(function(result){
+                    if(result){
+                        return true;
+                    }else{
+                        throw new Error('auth fail');
+                    }
                 });
             }
         }
+
+        return this.result(handle);
     }
 
     /**
@@ -36,22 +49,23 @@ class Dispatch{
      * @param app
      * @param filterUrl
      * @param verify
-     * @returns {function(express.Request, express.Response, any): undefined}
+     * @returns {function(express.Request): undefined}
      */
-    public static session(app: App, filterUrl: string[], verify: (session: {[key: string]: any}, notice:(result: boolean)=>void) => void):RequestHandler{
-        return function(req: express.Request, res: express.Response, next: any){
+    public static session(app: App, filterUrl: string[], verify: (session: {[key: string]: any}) => Promise<any>):RequestHandler{
+        function handle(req: express.Request):Promise<any>{
             if(filterUrl.indexOf(req.baseUrl) !== -1){
-                next();
+                return Promise.resolve();
             }else{
-                verify(req.session, function(result:boolean){
+                return Promise.resolve(verify(req.session)).then(function(result){
                     if(result){
-                        next();
+                        return true;
                     }else{
-                        next(new Error("need login"));
+                        throw new Error("need login");
                     }
                 });
             }
         }
+        return this.result(handle);
     }
 }
 

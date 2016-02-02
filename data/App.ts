@@ -5,11 +5,12 @@
 import App from "../app/App";
 import dataRouter from "./router/data";
 import swaggerRouter from "./router/swagger";
-import agent from "./handle/agent";
+import Agent from "./handle/agent";
 
 class DataApp extends App {
 
     protected name = "data";
+    protected _agent:Agent;
 
     constructor() {
         super();
@@ -22,9 +23,16 @@ class DataApp extends App {
         this.agentHandle();
     }
 
+    /**
+     * 获取agent实例
+     * @returns {Agent}
+     */
+    public agent(): Agent {
+        return this._agent;
+    }
+
     private agentHandle(): void {
-        agent.getInstance(this).wait();
-        this.logger.info("agent handle start");
+        this._agent = Agent.getInstance(this).wait();
     }
 }
 

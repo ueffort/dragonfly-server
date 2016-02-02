@@ -8,12 +8,14 @@ import * as redis from "redis";
 import {ResCallbackT} from "redis";
 export class Redis{
     protected connect: redis.RedisClient;
+    protected config:Config;
     constructor(config: Config) {
         let options: redis.ClientOpts = {};
         if(config.password){
             options['auth_pass'] = config.password;
         }
-        this.connect = redis.createClient(config.port, config.host, options);
+        this.config = config;
+        this.connect = redis.createClient(this.config.port, this.config.host, options);
 
     }
 
@@ -23,6 +25,17 @@ export class Redis{
      */
     public instance() :redis.RedisClient {
         return this.connect;
+    }
+
+    /**
+     * 建立一个新链接,零时链接,需要自我关闭
+     * @returns {RedisClient}
+     */
+    public newInstance(options?: redis.ClientOpts) :redis.RedisClient {
+        if(this.config.password){
+            options['auth_pass'] = this.config.password;
+        }
+        return redis.createClient(this.config.port, this.config.host, options);
     }
 }
 

@@ -17,11 +17,11 @@ export default function routerHandle(app: DataApp): express.Router{
     /**
      * 验证token
      */
-    router.use(Dispatch.token(app, "token", function(tokenStr: string, notice:(result:boolean)=>void){
-        token(mysql, tokenStr).then(function(auth:any){
-            notice(!!auth);
+    router.use(Dispatch.token(app, "token", function(tokenStr: string){
+        return token(mysql, tokenStr).then(function(auth:any){
+            return !!auth;
         }).catch(function(){
-            notice(false);
+            return false;
         });
     }));
 

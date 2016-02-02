@@ -25,7 +25,7 @@ export class Mysql{
      * @param sql
      * @returns {Promise}
      */
-    public promise(sql: string):Promise<any[]>{
+    public promise(sql: string):Promise<any>{
         let self = this;
         return new Promise((resolve, reject) => {
             self.instance().query(sql, function(err:Error, result:any[], fields:string[]){

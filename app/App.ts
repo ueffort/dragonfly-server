@@ -44,8 +44,8 @@ class App {
     public start(): void {
         this.express.set("app", this);
         this.express.set("name", this.name);
+        this.logger = createLogger(this.express, config.DEBUG);
         this.init();
-        this.logger = createLogger(this.express, config.debug);
         this.express.use(loggerMiddle(this.logger));
         this.errorHandle();
         this.closeHandle();
@@ -94,7 +94,7 @@ class App {
     protected listen(port: number) {
         let self = this;
         this.express.listen(port, function(){
-            self.logger.info(self.name, " listen port:", port);
+            self.logger.info(self.name, "listen port:", port);
         });
     }
 
