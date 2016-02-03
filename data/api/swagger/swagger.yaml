@@ -198,6 +198,7 @@ definitions:
       name:
         type: string
         description: "报表标示符"
+      
   ServiceModel:
     properties:
       name:

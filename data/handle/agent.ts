@@ -11,6 +11,7 @@ import {RedisClient} from "redis";
 interface AgentConfig{
     prefix: string;
     master: string;
+    advertise: string;
 }
 
 
@@ -74,12 +75,12 @@ class Agent {
     public send(advertise:string, command:string): Promise<any> {
         this.logger.debug("advertise"+advertise+" is not exist");
         if(this.agentList.indexOf(advertise) === -1){
-            this.logger.debug("advertise"+advertise+" is not exist");
+            this.logger.debug("advertise:"+advertise+" is not exist");
             return Promise.reject(new Error("no_exists"));
         }else{
             let publish = this.redis.instance();
-            let id = "rand";
-            let channel = "send/"+id;
+            let id = this.uuid();
+            let channel = this.config.advertise+'/'+id;
             let self = this;
             let task = new this.taskModel({
                 id: id,
@@ -154,9 +155,9 @@ class Agent {
                 self.agentList.push(result);
             }
             // 测试
-            //self.send(message,"ls").then(function(result){
-            //    self.logger.info(result.out);
-            //});
+            self.send(result,"ls").then(function(result){
+                self.logger.info(result.out);
+            });
         });
         // agent注销监听
         this.subscribe(unregister, function(err:Error, message:Buffer){
@@ -184,6 +185,38 @@ class Agent {
         });
         this.logger.info("agent waiting");
         return this;
+    }
+
+    private uuid():string{
+        let randMath = function(){
+            var b = new Array(16);
+            for (var i = 0, r = 0; i < 16; i++) {
+                if ((i & 0x03) == 0) r = Math.random() * 0x100000000;
+                b[i] = r >>> ((i & 0x03) << 3) & 0xff;
+            }
+            return b;
+        },
+            uuidParse = function(buf:any, offset?:number){
+                let _byteToHex:any[] = [];
+                let _hexToByte:{[key: string]: any} = {};
+                for (var i = 0; i < 256; i++) {
+                    _byteToHex[i] = (i + 0x100).toString(16).substr(1);
+                    _hexToByte[_byteToHex[i]] = i;
+                }
+                var i:number = offset || 0, bth = _byteToHex;
+                return  bth[buf[i++]] + bth[buf[i++]] +
+                    bth[buf[i++]] + bth[buf[i++]] +
+                    bth[buf[i++]] + bth[buf[i++]] +
+                    bth[buf[i++]] + bth[buf[i++]] +
+                    bth[buf[i++]] + bth[buf[i++]];
+            },
+            uuid = function(){
+                var rnds = randMath();
+                rnds[6] = (rnds[6] & 0x0f) | 0x40;
+                rnds[8] = (rnds[8] & 0x3f) | 0x80;
+                return uuidParse(rnds);
+            };
+        return uuid();
     }
 }
 
