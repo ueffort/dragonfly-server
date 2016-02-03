@@ -12,16 +12,16 @@
       "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
     },
     "serve-static/serve-static.d.ts": {
-      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "mime/mime.d.ts": {
-      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "node/node.d.ts": {
-      "commit": "c2939250ec2d1ecdc82fce62afb9354dd14909ea"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "express/express.d.ts": {
-      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "react-redux/react-redux.d.ts": {
       "commit": "fe563dff3428bac1260d1794e2c2ecf8f097535a"
@@ -70,6 +70,12 @@
     },
     "classnames/classnames.d.ts": {
       "commit": "c2939250ec2d1ecdc82fce62afb9354dd14909ea"
+    },
+    "express-session/express-session.d.ts": {
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
+    },
+    "redis/redis.d.ts": {
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     }
   }
 }

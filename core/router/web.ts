@@ -17,11 +17,11 @@ export default function routerHandle(app: CoreApp){
     let router: express.Router = express.Router();
 
     router.get("/", function(req: express.Request, res: express.Response, next: any){
-        let props = {};
+        let props = {isLogin: false};
         let reactHtml = React.createFactory(Container);
         let resource = jsonFile.read("app/resource");
         let host = app.config.DEBUG ? "http://localhost:9090/" : "";
-        res.render("index", {host: host, reactHtml: ReactDomServer.renderToString(reactHtml(props)), resource: resource});
+        res.render("index", {data: JSON.stringify(props), host: host, reactHtml: ReactDomServer.renderToString(reactHtml(props)), resource: resource});
     });
 
     router.use("/static", express.static("./static"));

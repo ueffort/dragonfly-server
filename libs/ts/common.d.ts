@@ -1,0 +1,2 @@
+
+interface Window { data: any; }

@@ -4,7 +4,7 @@
 
 /// <reference path="../../../../typings/redux/redux.d.ts" />
 /// <reference path="../../../../typings/node/node.d.ts" />
-/// <reference path="../../../../libs/ts/redux-thunk.d.ts" />
+/// <reference path="../../../../typings/redux-thunk/redux-thunk.d.ts" />
 // / <reference path="../../../../libs/ts/redux-dev-tools.d.ts" />
 
 import { compose, createStore, applyMiddleware } from "redux";

@@ -13,7 +13,7 @@ import App from "./App";
 import DevTools from "./DevTools";
 
 interface ContainerProp {
-
+    data:any
 }
 
 const store = MainStore();
@@ -28,7 +28,7 @@ class Container extends React.Component<ContainerProp, any> {
         return (
             <Provider store={store}>
                 <div>
-                    <App/>
+                    <App data={this.props.data}/>
                     <DevTools/>
                 </div>
             </Provider>

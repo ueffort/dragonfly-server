@@ -14,19 +14,28 @@ import Loading from "./Loading";
 
 interface AppProp {
     playbook?: any;
-    loading: any;
-    login: any;
-    actions: any;
+    loading?: any;
+    login?: any;
+    actions?: any;
+    data: any;
 }
 
 class App extends React.Component<AppProp, any> {
 
     constructor(props: any, context: any) {
         super(props, context);
-        this.props.actions.login(true);
+    }
+
+    private init(){
+        this.login(this.props.data.isLogin);
+    }
+
+    private login(isLogin: boolean):void{
+        this.props.actions.login(isLogin);
     }
 
     public render () {
+        this.init();
         return (
             <div><h2>hello {this.props.playbook[0].name}</h2><Loading loading={this.props.loading.isLoad}/></div>
 

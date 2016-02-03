@@ -8,6 +8,9 @@
 </head>
 <body>
 <div id="container"><%-reactHtml%></div>
+<script type="text/javascript">
+    window.data = <%-data%>;
+</script>
 <script type="text/javascript" src="<%=host%><%=resource.js.index%>"></script>
 </body>
 </html>

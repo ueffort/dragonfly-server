@@ -4,12 +4,17 @@
 
 import * as ActionTypes from "../constants/ActionTypes";
 
-const initialValue = {
+interface defalutValue {
+    isLoad:boolean;
+    loading:any[];
+}
+
+const initialValue:defalutValue = {
     isLoad:false,
     loading:[]
 };
 
-function Loading(state = initialValue, action: any) {
+function Loading(state:defalutValue = initialValue, action: any) {
     switch (action.type) {
         case ActionTypes.LOAD:
             state.isLoad = true;
