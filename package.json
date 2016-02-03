@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.14.2",
     "bunyan": "^1.5.1",
     "classnames": "^2.2.3",
     "commander": "^2.9.0",
@@ -49,6 +50,7 @@
   },
   "scripts": {
     "init": "gulp ts & gulp sass & gulp webpack",
+    "tsd-install": "tsd install --save ",
     "tsd": "tsd install && chmod -R +x typings",
     "start": "node index.js start",
     "dev": "supervisor dev.js",

@@ -37,7 +37,7 @@ paths:
           type: string
       responses:
         "200":
-          description: "查询成功"
+          description: Success
           schema:
             $ref: "#/definitions/AuthModel"
         default:
@@ -57,7 +57,7 @@ paths:
           type: string
       responses:
         "200":
-          description: "创建成功"
+          description: Success
           schema:
             $ref: "#/definitions/AuthModel"
         default:
@@ -82,7 +82,7 @@ paths:
           type: string
       responses:
         "200":
-          description: "更新成功"
+          description: Success
           schema:
             $ref: "#/definitions/AuthModel"
         default:
