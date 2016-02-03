@@ -79,7 +79,7 @@
     },
     "body-parser/body-parser.d.ts": {
       "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
-    }
+    },
     "react-router/history.d.ts": {
       "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
@@ -90,6 +90,9 @@
       "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "react-router-redux/react-router-redux.d.ts": {
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
+    },
+    "redux-thunk/redux-thunk.d.ts": {
       "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     }
   }
