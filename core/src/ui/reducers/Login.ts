@@ -9,7 +9,7 @@ const initialValue = {isLogin: false};
 function Login(state = initialValue, action: any) {
     switch (action.type) {
         case ActionTypes.LOGIN:
-            state.isLogin = true;
+            state.isLogin = action.value;
             return state;
         default:
             return state;

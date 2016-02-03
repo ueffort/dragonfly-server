@@ -13,13 +13,23 @@ import { persistState } from "redux-devtools";
 import DevTools from "../containers/DevTools";
 import * as thunk from "redux-thunk";
 
-const buildStore = compose(
-    applyMiddleware(thunk),
-    // Required! Enable Redux DevTools with the monitors you chose
-    DevTools.instrument(),
-    // Optional. Lets you write ?debug_session=<key> in address bar to persist debug sessions
-    persistState(getDebugSessionKey())
-)(createStore);
+
+function buildStore(debug:boolean, middleware:any[]){
+    middleware.push(thunk);
+    if(debug){
+        return compose(
+            applyMiddleware(...middleware),
+            // Required! Enable Redux DevTools with the monitors you chose
+            DevTools.instrument(),
+            // Optional. Lets you write ?debug_session=<key> in address bar to persist debug sessions
+            persistState(getDebugSessionKey())
+        )(createStore);
+    }else{
+        return compose(
+            applyMiddleware(...middleware)
+        )(createStore);
+    }
+}
 
 // const buildStore = applyMiddleware(thunk)(createStore);
 
@@ -30,12 +40,12 @@ function getDebugSessionKey() {
   return (matches && matches.length > 0)? matches[1] : null;
 }
 
-export default function MainStore(initialState?: any) {
+export default function MainStore(debug:boolean, initialState?: any, middleware: any[] = []) {
   // Hot reload reducers (requires Webpack or Browserify HMR to be enabled)
   // if (module.hot) {
   //  module.hot.accept('../reducers', () =>
   //    store.replaceReducer(require('../reducers')/*.default if you use Babel 6+ */)
   //  );
   // }
-  return buildStore(rootReducer, initialState);
+  return buildStore(debug, middleware)(rootReducer, initialState);
 }

@@ -22,7 +22,6 @@ class Loading extends React.Component<LoadingProp, any> {
 
     public render () {
         let className = classNames("c-loading", {show: this.props.loading}, {hide: !this.props.loading});
-        console.log(className);
         return (
             <div className={className}>
                 <div className="c-loading-img"></div>

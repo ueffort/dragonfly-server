@@ -5,5 +5,5 @@
 import * as ActionTypes from "../constants/ActionTypes";
 
 export function login(isLogin: boolean) {
-  return { type: ActionTypes.LOGIN, isLogin };
+  return { type: ActionTypes.LOGIN, value: isLogin };
 }

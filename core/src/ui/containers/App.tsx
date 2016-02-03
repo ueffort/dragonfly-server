@@ -17,7 +17,7 @@ interface AppProp {
     loading?: any;
     login?: any;
     actions?: any;
-    data: any;
+    data?: any;
 }
 
 class App extends React.Component<AppProp, any> {
@@ -35,10 +35,8 @@ class App extends React.Component<AppProp, any> {
     }
 
     public render () {
-        this.init();
         return (
             <div><h2>hello {this.props.playbook[0].name}</h2><Loading loading={this.props.loading.isLoad}/></div>
-
         );
     }
 }

@@ -16,14 +16,15 @@ import CoreApp from "../App";
 export default function routerHandle(app: CoreApp){
     let router: express.Router = express.Router();
 
-    router.get("/", function(req: express.Request, res: express.Response, next: any){
-        let props = {isLogin: false};
+
+    router.use("/static", express.static("./static"));
+
+    router.get("*", function(req: express.Request, res: express.Response, next: any){
+        let data = {props:{Login:{isLogin:false}}, debug: app.config.DEBUG};
         let reactHtml = React.createFactory(Container);
         let resource = jsonFile.read("app/resource");
         let host = app.config.DEBUG ? "http://localhost:9090/" : "";
-        res.render("index", {data: JSON.stringify(props), host: host, reactHtml: ReactDomServer.renderToString(reactHtml(props)), resource: resource});
+        res.render("index", {data: JSON.stringify(data), host: host, reactHtml: ReactDomServer.renderToString(reactHtml({data: data})), resource: resource});
     });
-
-    router.use("/static", express.static("./static"));
     return router;
 };
