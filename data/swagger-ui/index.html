@@ -53,8 +53,9 @@
           onFailure: function(data) {
             log("Unable to Load SwaggerUI");
           },
-          docExpansion: "none",
-          sorter : "alpha"
+          docExpansion: "list",
+          sorter : "alpha",
+          validatorUrl: null
         });
 
         function addApiKeyAuthorization(){
@@ -67,15 +68,13 @@
         }
 
         $('#input_apiKey').change(addApiKeyAuthorization);
-
-        // if you have an apiKey you would like to pre-populate on the page for demonstration purposes...
-        /*
-          var apiKey = "myApiKeyXXXX123456789";
-          $('#input_apiKey').val(apiKey);
-          addApiKeyAuthorization();
-        */
-
         window.swaggerUi.load();
+        // if you have an apiKey you would like to pre-populate on the page for demonstration purposes...
+
+        var apiKey = "123123";
+        $('#input_apiKey').val(apiKey);
+        $('#input_baseUrl').val('/api-docs');
+        addApiKeyAuthorization();
       }
 
       $.ajax({
@@ -106,7 +105,7 @@
 </head>
 
 <body class="swagger-section">
-<div id='header'>
+<div id='header' style="display: none;">
   <div class="swagger-ui-wrap">
     <a id="logo" href="http://swagger.io">swagger</a>
     <form id='api_selector'>

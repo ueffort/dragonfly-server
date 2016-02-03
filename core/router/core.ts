@@ -12,8 +12,8 @@ import Dispatch from "../../app/Dispatch";
 export default function routerHandle(app:CoreApp):express.Router{
     let router: express.Router = express.Router();
     // 全局登录验证
-    router.use(Dispatch.session(app,['login'], function(session:{[key: string]: any}, notice:(result:boolean)=>void){
-        notice(true);
+    router.use(Dispatch.session(app,['login'], function(session: {[key: string]: any}){
+        return Promise.resolve(true);
     }));
     router.get("/core/", function(req: express.Request, res: express.Response, next: any) {
         return;
