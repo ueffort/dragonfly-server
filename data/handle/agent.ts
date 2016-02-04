@@ -73,7 +73,6 @@ class Agent {
      * @returns {Promise}
      */
     public send(advertise:string, command:string): Promise<any> {
-        this.logger.debug("advertise"+advertise+" is not exist");
         if(this.agentList.indexOf(advertise) === -1){
             this.logger.debug("advertise:"+advertise+" is not exist");
             return Promise.reject(new Error("no_exists"));
@@ -154,10 +153,11 @@ class Agent {
             if(index === -1){
                 self.agentList.push(result);
             }
+            logger.debug("agent List:", self.agentList);
             // 测试
-            self.send(result,"ls").then(function(result){
-                self.logger.info(result.out);
-            });
+            //self.send(result,"ls").then(function(result){
+            //    self.logger.info(result.out);
+            //});
         });
         // agent注销监听
         this.subscribe(unregister, function(err:Error, message:Buffer){

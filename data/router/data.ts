@@ -16,8 +16,12 @@ import {Auth} from "../controllers/auth";
 
 interface ParamDesc {
     name: string;
+    /**
+     * 只能设置一个,获取整个body
+     */
     body?: boolean;
     query?: boolean;
+    form?: boolean;
     /**
      * 只能设置一个,获取path中最后一位
      */
@@ -33,7 +37,7 @@ export default function routerHandle(app: DataApp): express.Router{
      */
     router.use(Dispatch.token(app, "token", function(tokenStr: string){
         return token(app.mysql(), tokenStr).then(function(auth:any){
-            return !!auth;
+            return !!auth ? !!auth.state : false;
         }).catch(function(err){
             return false;
         });
@@ -54,11 +58,13 @@ export default function routerHandle(app: DataApp): express.Router{
         return function(req: express.Request, res: express.Response, next: any):void{
             let args = param.map(function(value:ParamDesc){
                 if(value.body){
-                    return req.body[value.name];
+                    return req.body;
                 }else if(value.query){
                     return req.query[value.name];
                 }else if(value.path){
                     return req.path.split("/").pop();
+                }else if(value.form){
+                    return req.body[value.name];
                 }
             });
             action.apply(Controller, args).then(function(result:any){

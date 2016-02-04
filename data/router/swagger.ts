@@ -15,9 +15,8 @@ var spec = fs.readFileSync("./data/api/swagger/swagger.yaml", "utf8");
 var swaggerDoc = yaml.safeLoad(spec);
 // swaggerRouter configuration
 var options = {
-    swaggerUi: '/swagger.json',
-    controllers: './data/controller',
-    useStubs: process.env.NODE_ENV === 'development' // Conditionally turn on stubs (mock mode)
+    controllers: './data/controllers',
+    useStubs: process.env.DATE_MODE === 'mock' // Conditionally turn on stubs (mock mode)
 };
 var uiOptions = {
     apiDocs: '/api-docs',
@@ -32,11 +31,13 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware: any) {
     // Validate Swagger requests
     router.use(middleware.swaggerValidator());
 
-    // Route validated requests to appropriate controller
-    //router.use(middleware.swaggerRouter(options));
-
     // Serve the Swagger documents and Swagger UI
     router.use(middleware.swaggerUi(uiOptions));
+
+    // Route validated requests to appropriate controller
+    if (process.env.DATE_MODE === 'mock'){
+        router.use(middleware.swaggerRouter(options));
+    }
 });
 
 export default router;

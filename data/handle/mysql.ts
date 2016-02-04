@@ -10,7 +10,7 @@ import {Mysql} from "../../app/tools/Mysql";
  * @returns {Promise<any>}
  */
 export function token(mysql:Mysql, token:string){
-    return mysql.promise("SELECT * FROM `data_auth` WHERE `token`='"+token+"' limit 1").then(function(result:any[]){
+    return mysql.promise("SELECT * FROM `data_auth` WHERE `token`='"+token+"' and delete_time = 0 limit 1").then(function(result:any[]){
         return result[0];
     })
 }

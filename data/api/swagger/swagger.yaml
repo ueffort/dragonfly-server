@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  version: "0.0.1"
-  title: Limei Data Api
+  version: "0.1.1"
+  title: Limei Dragonfly Data Api
 # during dev, should point to your local machine
 host: 127.0.0.1:8181
 # basePath prefixes all resource paths
@@ -89,6 +89,20 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/Error"
+    delete:
+      description: "删除token"
+      operationId: deleteAuth
+      security:
+        - token: []
+      parameters:
+        - name: token
+          in: query
+          description: "token值"
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
   /report:
     x-swagger-router-controller: report
     post:
@@ -97,31 +111,107 @@ paths:
       security:
         - token: []
       parameters:
-        - name: name
-          type: string
-          in: formData
-          description: "报表名称，唯一标示符，不能重复"
+        - name: report
+          in: body
+          schema:
+            $ref: "#/definitions/ReportModel"
+          description: "报表信息，唯一标示符，不能重复"
       responses:
         "200":
           description: Success
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
   /report/info/{name}:
     x-swagger-router-controller: report
+    put:
+      description: "更新报表信息"
+      operationId: putReportInfo
+      security:
+        - token: []
+      parameters:
+        - name: name
+          in: path
+          description: "报表名称"
+          type: string
+          required: true
+        - name: report
+          in: body
+          schema:
+            $ref: "#/definitions/ReportModel"
+          description: "报表信息"
+      responses:
+        "200":
+          description: Success
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
     get:
       description: "查询该报表当前状态"
-      operationId: getReport
+      operationId: getReportInfo
       security:
         - token: []
       parameters:
         - name: name
           type: string
           in: path
-          description: "服务名称"
+          description: "报表名称"
           required: true
       responses:
         "200":
           description: Success
           schema:
             $ref: "#/definitions/ReportModel"
+  /report/notice/{name}:
+    x-swagger-router-controller: report
+    put:
+      description: "通知报表状态"
+      operationId: putReportNotice
+      security:
+        - token: []
+      parameters:
+        - name: name
+          type: string
+          in: path
+          description: "报表名称"
+          required: true
+        - name: time
+          type: string
+          in: query
+          description: "报表执行时间:同一时间只记录最后的状态"
+          required: true
+        - name: state
+          type: boolean
+          in: formData
+          description: "执行状态"
+          required: true
+        - name: description
+          type: string
+          in: formData
+          description: "错误描述信息"
+      responses:
+        "200":
+          description: Success
+    get:
+      description: "获取报表通知信息列表:返回长度和周期相关"
+      operationId: getReportNotice
+      security:
+        - token: []
+      parameters:
+        - name: name
+          type: string
+          in: path
+          description: "报表名称"
+          required: true
+      responses:
+        "200":
+            description: Success
+            schema:
+              type: array
+              items:
+                $ref: "#/definitions/ReportNoticeModel"
   /service:
     x-swagger-router-controller: service
     post:
@@ -130,29 +220,72 @@ paths:
       security:
         - token: []
       parameters:
-        - name: name
-          type: string
-          in: formData
-          description: "服务名称，唯一标示符，不能重复"
+        - name: service
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceModel"
+          description: "服务信息，唯一标示符，不能重复"
           required: true
-        - name: description
-          type: string
-          in: formData
-          description: "服务描述，作用及相关信息"
-        - name: depends
-          type: array
-          in: formData
-          description: "服务依赖"
-          items:
-            type: string
       responses:
         "200": 
           description: Success
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+    get:
+      description: "获取服务列表"
+      operationId: getService
+      security:
+        - token: []
+      parameters:
+        - name: name
+          in: query
+          description: "服务名称,like"
+          type: string
+        - name: dep
+          in: query
+          description: "依赖该服务的相关服务"
+          type: string
+        - name: state
+          in: query
+          description: "服务的状态:正常true,异常false"
+          type: boolean
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceModel"
   /service/info/{name}:
     x-swagger-router-controller: service
+    put:
+      description: "更新服务信息"
+      operationId: putServiceInfo
+      security:
+        - token: []
+      parameters:
+        - name: name
+          type: string
+          in: path
+          description: "服务名称"
+          required: true
+        - name: service
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceModel"
+          description: "服务信息"
+      responses:
+        "200":
+          description: Success
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
     get:
       description: "查询该服务当前状态"
-      operationId: getService
+      operationId: getServiceInfo
       security:
         - token: []
       parameters:
@@ -167,18 +300,56 @@ paths:
           schema:
             $ref: "#/definitions/ServiceModel"
   /notice:
+    x-swagger-router-controller: notice
     post:
       description: "发送通知给指定的用户"
       operationId: postNotice
       security:
         - token: []
       parameters:
-        - name: name
+        - name: subject
           type: string
+          in: query
+          description: "标题"
+        - name: body
+          type: string
+          in: formData
+          description: "正文"
+        - name: to
+          type: string
+          in: formData
+          description: "收件人"
+      responses:
+        "200":
+          description: Success
+  /agent:
+    x-swagger-router-controller: agent
+    get:
+      description: "查询当前存在的agent列表"
+      operationId: getAgent
+      security:
+        - token: []
+      parameters:
+        - name: advertiser
+          type: string
+          description: "agent启动的advertiser值,部分匹对"
           in: query
       responses:
         "200":
           description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AgentModel"
+  #/data/campaign/info/{id}:
+  #/data/adgroup/info/{id}:
+  #/data/creative/info/{id}:
+  #/data/campaign/cache/{id}:
+  #/data/adgroup/cache/{id}:
+  #/data/creative/cache/{id}:
+  #/data/campaign/filter/{id}:
+  #/data/adgroup/filter/{id}:
+  #/data/creative/filter/{id}:
   /swagger:
     x-swagger-pipe: swagger_raw
 definitions:
@@ -197,13 +368,38 @@ definitions:
     properties:
       name:
         type: string
-        description: "报表标示符"
-      
+        description: "报表名称,唯一标示符"
+      description:
+        type: string
+        description: "报表描述,作用及相关信息"
+      period:
+        type: string
+        description: "报表执行周期:daily,hourly,weekly,monthly,custom"
+      author:
+        type: string
+        description: "开发者,负责人,报警通知人"
+  ReportNoticeModel:
+    properties:
+      name:
+        type: string
+        description: "报表名称,唯一标识符"
+      time:
+        type: string
+        description: "报表时间"
+      state:
+        type: string
+        description: "执行情况"
+      number:
+        type: integer
+        description: "执行次数"
   ServiceModel:
     properties:
       name:
         type: string
-        description: "服务标示符"
+        description: "服务名称,唯一标示符"
+      description:
+        type: string
+        description: "服务描述，作用及相关信息"
       state:
         type: boolean
         description: "当前状态：true为正常，false为异常"
@@ -212,6 +408,20 @@ definitions:
         description: "依赖服务"
         items:
           type: string
+      author:
+        type: string
+        description: "开发者,负责人,报警通知人"
+  AgentModel:
+    properties:
+      advertiser:
+        type: string
+        description: "agent启动时定义的advertiser,需要唯一"
+      time:
+        type: string
+        description: "最后注册时间"
+      number:
+        type: integer
+        description: "执行次数"
   Error:
     properties:
       status:
