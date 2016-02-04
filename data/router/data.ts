@@ -26,6 +26,10 @@ interface ParamDesc {
      * 只能设置一个,获取path中最后一位
      */
     path?: boolean;
+    /**
+     * 针对query的数组支持
+     */
+    array?: boolean;
 }
 export default function routerHandle(app: DataApp): express.Router{
 
@@ -60,7 +64,8 @@ export default function routerHandle(app: DataApp): express.Router{
                 if(value.body){
                     return req.body;
                 }else if(value.query){
-                    return req.query[value.name];
+                    let v:string = req.query[value.name];
+                    return value.array ? v.split(',') : v;
                 }else if(value.path){
                     return req.path.split("/").pop();
                 }else if(value.form){

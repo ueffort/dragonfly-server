@@ -14,6 +14,12 @@ interface AgentConfig{
     advertise: string;
 }
 
+interface AgentInfo{
+    advertiser: string;
+    time: Date;
+    number: number;
+}
+
 
 class Agent {
 
@@ -23,6 +29,7 @@ class Agent {
     private config: AgentConfig;
     private logger: any;
     private agentList: string[] = [];
+    private agentInfo: {[key: string]: AgentInfo} = {};
     private handler: any = {};
     private taskModel: any;
     private resultModel: any;
@@ -89,6 +96,7 @@ class Agent {
             return new Promise((resolve, reject) => {
                 self.subscribe(channel, function(err:Error, message:Buffer){
                     self.unsubscribe(channel);
+                    self.agentInfo[advertise].number += 1;
                     if(err){
                         reject(err);
                     }else{
@@ -152,7 +160,15 @@ class Agent {
             let index = self.agentList.indexOf(result);
             if(index === -1){
                 self.agentList.push(result);
+                self.agentInfo[result] = {
+                    advertiser: result,
+                    time: new Date(),
+                    number: 0
+                };
+            }else{
+                self.agentInfo[result].time = new Date();
             }
+
             logger.debug("agent List:", self.agentList);
             // 测试
             //self.send(result,"ls").then(function(result){
@@ -166,6 +182,7 @@ class Agent {
             let index = self.agentList.indexOf(result);
             if(index !== -1){
                 self.agentList.splice(index, 1);
+                delete self.agentInfo[result];
             }
         });
         this.redisInstance.on("message", function(channel:string, message:Buffer){

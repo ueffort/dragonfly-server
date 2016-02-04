@@ -341,15 +341,156 @@ paths:
             type: array
             items:
               $ref: "#/definitions/AgentModel"
-  #/data/campaign/info/{id}:
-  #/data/adgroup/info/{id}:
-  #/data/creative/info/{id}:
-  #/data/campaign/cache/{id}:
-  #/data/adgroup/cache/{id}:
-  #/data/creative/cache/{id}:
-  #/data/campaign/filter/{id}:
-  #/data/adgroup/filter/{id}:
-  #/data/creative/filter/{id}:
+  /data/campaign/cache/{id}:
+    x-swagger-router-controller: data
+    get:
+      description: "获取campaign信息"
+      operationId: getCampaignCache
+      security:
+        - token: []
+      parameters:
+        - name: id
+          type: integer
+          description: "campaignid"
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/CampaignCache"
+  /data/adgroup/cache/{id}:
+    x-swagger-router-controller: data
+    get:
+      description: "获取adgroup信息"
+      operationId: getAdgroupCache
+      security:
+        - token: []
+      parameters:
+        - name: id
+          type: integer
+          description: "adgroupid"
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/AdgroupCache"
+  /data/creative/cache/{id}:
+    x-swagger-router-controller: data
+    get:
+      description: "获取creative信息"
+      operationId: getCreativeCache
+      security:
+        - token: []
+      parameters:
+        - name: id
+          type: integer
+          description: "creativeid"
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/CreativeCache"
+  /data/campaign/filter/{id}:
+    x-swagger-router-controller: data
+    get:
+      description: "获取campaign的过滤计数"
+      operationId: getCampaignFilter
+      security:
+        - token: []
+      parameters:
+        - name: id
+          type: integer
+          description: "campaignid"
+          in: path
+          required: true
+        - name: time
+          type: integer
+          description: "查询时间:只能查询当天的"
+          in: query
+          required: true
+        - name: agent
+          type: array
+          items:
+            type: string
+          description: "对应agent所在的机器"
+          in: query
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/FilterInfo"
+  /data/adgroup/filter/{id}:
+    x-swagger-router-controller: data
+    get:
+      description: "获取campaign的过滤计数"
+      operationId: getAdgroupFilter
+      security:
+        - token: []
+      parameters:
+        - name: id
+          type: integer
+          description: "adgroupid"
+          in: path
+          required: true
+        - name: time
+          type: integer
+          description: "查询时间:只能查询当天的"
+          in: query
+          required: true
+        - name: agent
+          type: array
+          items:
+            type: string
+          description: "对应agent所在的机器"
+          in: query
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/FilterInfo"
+  /data/creative/filter/{id}:
+    x-swagger-router-controller: data
+    get:
+      description: "获取campaign的过滤计数"
+      operationId: getCreativeFilter
+      security:
+        - token: []
+      parameters:
+        - name: id
+          type: integer
+          description: "creativeid"
+          in: path
+          required: true
+        - name: time
+          type: integer
+          description: "查询时间:只能查询当天的"
+          in: query
+          required: true
+        - name: agent
+          type: array
+          items:
+            type: string
+          description: "对应agent所在的机器"
+          in: query
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/FilterInfo"
   /swagger:
     x-swagger-pipe: swagger_raw
 definitions:
@@ -418,10 +559,34 @@ definitions:
         description: "agent启动时定义的advertiser,需要唯一"
       time:
         type: string
-        description: "最后注册时间"
+        description: "最后注册时间:Y-m-d H:i:s"
       number:
         type: integer
         description: "执行次数"
+  CampaignCache:
+    properties:
+      id:
+        type: integer
+        description: "campaignId"
+      
+  AdgroupCache:
+    properties:
+      id:
+        type: integer
+        description: "adgroupId"
+  CreativeCache:
+    properties:
+      id:
+        type: integer
+        description: "creativeId"
+  FilterInfo:
+    properties:
+      attr:
+        type: string
+        description: "过滤字段"
+      number:
+        type: integer
+        description: "过滤次数"
   Error:
     properties:
       status:
