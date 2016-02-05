@@ -23,9 +23,13 @@ interface ParamDesc {
     query?: boolean;
     form?: boolean;
     /**
-     * 只能设置一个,获取path中最后一位
+     * 参数在path中,位数按index计算
      */
     path?: boolean;
+    /**
+     * 默认为0,用于设定path的参数,从后向前
+     */
+    index?: number;
     /**
      * 针对query的数组支持
      */
@@ -67,7 +71,8 @@ export default function routerHandle(app: DataApp): express.Router{
                     let v:string = req.query[value.name];
                     return value.array ? v.split(',') : v;
                 }else if(value.path){
-                    return req.path.split("/").pop();
+                    let a:string[] = req.path.split("/");
+                    return value.index ? a.splice(a.length - value.index - 1, 1) : a.pop();
                 }else if(value.form){
                     return req.body[value.name];
                 }
