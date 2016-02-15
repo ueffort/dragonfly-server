@@ -440,12 +440,12 @@ paths:
           required: true
         - name: id
           type: integer
-          description: "creativeid"
+          description: "业务id"
           in: path
           required: true
         - name: time
           type: integer
-          description: "查询时间:只能查询当天的"
+          description: "查询时间:只能查询当天的,支持分钟"
           in: query
           required: true
         - name: agent
@@ -462,6 +462,42 @@ paths:
             type: array
             items:
               $ref: "#/definitions/FilterInfo"
+  /data/access/{type}:
+    x-swagger-router-controller: data
+    get:
+      description: "获取access日志信息"
+      operationId: getAccess
+      security:
+        - token: []
+      parameters:
+        - name: type
+          type: string
+          description: "业务类型:impression,click,conversion"
+          in: path
+          required: true
+        - name: time
+          type: integer
+          description: "查询时间:支持7天"
+          in: query
+          required: true
+        - name: agent
+          type: array
+          items:
+            type: string
+          description: "对应agent所在的机器"
+          in: query
+          required: true
+        - name: filter
+          type: string
+          description: "筛选所需日志信息"
+          in: query
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AccessInfo"
   /swagger:
     x-swagger-pipe: swagger_raw
 definitions:
@@ -558,6 +594,23 @@ definitions:
       number:
         type: integer
         description: "过滤次数"
+  AccessInfo:
+    properties:
+      ip:
+        type: string
+        description: "IP"
+      time:
+        type: string
+        description: "时间"
+      url:
+        type: string
+        description: "请求"
+      referer:
+        type: string
+        description: "来源页"
+      status:
+        type: integer
+        description: "状态"
   Error:
     properties:
       status:
