@@ -29,12 +29,26 @@ var webpack = require('webpack');
 gulp.task("webpack", function(callback) {
     webpack({
         entry: {
-            index: ["./core/src/index.js"]
+            "common": ["./core/src/js/tools/Platform"],
+            index: ["./core/src/Index.js"],
+            "reactAll": ["react", "react-redux", "react-dom", "react-router", "react-redux", "react-router-redux"]
         },
         output: {
             path: "static/js",
             filename: "[name].js"
-        }
+        },
+        plugins: [
+            new webpack.optimize.CommonsChunkPlugin({
+                "name": "common",
+                "chunks": ["common", "reactAll", "index"],
+                "minChunks": Infinity
+            }),
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false
+                }
+            })
+        ]
     }, function(err, stats) {
         if(err) throw new gutil.PluginError("webpack", err);
         callback();
@@ -50,18 +64,23 @@ gulp.task("webpack-dev-server", function(callback) {
             "index": [
                 'webpack-dev-server/client?http://localhost:9090',
                 'webpack/hot/only-dev-server',
-                './core/src/index'
+                './core/src/Index'
             ],
             "reactAll": ["react", "react-redux", "react-dom", "react-router", "react-redux", "react-router-redux"]
         },
         output: {
             path: path.join(__dirname, 'static/js'),
-            filename: '[name].js',
+            filename: "[name].js",
+            chunkFilename: "[id].js",
             publicPath: 'http://localhost:9090/static/js'
         },
         plugins: [
             new webpack.HotModuleReplacementPlugin(),
-            new webpack.optimize.CommonsChunkPlugin("common", "common.js")
+            new webpack.optimize.CommonsChunkPlugin({
+                "name": "common",
+                "chunks": ["common", "reactAll", "index"],
+                "minChunks": Infinity
+            })
         ],
         resolve: {
             extensions: ['', '.js']

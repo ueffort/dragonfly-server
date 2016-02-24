@@ -2,24 +2,31 @@
  * Created by tutu on 15-12-22.
  */
 
-class Platform{
+export default class Platform {
 
     private static platform: Platform;
     private pc: boolean;
     private android: boolean;
+    private ios: boolean;
+    private server: boolean;
 
     constructor() {
-        this.pc = false;
+        if(typeof window == "object"){
+            this.pc = false;
+            this.android = false;
+            this.ios = false;
+            this.server = true;
+        }
     }
 
-    public static getPlatform(){
+    public static getPlatform() {
         if(!this.platform){
             this.platform = new Platform();
         }
         return this.platform;
     }
 
-    public isPC(){
+    public isPC() {
         return this.pc;
     }
 }
