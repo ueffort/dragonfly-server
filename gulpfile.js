@@ -46,11 +46,13 @@ var WebpackDevServer = require("webpack-dev-server");
 gulp.task("webpack-dev-server", function(callback) {
     var compiler = webpack({
         entry: {
+            "common": ["./core/src/js/tools/Platform"],
             "index": [
                 'webpack-dev-server/client?http://localhost:9090',
                 'webpack/hot/only-dev-server',
-                './core/src/index.js'
-            ]
+                './core/src/index'
+            ],
+            "reactAll": ["react", "react-redux", "react-dom", "react-router", "react-redux", "react-router-redux"]
         },
         output: {
             path: path.join(__dirname, 'static/js'),
@@ -58,7 +60,8 @@ gulp.task("webpack-dev-server", function(callback) {
             publicPath: 'http://localhost:9090/static/js'
         },
         plugins: [
-            new webpack.HotModuleReplacementPlugin()
+            new webpack.HotModuleReplacementPlugin(),
+            new webpack.optimize.CommonsChunkPlugin("common", "common.js")
         ],
         resolve: {
             extensions: ['', '.js']

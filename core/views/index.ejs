@@ -3,14 +3,18 @@
 <head>
     <title>首页</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="icon" type="image/x-icon" href="<%=host%><%=resource.img.favicon%>">
-    <link rel="stylesheet" type="text/css" href="<%=host%><%=resource.css.index%>">
+    <link rel="icon" type="image/x-icon" href="<%=resUrl(resource.img.favicon)%>">
+    <link rel="stylesheet" type="text/css" href="<%=resUrl(resource.css.index)%>">
 </head>
 <body>
-<div id="container"><%-reactHtml%></div>
+<div id="container"></div>
 <script type="text/javascript">
-    window.data = <%-data%>;
+    window._data = <%-data%>;
+    <% if (dev) { %>
+    window.__DEV__ = <%-dev%>;
+    <% } %>
 </script>
-<script type="text/javascript" src="<%=host%><%=resource.js.index%>"></script>
+<script type="text/javascript" src="<%=resUrl(resource.js.common)%>"></script>
+<script type="text/javascript" src="<%=resUrl(resource.js.index)%>"></script>
 </body>
 </html>

@@ -7,9 +7,6 @@
 /// <reference path="../../typings/react/react-dom.d.ts" />
 
 import * as express from "express";
-import * as React from "react";
-import * as ReactDomServer from "react-dom/server";
-import Container from "../src/ui/containers/Container";
 import jsonFile from "../../app/tools/JsonFile";
 import CoreApp from "../App";
 
@@ -20,11 +17,12 @@ export default function routerHandle(app: CoreApp){
     router.use("/static", express.static("./static"));
 
     router.get("*", function(req: express.Request, res: express.Response, next: any){
-        let data = {props:{Login:{isLogin:false}}, debug: app.config.DEBUG};
-        let reactHtml = React.createFactory(Container);
+        let data = {Login: {isLogin: true}};
         let resource = jsonFile.read("app/resource");
-        let host = app.config.DEBUG ? "http://localhost:9090/" : "";
-        res.render("index", {data: JSON.stringify(data), host: host, reactHtml: ReactDomServer.renderToString(reactHtml({data: data})), resource: resource});
+        let dev = app.config.DEBUG ? true : false;
+        res.render("index", {dev: dev, data: JSON.stringify(data), resource: resource, resUrl:function(url: string){
+            return dev ? "http://localhost:9090/" + url : url;
+        }});
     });
     return router;
 };

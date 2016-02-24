@@ -12,12 +12,12 @@ import injectTapEventPlugin = require("react-tap-event-plugin");
 
 import * as ReactDom from "react-dom";
 import * as React from "react";
-import Container from "./ui/containers/Container";
+import Container from "./js/containers/Container";
 
 injectTapEventPlugin();
 class Index {
     public static init(): void {
-        let data:any = window.data || {};
+        let data:any = window._data || {};
         ReactDom.render(<Container data={data}/>, document.getElementById("container"));
     }
 }

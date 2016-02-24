@@ -1,2 +1,2 @@
 
-interface Window { data: any; }
+interface Window { _data: any; __DEV__: boolean}

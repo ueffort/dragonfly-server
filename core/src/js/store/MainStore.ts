@@ -14,9 +14,9 @@ import DevTools from "../containers/DevTools";
 import * as thunk from "redux-thunk";
 
 
-function buildStore(debug:boolean, middleware:any[]){
+function buildStore(middleware:any[] = []){
     middleware.push(thunk);
-    if(debug){
+    if(window.__DEV__){
         return compose(
             applyMiddleware(...middleware),
             // Required! Enable Redux DevTools with the monitors you chose
@@ -40,12 +40,12 @@ function getDebugSessionKey() {
   return (matches && matches.length > 0)? matches[1] : null;
 }
 
-export default function MainStore(debug:boolean, initialState?: any, middleware: any[] = []) {
+export default function MainStore(initialState?: any, middleware: any[] = []) {
   // Hot reload reducers (requires Webpack or Browserify HMR to be enabled)
   // if (module.hot) {
   //  module.hot.accept('../reducers', () =>
   //    store.replaceReducer(require('../reducers')/*.default if you use Babel 6+ */)
   //  );
   // }
-  return buildStore(debug, middleware)(rootReducer, initialState);
+  return buildStore(middleware)(rootReducer, initialState);
 }
