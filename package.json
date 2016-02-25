@@ -13,6 +13,7 @@
     "express": "^4.13.3",
     "express-session": "^1.13.0",
     "gulp": "^3.9.0",
+    "gulp-minify-css": "^1.2.4",
     "gulp-sass": "^2.1.1",
     "gulp-typescript": "^2.10.0",
     "history": "^1.17.0",

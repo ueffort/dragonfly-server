@@ -9,7 +9,7 @@
 import * as React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import * as MainAction from "../actions/Main";
+import * as MainAction from "../actions/MainActions";
 import Loading from "./Loading";
 
 interface AppProp {
@@ -25,13 +25,19 @@ class App extends React.Component<AppProp, any> {
         super(props, context);
     }
 
-    public render () {
+    public render() {
+        console.log(this._click);
         return (
             <div>
-                <h2>hello {this.props.playbook[0].name}</h2>
+                <h2 onClick={this._click.bind(this)}>hello {this.props.playbook[0].name}</h2>
                 <Loading loading={this.props.loading.isLoad}/>
             </div>
         );
+    }
+
+    public _click(){
+        console.log(this);
+        this.props.actions.router('/login');
     }
 }
 

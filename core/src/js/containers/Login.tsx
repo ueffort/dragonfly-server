@@ -9,17 +9,17 @@
 import * as React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import * as MainAction from "../actions/Main";
+import * as MainAction from "../actions/MainActions";
 import Loading from "./Loading";
 
-interface AppProp {
+interface LoginProp {
     playbook?: any;
     loading?: any;
     login?: any;
     actions?: any;
 }
 
-class App extends React.Component<AppProp, any> {
+class Login extends React.Component<LoginProp, any> {
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -52,4 +52,4 @@ function mapDispatchToProps(dispatch: any) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(App)
+)(Login)

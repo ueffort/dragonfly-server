@@ -12,16 +12,18 @@
 import * as React from "react";
 import { Provider } from "react-redux";
 import MainStore from "../store/MainStore";
-import App from "./App";
-import Login from "./Login";
 import DevTools from "./DevTools";
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 
+//路由页面
+import App from "./App";
+import Login from "./Login";
+import Error from "./Error";
+
 interface ContainerProp {
     data:any;
 }
-
 
 class Container extends React.Component<ContainerProp, any> {
 
@@ -46,12 +48,9 @@ class Container extends React.Component<ContainerProp, any> {
     private getRoutes(store: any){
         return (
             <Router history={this.getHistory(store)}>
-                <Route path="login">
-                    <IndexRoute component={Login}/>
-                </Route>
-                <Route path="*">
-                    <IndexRoute component={App}/>
-                </Route>
+                <Route path="/" component={App}/>
+                <Route path="login" component={Login}/>
+                <Route path="*" component={Error}/>
             </Router>
         );
     }
