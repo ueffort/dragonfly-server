@@ -7,6 +7,8 @@ var gulp = require('gulp');
 var path = require("path");
 var gutil = require("gulp-util");
 var config = require("app/config");
+var clean = require('gulp-clean');
+var shell = require('gulp-shell');
 var __DEV__ = config.DEBUG;
 
 
@@ -74,6 +76,7 @@ function webpackConfig (){
             })
         ];
         if(!__DEV__){
+            output.fileName = "[name]-[chunkHash].js";
             plugins.push(
                 new webpack.optimize.UglifyJsPlugin({
                 compress: {
@@ -120,24 +123,35 @@ function webpackConfig (){
 
 }
 var webpack_config = new webpackConfig();
-
-gulp.task("webpack", function(callback) {
+//清除文件
+gulp.task("webpack_clean", function(){
+    gulp.src('./static/js/*.js')
+        .pipe(clean());
+});
+gulp.task("webpack", ["webpack_clean"], function(callback) {
     webpack(webpack_config.getConfig(), function(err, stats) {
         if(err) throw new gutil.PluginError("webpack", err);
         callback();
     });
 });
-
-if(__DEV__){
+//处理生成文件
+gulp.task('webpack_handle', ["webpack"], shell.task([path.join(__dirname,"./resource.sh")]));
 
 //开启webpack资源服务器
-    var WebpackDevServer = require("webpack-dev-server");
+var WebpackDevServer = require("webpack-dev-server");
 
-    gulp.task("webpack-dev-server", function(callback) {
-        new WebpackDevServer(webpack(webpack_config.getConfig(true)), webpack_config.getServerConfig())
-            .listen(9090, function (err, result) {
-                if(err) throw new gutil.PluginError("webpack-dev-server", err);
-                callback();
-            });
-    });
+gulp.task("webpack-dev-server", function(callback) {
+    new WebpackDevServer(webpack(webpack_config.getConfig(true)), webpack_config.getServerConfig())
+        .listen(9090, function (err, result) {
+            if(err) throw new gutil.PluginError("webpack-dev-server", err);
+            callback();
+        });
+});
+
+
+if(__DEV__){
+    gulp.task("init", ["sass", "webpack_clean", "webpack", "webpack_handle", "webpack-dev-server"]);
+}else{
+    gulp.task("init", ["sass", "webpack_clean", "webpack", "webpack_handle"]);
 }
+

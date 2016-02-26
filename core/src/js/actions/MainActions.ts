@@ -5,8 +5,12 @@
 import * as ActionTypes from "../constants/ActionTypes";
 import { push } from 'react-router-redux';
 
-export function login(isLogin: boolean) {
-    return { type: ActionTypes.LOGIN, value: isLogin };
+export function login(userName: string, password: string) {
+    return { type: ActionTypes.LOGIN, value: {userName: userName, password: password} };
+}
+
+export function register(userName: string, password: string) {
+    return { type: ActionTypes.LOGIN, value: {userName: userName, password: password} };
 }
 
 export function router(path: string) {
