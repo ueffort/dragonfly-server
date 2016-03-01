@@ -11,12 +11,18 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import * as MainAction from "../actions/MainActions";
 import Loading from "./Loading";
+import Header from "./Header";
+import Left from "./Left";
+import Content from "./Content";
+import Platform from "../tools/Platform";
 
 interface AppProp {
     playbook?: any;
     loading?: any;
     login?: any;
+    style?: any;
     actions?: any;
+    params?: any;
 }
 
 class App extends React.Component<AppProp, any> {
@@ -25,10 +31,30 @@ class App extends React.Component<AppProp, any> {
         super(props, context);
     }
 
+    private updateDimensions() {
+        Platform.getPlatform().init();
+        this.setState({update:true});
+    }
+
+    public componentDidMount() {
+        window.addEventListener("resize", this.updateDimensions.bind(this));
+    }
+
+    public componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimensions.bind(this));
+    }
+
     public render() {
         return (
             <div>
-                <h2>hello {this.props.playbook[0].name}</h2>
+                <Header title={this.props.playbook[0].name} menuAction={this.props.actions.leftShow}/>
+                <Left show={this.props.style.leftShow}
+                      showAction={this.props.actions.leftShow}
+                      routerAction={this.props.actions.router}/>
+                <Content playbook={this.props.playbook}
+                         routerAction={this.props.actions.router}
+                         id={this.props.params.id}
+                         type={this.props.params.type}/>
                 <Loading loading={this.props.loading.isLoad}/>
             </div>
         );
@@ -39,7 +65,8 @@ function mapStateToProps(state: any) {
     return {
         playbook: state.PlayBook,
         loading: state.Loading,
-        login: state.Login
+        login: state.Login,
+        style: state.Style
     };
 }
 

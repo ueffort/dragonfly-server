@@ -20,9 +20,9 @@ function buildStore(middleware:any[] = []){
         return compose(
             applyMiddleware(...middleware),
             // Required! Enable Redux DevTools with the monitors you chose
-            DevTools.instrument(),
+            DevTools.instrument()
             // Optional. Lets you write ?debug_session=<key> in address bar to persist debug sessions
-            persistState(getDebugSessionKey())
+            //persistState(getDebugSessionKey())
         )(createStore);
     }else{
         return compose(

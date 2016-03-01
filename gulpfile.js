@@ -148,10 +148,5 @@ gulp.task("webpack-dev-server", function(callback) {
         });
 });
 
-
-if(__DEV__){
-    gulp.task("init", ["sass", "webpack_clean", "webpack", "webpack_handle", "webpack-dev-server"]);
-}else{
-    gulp.task("init", ["sass", "webpack_clean", "webpack", "webpack_handle"]);
-}
+gulp.task("init", ["sass", "webpack_clean", "webpack", "webpack_handle"]);
 

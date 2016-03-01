@@ -1,0 +1,66 @@
+/**
+ * Created by tutu on 16-1-4.
+ */
+
+/// <reference path="../../../../typings/react/react.d.ts" />
+/// <reference path="../../../../libs/ts/material-ui.d.ts" />
+/// <reference path="../../../../typings/classnames/classnames.d.ts" />
+
+import * as React from "react";
+import * as classNames from "classnames";
+import Platform from "../tools/Platform";
+import LeftNav = require('material-ui/lib/left-nav');
+import MenuItem = require('material-ui/lib/menus/menu-item');
+import Menu = require('material-ui/lib/menus/menu');
+import RaisedButton = require('material-ui/lib/raised-button');
+
+
+interface LeftProp {
+    show?: boolean;
+    showAction?: any;
+    routerAction?: any;
+}
+
+class Left extends React.Component<LeftProp, any> {
+
+    constructor(props: any, context: any) {
+        super(props);
+    }
+
+    public render() {
+        let open = true;
+        let style = {zIndex: 4, paddingTop: 64};
+        let width = 300;
+        let docked = true;
+        if(Platform.getPlatform().isMobile()){
+            width = 400;
+            style.zIndex = 1201;
+            style.paddingTop = 0;
+            docked = false;
+            open = this.props.show;
+        }
+        return (
+            <div>
+                <LeftNav
+                    docked={docked}
+                    width={width}
+                    style={style}
+                    open={open}
+                    onRequestChange={this.props.showAction}
+                ><Menu onChange={this.__click.bind(this)}
+                       autoWidth={false} width={width}>
+                    <MenuItem value="1">Menu Item</MenuItem>
+                    <MenuItem value="2">Menu Item 2</MenuItem>
+                </Menu>
+                </LeftNav>
+            </div>
+        );
+    }
+
+    private __click(event: any, value: any){
+        this.props.showAction();
+        this.props.routerAction("/playbook/"+value);
+    }
+}
+
+export default Left;

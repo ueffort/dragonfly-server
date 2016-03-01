@@ -5,7 +5,16 @@
 import * as ActionTypes from "../constants/ActionTypes";
 
 const initialValue = [
-    {"name": "test"}
+    {"name": "test", "status": "loading"},
+    {"name": "test", "status": "loading"},
+    {"name": "test", "status": "loading"},
+    {"name": "test", "status": "loading"},
+    {"name": "test", "status": "loading"},
+    {"name": "test", "status": "loading"},
+    {"name": "test", "status": "loading"},
+    {"name": "test", "status": "loading"},
+    {"name": "test", "status": "loading"},
+    {"name": "test", "status": "loading"}
 ];
 
 function PlayBook(state = initialValue, action: any) {

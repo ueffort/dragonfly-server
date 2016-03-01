@@ -10,7 +10,19 @@ export function login(userName: string, password: string) {
 }
 
 export function register(userName: string, password: string) {
-    return { type: ActionTypes.LOGIN, value: {userName: userName, password: password} };
+    return { type: ActionTypes.REGISTER, value: {userName: userName, password: password} };
+}
+
+export function load() {
+    return { type: ActionTypes.LOAD, value: true };
+}
+
+export function loaded() {
+    return { type: ActionTypes.LOADED, value: true };
+}
+
+export function leftShow() {
+    return { type: ActionTypes.LEFT_SHOW, value: true };
 }
 
 export function router(path: string) {
