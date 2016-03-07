@@ -19,7 +19,7 @@ import Platform from "../tools/Platform";
 interface AppProp {
     playbook?: any;
     loading?: any;
-    login?: any;
+    user?: any;
     style?: any;
     actions?: any;
     params?: any;
@@ -33,7 +33,7 @@ class App extends React.Component<AppProp, any> {
     }
 
     private init(){
-        if(!this.props.login.userName){
+        if(!this.props.user.name){
             this.props.actions.router("login");
         }
     }
@@ -72,7 +72,7 @@ function mapStateToProps(state: any) {
     return {
         playbook: state.PlayBook,
         loading: state.Loading,
-        login: state.Login,
+        user: state.User,
         style: state.Style
     };
 }

@@ -7,14 +7,14 @@
 import { combineReducers } from "redux";
 import PlayBook from "./PlayBook";
 import Loading from "./Loading";
-import Login from "./Login";
+import User from "./User";
 import Style from "./Style";
 import { routerReducer } from 'react-router-redux';
 
 const AppReducers = combineReducers({
   PlayBook,
   Loading,
-  Login,
+  User,
   Style,
   routing: routerReducer
 });

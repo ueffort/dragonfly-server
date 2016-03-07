@@ -4,16 +4,16 @@
 
 import * as ActionTypes from "../constants/ActionTypes";
 
-const initialValue = {userName: ""};
+const initialValue = {name: ""};
 
-function Login(state = initialValue, action: any) {
+function User(state = initialValue, action: any) {
     switch (action.type) {
         case ActionTypes.LOGIN:
-            state.userName = action.value;
+            state.name = action.value;
             return state;
         default:
             return state;
     }
 }
 
-export default Login
+export default User
