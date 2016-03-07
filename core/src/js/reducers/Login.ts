@@ -4,12 +4,12 @@
 
 import * as ActionTypes from "../constants/ActionTypes";
 
-const initialValue = {isLogin: false};
+const initialValue = {userName: ""};
 
 function Login(state = initialValue, action: any) {
     switch (action.type) {
         case ActionTypes.LOGIN:
-            state.isLogin = action.value;
+            state.userName = action.value;
             return state;
         default:
             return state;

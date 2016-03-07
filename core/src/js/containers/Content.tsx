@@ -32,7 +32,7 @@ class Content extends React.Component<ContentProp, any> {
     render() {
         let dialogOpen = false;
         if(this.props.id) dialogOpen = true;
-        let style = {paddingLeft: 300, paddingTop: 64, width: "100%"};
+        let style = {paddingLeft: 300, paddingTop: 64};
         if(Platform.getPlatform().isMobile()){
             style.paddingLeft = 0;
         }

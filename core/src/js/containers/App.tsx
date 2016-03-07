@@ -29,6 +29,13 @@ class App extends React.Component<AppProp, any> {
 
     constructor(props: any, context: any) {
         super(props, context);
+        this.init();
+    }
+
+    private init(){
+        if(!this.props.login.userName){
+            this.props.actions.router("login");
+        }
     }
 
     private updateDimensions() {

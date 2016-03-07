@@ -5,6 +5,7 @@
 /// <reference path="../typings/express/express.d.ts" />
 
 import * as express from "express";
+import * as session from"express-session";
 import jsonFile from "./tools/JsonFile";
 import {create as createLogger, middle as loggerMiddle} from "./tools/Log";
 import {Mysql, connect as connectMysql} from "./tools/Mysql";
@@ -46,6 +47,11 @@ class App {
         this.express.set("app", this);
         this.express.set("name", this.name);
         this.logger = createLogger(this.express, config.DEBUG);
+        this.express.use(session({
+            secret: 'keyboard cat',
+            resave: false,
+            saveUninitialized: true,
+            cookie: { maxAge: 60000 }}));
         this.init();
         this.express.use(loggerMiddle(this.logger));
         this.errorHandle();
