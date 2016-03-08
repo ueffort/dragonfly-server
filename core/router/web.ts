@@ -18,7 +18,7 @@ export default function routerHandle(app: CoreApp){
     router.use("/static", express.static("./static"));
 
     router.get("*", function(req: express.Request, res: express.Response, next: any){
-        let data = {Login: {name: req.session['userName'] ? req.session['userName'] : ""}};
+        let data = {User: {email: req.session['email'] ? req.session['email'] : ""}};
         let resource = jsonFile.read("app/resource");
         let dev = app.config.DEBUG ? true : false;
         res.render("index", {dev: dev, data: JSON.stringify(data), resource: resource, resUrl:function(url: string){

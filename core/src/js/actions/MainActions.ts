@@ -4,13 +4,47 @@
 
 import * as ActionTypes from "../constants/ActionTypes";
 import { push } from 'react-router-redux';
+import Ajax from "../tools/Ajax";
 
-export function login(userName: string, password: string) {
-    return { type: ActionTypes.LOGIN, value: {userName: userName, password: password} };
+
+export function login(email: string, password: string) {
+    return function(dispatch: Redux.Dispatch, getState?: () => {}){
+        dispatch(load());
+        Ajax.post("/api/login", {email: email, password: password})
+            .then((result: any)=>{
+                if(result.status == 200){
+                    dispatch({type: ActionTypes.LOGIN, value: {email: result.data.email}});
+                    dispatch(router("/"));
+                }else{
+                    dispatch(message(result.message));
+                }
+                dispatch(loaded());
+            }).catch(function(){
+                dispatch(loaded());
+            });
+    };
 }
 
-export function register(userName: string, password: string) {
-    return { type: ActionTypes.REGISTER, value: {userName: userName, password: password} };
+export function register(email: string, password: string) {
+    return function(dispatch: Redux.Dispatch, getState?: () => {}){
+        dispatch(load());
+        Ajax.post("/api/register", {email: email, password: password})
+            .then((result: any)=>{
+                if(result.status == 200){
+                    dispatch({type: ActionTypes.REGISTER, value: {email: result.data.email}});
+                    dispatch(router("/"));
+                }else{
+                    dispatch(message(result.message));
+                }
+                dispatch(loaded());
+            }).catch(function(){
+                dispatch(loaded());
+            });
+    };
+}
+
+export function message(message: string){
+    return {type: ActionTypes.MESSAGE, value: message};
 }
 
 export function load() {

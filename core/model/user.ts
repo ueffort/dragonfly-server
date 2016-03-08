@@ -8,16 +8,12 @@ import {md5} from "../../app/tools/StringHandle";
 
 export class User extends Base{
 
-    public key: string = "id";
-
-    public filed: string[] = ["id", "name", "password"];
-
     get id(){
         return this.get("id");
     }
 
-    get name(){
-        return this.get("name");
+    get email(){
+        return this.get("email");
     }
 
     get password(){
@@ -29,6 +25,10 @@ export class UserModel extends BaseModel{
 
     protected tableName = "core_user";
 
+    public key: string = "id";
+
+    public filed: string[] = ["id", "email", "password", "state", "create_time", "update_time", "delete_time"];
+
     protected formatData(data: any){
         return new User(data);
     }
@@ -37,30 +37,30 @@ export class UserModel extends BaseModel{
         return md5(password);
     }
 
-    public login(userName: string, password: string){
-        return this.getUserByName(userName, UserModel.formatPassword(password))
+    public login(email: string, password: string){
+        return this.getUserByName(email, UserModel.formatPassword(password))
             .then((user: User)=>{
                 return user
             });
     }
 
-    public register(userName: string, password: string){
+    public register(email: string, password: string){
         let user = new User();
-        user.name = userName;
-        user.password = password;
+        user.email = email;
+        user.password = UserModel.formatPassword(password);
         return this.add(user)
             .then((user: User)=>{
                 return user
             });
     }
 
-    private getUserByName(userName: string, password: string){
-        let sql: string = "SELECT * FROM "+this.tableName+" WHERE `name` = "+userName+" and `password`="+password;
+    private getUserByName(email: string, password: string){
+        let sql: string = "SELECT * FROM "+this.tableName+" WHERE `email` = '"+email+"' and `password`='"+password+"' and "+this.deleteTime+"<= 0";
         return this.exec(sql).then((result: any[])=>{
-            if(result){
+            if(result.length > 0){
                 return this.formatData(result[0]);
             }else{
-                throw Error("user is error");
+                throw Error("email or password is error");
             }
         });
     }

@@ -2,7 +2,10 @@
  * Created by tutu on 16-1-4.
  */
 
+/// <reference path="../../../../libs/ts/object-assign.d.ts" />
+
 import * as ActionTypes from "../constants/ActionTypes";
+import objectAssign = require("object-assign");
 
 interface defaultValue {
     isLoad:boolean;
@@ -19,7 +22,7 @@ function Loading(state:defaultValue = initialValue, action: any) {
         case ActionTypes.LOAD:
             state.isLoad = true;
             state.loading.push(true);
-            return state;
+            return objectAssign({}, state);
         case ActionTypes.LOADED:
             state.loading.pop();
             if(state.loading.length>0){
@@ -27,7 +30,7 @@ function Loading(state:defaultValue = initialValue, action: any) {
             }else{
                 state.isLoad = false;
             }
-            return state;
+            return objectAssign({}, state);
         default:
             return state;
     }

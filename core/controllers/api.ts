@@ -6,13 +6,24 @@
 import {Promise} from "../../app/tools/Promise";
 import Controller from "../Controller";
 import {UserModel} from "../model/user";
+import {User} from "../model/user";
 
 export class Api extends Controller{
-    public static login(name: string, password: string):Promise<any>{
-        return new UserModel(Api.app).login(name, password);
+    public static login(email: string, password: string):Promise<any>{
+        return new UserModel(this.app).login(email, password)
+            .then((user: User)=>{
+                return Api.formatResult({email: user.email});
+            });
     }
 
-    public static register(name: string, password: string):Promise<any>{
-        return new UserModel(Api.app).register(name, password);
+    public static register(email: string, password: string):Promise<any>{
+        return new UserModel(this.app).register(email, password)
+            .then((user: User)=>{
+                return Api.formatResult({email: user.email});
+            });
+    }
+
+    public static formatResult(data: any){
+        return {status: 200, message: "success", data: data}
     }
 }

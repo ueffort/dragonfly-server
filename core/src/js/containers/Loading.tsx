@@ -3,12 +3,12 @@
  */
 
 /// <reference path="../../../../typings/react/react.d.ts" />
-/// <reference path="../../../../typings/redux/redux.d.ts" />
-/// <reference path="../../../../typings/react-redux/react-redux.d.ts" />
-/// <reference path="../../../../typings/classnames/classnames.d.ts" />
+/// <reference path="../../../../libs/ts/material-ui.d.ts" />
 
 import * as React from "react";
 import * as classNames from "classnames";
+import CircularProgress = require('material-ui/lib/circular-progress');
+import Dialog = require('material-ui/lib/dialog');
 
 interface LoadingProp {
     loading: boolean;
@@ -21,10 +21,17 @@ class Loading extends React.Component<LoadingProp, any> {
     }
 
     public render () {
-        let className = classNames("c-loading", {show: this.props.loading}, {hide: !this.props.loading});
+        let dialogOpen = false;
+        if(this.props.loading) dialogOpen = true;
         return (
-            <div className={className}>
-                <div className="c-loading-img"></div>
+            <div>
+                <Dialog
+                    contentStyle={{width:118,height:118}}
+                    open={dialogOpen}
+                    overlayStyle={{backgroundColor: "none"}}
+                >
+                    <CircularProgress />
+                </Dialog>
             </div>
         );
     }

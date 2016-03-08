@@ -19,6 +19,7 @@ import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 //路由页面
 import App from "./App";
 import Login from "./Login";
+import Register from "./Register";
 import Error from "./Error";
 
 interface ContainerProp {
@@ -52,6 +53,7 @@ class Container extends React.Component<ContainerProp, any> {
                 <Route path="/playbook/:id" component={App}/>
                 <Route path="/addPlaybook/:typeId" component={App}/>
                 <Route path="login" component={Login}/>
+                <Route path="register" component={Register}/>
                 <Route path="*" component={Error}/>
             </Router>
         );

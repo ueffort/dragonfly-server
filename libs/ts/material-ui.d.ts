@@ -383,6 +383,7 @@ declare namespace __MaterialUI {
         title?: React.ReactNode;
         defaultOpen?: boolean;
         open?: boolean;
+        overlayStyle?: React.CSSProperties;
 
         onClickAway?: () => void;
         onDismiss?: () => void;
@@ -1139,9 +1140,11 @@ declare namespace __MaterialUI {
         autoHideDuration?: number;
         onActionTouchTap?: React.TouchEventHandler;
         onShow?: () => void;
+        open?: boolean;
         onDismiss?: () => void;
         openOnMount?: boolean;
         style?: React.CSSProperties;
+        onRequestClose?: (buttonClicked: boolean) => void;
     }
     export class Snackbar extends React.Component<SnackbarProps, {}> {
     }

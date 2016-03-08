@@ -18,6 +18,7 @@ import MenuItem = require('material-ui/lib/menus/menu-item');
 interface HeaderProp {
     title: string;
     menuAction?: any;
+    userName: string;
 }
 
 class Header extends React.Component<HeaderProp, any> {
@@ -44,7 +45,7 @@ class Header extends React.Component<HeaderProp, any> {
                     targetOrigin={{horizontal: 'right', vertical: 'top'}}
                     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                   >
-                    <MenuItem primaryText="用户名" />
+                    <MenuItem primaryText={this.props.userName} />
                     <MenuItem primaryText="退出" />
                   </IconMenu>
             }

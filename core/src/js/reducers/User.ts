@@ -2,15 +2,24 @@
  * Created by tutu on 16-1-4.
  */
 
-import * as ActionTypes from "../constants/ActionTypes";
+/// <reference path="../../../../libs/ts/object-assign.d.ts" />
 
-const initialValue = {name: ""};
+import * as ActionTypes from "../constants/ActionTypes";
+import objectAssign = require("object-assign");
+
+const initialValue = {email: ""};
 
 function User(state = initialValue, action: any) {
     switch (action.type) {
         case ActionTypes.LOGIN:
-            state.name = action.value;
-            return state;
+            state.email = action.value.email;
+            return objectAssign({}, state);
+        case ActionTypes.REGISTER:
+            state.email = action.value.email;
+            return objectAssign({}, state);
+        case ActionTypes.LOGINOUT:
+            state.email = "";
+            return objectAssign({}, state);
         default:
             return state;
     }

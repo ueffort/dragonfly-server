@@ -13,6 +13,7 @@ import * as MainAction from "../actions/MainActions";
 import Loading from "./Loading";
 import Header from "./Header";
 import Left from "./Left";
+import Message from "./Message";
 import Content from "./Content";
 import Platform from "../tools/Platform";
 
@@ -33,7 +34,7 @@ class App extends React.Component<AppProp, any> {
     }
 
     private init(){
-        if(!this.props.user.name){
+        if(!this.props.user.email){
             this.props.actions.router("login");
         }
     }
@@ -54,8 +55,10 @@ class App extends React.Component<AppProp, any> {
     public render() {
         return (
             <div>
-                <Header title={this.props.playbook[0].name} menuAction={this.props.actions.leftShow}/>
-                <Left show={this.props.style.leftShow}
+                <Header title={this.props.playbook[0].name}
+                        userName={this.props.user.email}
+                        menuAction={this.props.actions.leftShow}/>
+                <Left show={this.props.style.left}
                       showAction={this.props.actions.leftShow}
                       routerAction={this.props.actions.router}/>
                 <Content playbook={this.props.playbook}
@@ -63,6 +66,7 @@ class App extends React.Component<AppProp, any> {
                          id={this.props.params.id}
                          type={this.props.params.type}/>
                 <Loading loading={this.props.loading.isLoad}/>
+                <Message message={this.props.style.message} closeAction={this.props.actions.message}/>
             </div>
         );
     }

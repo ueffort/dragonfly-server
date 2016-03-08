@@ -37,7 +37,7 @@ export default function routerHandle(app:CoreApp):express.Router{
     let router: express.Router = express.Router();
     Controller.setApp(app);
     // 全局登录验证
-    router.use(Dispatch.session(app,['/api/login'], function(session: {[key: string]: any}){
+    router.use(Dispatch.session(app,['/api/login', '/api/register'], function(session: {[key: string]: any}){
         return Promise.resolve(true);
     }));
 
@@ -70,9 +70,9 @@ export default function routerHandle(app:CoreApp):express.Router{
             }
         };
 
-    router.get("/api/login", handle([{name:"name", form:true}, {name:"password", form:true}], Api.login));
+    router.post("/api/login", handle([{name:"email", form:true}, {name:"password", form:true}], Api.login));
 
-    router.get("/api/register", handle([{name:"name", form:true}, {name:"password", form:true}], Api.register));
+    router.post("/api/register", handle([{name:"email", form:true}, {name:"password", form:true}], Api.register));
 
     return router;
 };

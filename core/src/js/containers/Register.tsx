@@ -17,30 +17,23 @@ import FlatButton = require('material-ui/lib/flat-button');
 import {md5} from "../../../../app/tools/StringHandle";
 import Message from "./Message";
 
-interface LoginProp {
+interface RegisterProp {
     loading?: any;
     user?: any;
     style?: any;
     actions?: any;
 }
 
-interface LoginState {
+interface RegisterState {
     email?: string;
     password?: string;
 }
 
-class Login extends React.Component<LoginProp, LoginState> {
+class Register extends React.Component<RegisterProp, RegisterState> {
 
-    constructor(props: any, context: LoginState) {
+    constructor(props: any, context: any) {
         super(props, context);
         this.state = {email: "", password: ""};
-        this.init();
-    }
-
-    private init(){
-        if(this.props.user.email){
-            this.props.actions.router("/");
-        }
     }
 
     public render () {
@@ -52,30 +45,34 @@ class Login extends React.Component<LoginProp, LoginState> {
             <div>
                 <div style={style}>
                     <Paper style={paperStyle} zDepth={2}>
-                        <h2 style={titleStyle}>登录</h2>
+                        <h2 style={titleStyle}>注册</h2>
                         <TextField
                             hintText="name@limei.com"
                             floatingLabelText="email"
                             type="text"
-                            onChange={this.__email.bind(this)}
                         />
                         <br/>
                         <TextField
                             hintText="******"
                             floatingLabelText="Password"
                             type="password"
-                            onChange={this.__password.bind(this)}
+                        />
+                        <br/>
+                        <TextField
+                            hintText="******"
+                            floatingLabelText="Password"
+                            type="password"
                         />
                         <div style={buttonStyle}>
                             <FlatButton style={{float: "left"}}
-                                        label="登录"
+                                        label="注册"
                                         secondary={true}
                                         keyboardFocused={true}
-                                        onTouchTap={this.__login.bind(this)}/>
-                            <FlatButton style={{float: "right"}}
-                                        label="注册"
-                                        primary={true}
                                         onTouchTap={this.__register.bind(this)}/>
+                            <FlatButton style={{float: "right"}}
+                                        label="登录"
+                                        primary={true}
+                                        onTouchTap={this.__login.bind(this)}/>
                         </div>
                     </Paper>
                 </div>
@@ -84,7 +81,6 @@ class Login extends React.Component<LoginProp, LoginState> {
             </div>
         );
     }
-
     private __email(event: any){
         this.setState({email: event.target.value})
     }
@@ -94,11 +90,11 @@ class Login extends React.Component<LoginProp, LoginState> {
     }
 
     private __login(){
-        this.props.actions.login(this.state.email, md5(this.state.password));
+        this.props.actions.router("login");
     }
 
     private __register(){
-        this.props.actions.router("register");
+        this.props.actions.register(this.state.email, md5(this.state.password));
     }
 }
 
@@ -119,4 +115,4 @@ function mapDispatchToProps(dispatch: any) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Login)
+)(Register)
