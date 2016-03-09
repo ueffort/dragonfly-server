@@ -15,7 +15,7 @@ import Header from "./Header";
 import Left from "./Left";
 import Message from "./Message";
 import Content from "./Content";
-import Platform from "../tools/Platform";
+import Platform from "../../../../app/tools/Platform";
 
 interface AppProp {
     playbook?: any;
@@ -56,7 +56,8 @@ class App extends React.Component<AppProp, any> {
         return (
             <div>
                 <Header title={this.props.playbook[0].name}
-                        userName={this.props.user.email}
+                        user={this.props.user}
+                        loginOutAction={this.props.actions.loginOut}
                         menuAction={this.props.actions.leftShow}/>
                 <Left show={this.props.style.left}
                       showAction={this.props.actions.leftShow}

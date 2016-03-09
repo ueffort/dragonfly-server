@@ -11,6 +11,7 @@ import {create as createLogger, middle as loggerMiddle} from "./tools/Log";
 import {Mysql, connect as connectMysql} from "./tools/Mysql";
 import {Redis, connect as connectRedis} from "./tools/Redis";
 import {Email, connect as connectEmail} from "./tools/Email";
+import bodyParser = require("body-parser");
 
 const config = jsonFile.read("app/config");
 
@@ -51,7 +52,9 @@ class App {
             secret: 'keyboard cat',
             resave: false,
             saveUninitialized: true,
-            cookie: { maxAge: 60000 }}));
+            cookie: { maxAge: 24*60*60*1000 }}));
+        this.express.use(bodyParser.urlencoded({ extended: true }));
+        this.express.use(bodyParser.json());
         this.init();
         this.express.use(loggerMiddle(this.logger));
         this.errorHandle();

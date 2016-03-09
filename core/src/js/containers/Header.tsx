@@ -6,7 +6,7 @@
 /// <reference path="../../../../libs/ts/material-ui.d.ts" />
 
 import * as React from "react";
-import Platform from "../tools/Platform";
+import Platform from "../../../../app/tools/Platform";
 import AppBar = require('material-ui/lib/app-bar');
 import IconButton = require('material-ui/lib/icon-button');
 import NavigationMenu = require('material-ui/lib/svg-icons/navigation/menu');
@@ -18,7 +18,8 @@ import MenuItem = require('material-ui/lib/menus/menu-item');
 interface HeaderProp {
     title: string;
     menuAction?: any;
-    userName: string;
+    loginOutAction?: any;
+    user: any;
 }
 
 class Header extends React.Component<HeaderProp, any> {
@@ -45,8 +46,8 @@ class Header extends React.Component<HeaderProp, any> {
                     targetOrigin={{horizontal: 'right', vertical: 'top'}}
                     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                   >
-                    <MenuItem primaryText={this.props.userName} />
-                    <MenuItem primaryText="退出" />
+                    <MenuItem primaryText={this.props.user.email} />
+                    <MenuItem primaryText="退出" onTouchTap={this.props.loginOutAction} />
                   </IconMenu>
             }
             />

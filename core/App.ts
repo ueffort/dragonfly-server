@@ -9,7 +9,7 @@ import * as express from "express";
 import coreRouter from "./router/core";
 import webRouter from "./router/web";
 import * as path from "path";
-import bodyParser = require("body-parser");
+import * as ErrorID from "./ErrorID";
 
 class CoreApp extends App {
 
@@ -22,8 +22,6 @@ class CoreApp extends App {
     protected init(): void {
         this.express.set("views", path.join(__dirname, "views"));
         this.express.set("view engine", "ejs");
-        this.express.use(bodyParser.urlencoded({ extended: true }));
-        this.express.use(bodyParser.json());
         this.express.use(coreRouter(this), webRouter(this));
 
         this.listen(this.config.CORE_CONFIG.PORT);
@@ -34,12 +32,36 @@ class CoreApp extends App {
      */
     protected errorHandle(): void {
         this.express.use((req: express.Request, res: express.Response, next: any)=>{
-            res.status(200).json({status:404, message:"not find!"});
+            let error = new Error("no find!");
+            error.name = ErrorID.NO_FIND;
+            res.status(200).json(CoreApp.formatResult({}, error));
         });
         this.express.use((err: Error, req: express.Request, res: express.Response, next: any)=>{
             this.logger.error(err);
-            res.status(200).json({status:500, message:err.message});
+            res.status(200).json(CoreApp.formatResult({}, err));
         });
+    }
+
+    public static formatResult(data?: any,  err?: Error){
+        let result: any = {};
+        if(err){
+            switch (err.name){
+                case ErrorID.NO_FIND:
+                    result.status = ErrorID.NO_FIND_STATUS;
+                    break;
+                case ErrorID.NEED_LOGIN:
+                    result.status = ErrorID.NEED_LOGIN_STATUS;
+                    break;
+                default:
+                    result.status = ErrorID.OTHER_ERROR_STATUS;
+                    break;
+            }
+        }else{
+            result.status = ErrorID.SUCCESS_STATUS;
+        }
+        result.message = err ? err.message : "success";
+        result.data = data ? data : {};
+        return result;
     }
 }
 

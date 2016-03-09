@@ -38,6 +38,7 @@
     "react-tap-event-plugin": "^0.2.1",
     "redis": "^2.4.2",
     "redux": "^3.0.5",
+    "request": "^2.69.0",
     "should": "^8.0.2",
     "supertest": "^1.1.0",
     "swagger": "^0.7.5",
@@ -62,7 +63,7 @@
     "tsd": "tsd install && chmod -R +x typings",
     "start": "node index.js start",
     "dev": "supervisor dev.js & gulp webpack-dev-server",
-    "test": "mocha --recursive test/ --bail",
+    "test": "mocha --recursive --bail ",
     "test-cov": "node ./node_modules/istanbul-harmony/lib/cli.js cover ./node_modules/mocha/bin/_mocha --recursive test/ --bail",
     "api-edit": "swagger project edit data -p 8182 -s --host 0.0.0.0"
   },

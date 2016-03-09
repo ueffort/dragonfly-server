@@ -10,6 +10,7 @@ import CoreApp from "../App";
 import Dispatch from "../../app/Dispatch";
 import Controller from "../Controller";
 import {Api} from "../controllers/api";
+import * as ErrorID from "../ErrorID";
 
 interface ParamDesc {
     name: string;
@@ -37,8 +38,13 @@ export default function routerHandle(app:CoreApp):express.Router{
     let router: express.Router = express.Router();
     Controller.setApp(app);
     // 全局登录验证
-    router.use(Dispatch.session(app,['/api/login', '/api/register'], function(session: {[key: string]: any}){
-        return Promise.resolve(true);
+    router.use("/api/*", Dispatch.session(app,['/api/login', '/api/register'], function(session: any){
+        let user = session["user"];
+        if(user["email"]){
+            return Promise.resolve(true);
+        }else{
+            throw new Error("need login").name =  ErrorID.NEED_LOGIN;
+        }
     }));
 
     /**
@@ -62,6 +68,8 @@ export default function routerHandle(app:CoreApp):express.Router{
                         return req.body[value.name];
                     }
                 });
+                args.push(req);
+                args.push(res);
                 action.apply(Controller, args).then(function(result:any){
                     res.json(result);
                 }).catch(function(err:Error){
@@ -73,6 +81,8 @@ export default function routerHandle(app:CoreApp):express.Router{
     router.post("/api/login", handle([{name:"email", form:true}, {name:"password", form:true}], Api.login));
 
     router.post("/api/register", handle([{name:"email", form:true}, {name:"password", form:true}], Api.register));
+
+    router.post("/api/loginOut", handle([], Api.loginOut));
 
     return router;
 };

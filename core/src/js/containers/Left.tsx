@@ -8,7 +8,7 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
-import Platform from "../tools/Platform";
+import Platform from "../../../../app/tools/Platform";
 import LeftNav = require('material-ui/lib/left-nav');
 import MenuItem = require('material-ui/lib/menus/menu-item');
 import Menu = require('material-ui/lib/menus/menu');

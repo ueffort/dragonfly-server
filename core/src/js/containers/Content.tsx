@@ -13,7 +13,7 @@ import TableHeader = require('material-ui/lib/table/table-header');
 import TableRowColumn = require('material-ui/lib/table/table-row-column');
 import TableBody = require('material-ui/lib/table/table-body');
 import Dialog = require('material-ui/lib/dialog');
-import Platform from "../tools/Platform";
+import Platform from "../../../../app/tools/Platform";
 
 
 interface ContentProp {
