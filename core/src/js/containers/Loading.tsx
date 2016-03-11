@@ -26,11 +26,12 @@ class Loading extends React.Component<LoadingProp, any> {
         return (
             <div>
                 <Dialog
-                    contentStyle={{width:118,height:118}}
+                    contentStyle={{width:118, height:118}}
+                    bodyStyle={{backgroundColor: "#333", opacity: 0.5, borderRadius: 20, position: "absolute"}}
                     open={dialogOpen}
                     overlayStyle={{backgroundColor: "none"}}
                 >
-                    <CircularProgress />
+                    <CircularProgress/>
                 </Dialog>
             </div>
         );

@@ -8,7 +8,6 @@ import { combineReducers } from "redux";
 import PlayBook from "./PlayBook";
 import Loading from "./Loading";
 import User from "./User";
-import Message from "./Message";
 import Style from "./Style";
 import { routerReducer } from 'react-router-redux';
 
