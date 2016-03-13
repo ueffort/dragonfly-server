@@ -5,7 +5,7 @@
 /// <reference path="../../libs/ts/request.d.ts" />
 
 import * as request from 'request';
-import ServerAjax from "../../app/tools/ServerAjax";
+import ServerHttp from "../../app/tools/ServerHttp";
 
 const BODY = 1;
 const FORM = 2;
@@ -44,7 +44,7 @@ export default class DataHandle{
             "token": 123123
         };
         let option = this.formatData(url, data);
-        return ServerAjax.setData(type, headers, option["url"], option["data"]).then((result)=>{
+        return ServerHttp.setData(type, headers, option["url"], option["data"]).then((result)=>{
             //result = JSON.parse(result);
             if(result.status){
                 throw new Error(result.message);
@@ -58,18 +58,18 @@ export default class DataHandle{
     }
 
     public static getAuth(token: string){
-        return this.AjaxHandle("get", "http://127.0.0.1:8181/auth", [{name: "token", value: token, type: QUERY}]);
+        return this.AjaxHandle("get", "/auth", [{name: "token", value: token, type: QUERY}]);
     }
 
     public static deleteAuth(token: string){
-        return this.AjaxHandle("delete", "http://127.0.0.1:8181/auth", [{name: "token", value: token, type: QUERY}]);
+        return this.AjaxHandle("delete", "/auth", [{name: "token", value: token, type: QUERY}]);
     }
 
     public static putAuth(token: string, email: string){
-        return this.AjaxHandle("put", "http://127.0.0.1:8181/auth", [{name: "token", value: token, type: QUERY},{name:"email", value: email, type: FORM}]);
+        return this.AjaxHandle("put", "/auth", [{name: "token", value: token, type: QUERY},{name:"email", value: email, type: FORM}]);
     }
 
     public static postAuth(email: string){
-        return this.AjaxHandle("post", "http://127.0.0.1:8181/auth", [{name: "email", value: email, type: QUERY}]);
+        return this.AjaxHandle("post", "/auth", [{name: "email", value: email, type: QUERY}]);
     }
 }

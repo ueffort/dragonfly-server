@@ -3,10 +3,10 @@
  */
 import {Mysql} from "../../app/tools/Mysql";
 import CoreApp from "../App";
-import {Base, BaseModel} from "./base";
+import {Record, Model} from "../../app/abstract/Model";
 import {md5} from "../../app/tools/StringHandle";
 
-export class User extends Base{
+export class User extends Record{
 
     get id(){
         return this.get("id");
@@ -21,7 +21,7 @@ export class User extends Base{
     }
 }
 
-export class UserModel extends BaseModel{
+export class UserModel extends Model{
 
     protected tableName = "core_user";
 

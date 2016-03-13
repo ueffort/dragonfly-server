@@ -7,7 +7,7 @@
 import * as request from 'request';
 import {Promise} from "./Promise";
 
-export default class ServerAjax {
+export default class ServerHttp {
 
     public static setData(type: string, header: any, url: string, data: any):Promise<any>{
         return new Promise((resolve, reject) => {

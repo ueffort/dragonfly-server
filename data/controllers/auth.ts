@@ -5,7 +5,7 @@
 
 import {token} from "../handle/mysql";
 import {Promise} from "../../app/tools/Promise";
-import Controller from "../Controller";
+import Controller from "../../app/abstract/Controller";
 
 export class Auth extends Controller{
     public static get(tokenStr:string):Promise<any>{

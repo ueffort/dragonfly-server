@@ -1,10 +1,12 @@
 {
     "DEBUG": true,
     "DATA_CONFIG": {
-        "PORT": 8181
+        "PORT": 8181,
+        "HOST": "http://127.0.0.1"
     },
     "CORE_CONFIG": {
-        "PORT": 8080
+        "PORT": 8080,
+        "HOST": "http://127.0.0.1"
     },
     "SERVICE":{
         "redis": {

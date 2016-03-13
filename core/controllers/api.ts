@@ -6,7 +6,7 @@
 
 import * as express from "express";
 import {Promise} from "../../app/tools/Promise";
-import Controller from "../Controller";
+import Controller from "../../app/abstract/Controller";
 import {UserModel} from "../model/user";
 import {User} from "../model/user";
 import CoreApp from "../App";

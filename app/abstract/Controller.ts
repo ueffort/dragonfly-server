@@ -2,7 +2,7 @@
  * Created by tutu on 15-12-17.
  */
 
-import App from "../app/App";
+import App from "../App";
 
 class Controller{
     protected static app:App;

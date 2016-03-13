@@ -4,7 +4,7 @@
 import {Mysql} from "../../app/tools/Mysql";
 import App from "../../app/App";
 
-export class Base{
+export class Record{
 
     private data:any = {};
 
@@ -21,7 +21,7 @@ export class Base{
     }
 }
 
-export class BaseModel{
+export class Model{
 
     protected mysql: Mysql;
     protected tableName: string;
@@ -36,19 +36,19 @@ export class BaseModel{
     }
 
     protected formatData(data: any){
-        return new Base(data);
+        return new Record(data);
     }
 
     private getTime(){
         return new Date().getTime();
     }
 
-    public del(data: Base){
+    public del(data: Record){
         data.set(this.deleteTime, this.getTime);
         return this.update(data);
     }
 
-    public get(data: Base){
+    public get(data: Record){
         let sql: string = "SELECT * FROM "+this.tableName+" WHERE "+this.key+" = "+data.get(this.key)+" AND "+this.deleteTime+"<=0";
         return this.exec(sql).then((result: any[])=>{
             let newResult: any[] = [];
@@ -59,7 +59,7 @@ export class BaseModel{
         });
     }
 
-    public update(data: Base){
+    public update(data: Record){
         data.set(this.updateTime, this.getTime);
         let setSql = "";
         for(let i=0;i<this.filed.length;i++){
@@ -73,7 +73,7 @@ export class BaseModel{
         return this.exec(sql).then(()=>{return true});
     }
 
-    public add(data: Base){
+    public add(data: Record){
         data.set(this.createTime, this.getTime);
         let vals: any[] = [];
         let keys: any[] = [];

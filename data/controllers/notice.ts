@@ -5,7 +5,7 @@
 
 import {token} from "../handle/mysql";
 import {Promise} from "../../app/tools/Promise";
-import Controller from "../Controller";
+import Controller from "../../app/abstract/Controller";
 
 export class Notice extends Controller{
     public static post(subject:string, body:string, to:string):Promise<any>{
