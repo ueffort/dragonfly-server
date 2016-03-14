@@ -135,10 +135,6 @@ class App {
             self.exit();
         });
     }
-
-    get app(): express.Application {
-        return this.express;
-    }
 }
 
 export default App

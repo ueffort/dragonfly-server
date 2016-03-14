@@ -6,17 +6,20 @@
 
 import * as request from 'request';
 import ServerHttp from "../../app/tools/ServerHttp";
+import jsonFile from "../../app/tools/JsonFile";
 
 const BODY = 1;
 const FORM = 2;
 const QUERY = 3;
 const PATH = 4;
 
+const config = jsonFile.read("app/config");
+
 export default class DataHandle{
 
     public static formatData(url: string, data: any[]){
         let option: any = {}, baseUrl: string = url, uri: string = "";
-        option.url = "";
+        option.url = config.DATA_CONFIG.HOST + config.DATA_CONFIG.PORT;
         option.data = {};
         for(let i=0;i<data.length;i++){
             let type = data[i]["type"], name = data[i]["name"], value = data[i]["value"];
@@ -35,11 +38,11 @@ export default class DataHandle{
                 option.data = value;
             }
         }
-        option.url = baseUrl + uri;
+        option.url += baseUrl + uri;
         return option
     }
 
-    public static AjaxHandle(type: string, url: string, data: any[]){
+    public static Http(type: string, url: string, data: any[]){
         let headers: any = {
             "token": 123123
         };
@@ -58,18 +61,18 @@ export default class DataHandle{
     }
 
     public static getAuth(token: string){
-        return this.AjaxHandle("get", "/auth", [{name: "token", value: token, type: QUERY}]);
+        return this.Http("get", "/auth", [{name: "token", value: token, type: QUERY}]);
     }
 
     public static deleteAuth(token: string){
-        return this.AjaxHandle("delete", "/auth", [{name: "token", value: token, type: QUERY}]);
+        return this.Http("delete", "/auth", [{name: "token", value: token, type: QUERY}]);
     }
 
     public static putAuth(token: string, email: string){
-        return this.AjaxHandle("put", "/auth", [{name: "token", value: token, type: QUERY},{name:"email", value: email, type: FORM}]);
+        return this.Http("put", "/auth", [{name: "token", value: token, type: QUERY},{name:"email", value: email, type: FORM}]);
     }
 
     public static postAuth(email: string){
-        return this.AjaxHandle("post", "/auth", [{name: "email", value: email, type: QUERY}]);
+        return this.Http("post", "/auth", [{name: "email", value: email, type: QUERY}]);
     }
 }
