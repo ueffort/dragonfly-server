@@ -8,17 +8,14 @@
 import * as express from "express";
 import CoreApp from "../App";
 import Dispatch from "../../app/abstract/Dispatch";
-import Controller from "../../app/abstract/Controller";
-import {Api} from "../controllers/api";
+import Api from "../controllers/api";
 import * as ErrorID from "../ErrorID";
-import {handle} from "../../app/handle/Router";
 import * as bodyParser from "body-parser";
 import  * as session from "express-session";
 
 
 export default function routerHandle(app:CoreApp):express.Router{
     let router: express.Router = express.Router();
-    Controller.setApp(app);
 
     router.use(session({
         secret: 'keyboard cat',
@@ -38,11 +35,13 @@ export default function routerHandle(app:CoreApp):express.Router{
         }
     }));
 
-    router.post("/api/login", handle([{name:"email", form:true}, {name:"password", form:true}], Api.login));
+    let api = new Api(app);
 
-    router.post("/api/register", handle([{name:"email", form:true}, {name:"password", form:true}], Api.register));
+    router.post("/api/login", api.handle([{name:"email", form:true}, {name:"password", form:true}], api.login));
 
-    router.post("/api/loginOut", handle([], Api.loginOut));
+    router.post("/api/register", api.handle([{name:"email", form:true}, {name:"password", form:true}], api.register));
+
+    router.post("/api/loginOut", api.handle([], api.loginOut));
 
     return router;
 };

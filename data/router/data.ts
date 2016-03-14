@@ -7,18 +7,15 @@
 
 import * as express from "express";
 import Dispatch from "../../app/abstract/Dispatch";
-import Controller from "../../app/abstract/Controller";
 import DataApp from "../App";
 import {token} from "../handle/mysql";
 import * as bodyParser from "body-parser";
 import  * as session from "express-session";
 import {Auth} from "../controllers/auth";
-import {handle} from "../../app/handle/Router";
 
 export default function routerHandle(app: DataApp): express.Router{
 
     let router: express.Router = express.Router();
-    Controller.setApp(app);
 
     router.use(session({
         secret: 'keyboard cat',
@@ -39,10 +36,10 @@ export default function routerHandle(app: DataApp): express.Router{
         });
     }));
 
-
+    let auth = new Auth(app);
     /**
      * 接口定义,同步swagger
      */
-    router.get("/auth", handle([{name:"token", query:true}], Auth.get));
+    router.get("/auth", auth.handle([{name:"token", query:true}], auth.get));
     return router;
 }

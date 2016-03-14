@@ -8,7 +8,7 @@ import {Promise} from "../../app/tools/Promise";
 import Controller from "../../app/abstract/Controller";
 
 export class Notice extends Controller{
-    public static post(subject:string, body:string, to:string):Promise<any>{
+    public post(subject:string, body:string, to:string):Promise<any>{
         return this.app.email().send(subject, body, [to]);
     }
 }

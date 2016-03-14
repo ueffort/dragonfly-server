@@ -11,25 +11,33 @@ import {UserModel} from "../model/user";
 import {User} from "../model/user";
 import CoreApp from "../App";
 
-export class Api extends Controller{
-    public static login(email: string, password: string, req: express.Request, res: express.Response):Promise<any>{
+export default class Api extends Controller{
+
+    public getApp(){
+        console.log(this.app);
+    }
+    public login(email: string, password: string, req: express.Request, res: express.Response):Promise<any>{
         return new UserModel(this.app).login(email, password)
             .then((user: User)=>{
                 if(user.email) req.session["user"] = {email: user.email};
-                return CoreApp.formatResult({email: user.email});
+                return {email: user.email};
             });
     }
 
-    public static register(email: string, password: string, req: express.Request, res: express.Response):Promise<any>{
+    public register(email: string, password: string, req: express.Request, res: express.Response):Promise<any>{
         return new UserModel(this.app).register(email, password)
             .then((user: User)=>{
                 if(user.email) req.session["user"] = {email: user.email};
-                return CoreApp.formatResult({email: user.email});
+                return {email: user.email};
             });
     }
 
-    public static loginOut(req: express.Request, res: express.Response):Promise<any>{
+    public loginOut(req: express.Request, res: express.Response):Promise<any>{
         req.session["user"] = {};
         return Promise.resolve(true);
+    }
+
+    protected __resultHandle(req: express.Request, res: express.Response, next: any, result: any){
+        return res.json(CoreApp.formatResult(result));
     }
 }

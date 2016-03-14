@@ -2,14 +2,78 @@
  * Created by tutu on 15-12-17.
  */
 
+/// <reference path="../../typings/express/express.d.ts" />
+import * as express from "express";
 import App from "../App";
 
-class Controller{
-    protected static app:App;
 
-    public static setApp(app:App): void {
+interface ParamDesc {
+    name: string;
+    /**
+     * 只能设置一个,获取整个body
+     */
+    body?: boolean;
+    query?: boolean;
+    form?: boolean;
+    /**
+     * 参数在path中,位数按index计算
+     */
+    path?: boolean;
+    /**
+     * 默认为0,用于设定path的参数,从后向前
+     */
+    index?: number;
+    /**
+     * 针对query的数组支持
+     */
+    array?: boolean;
+}
+
+class Controller{
+    protected app:App;
+
+
+    public constructor(app: App){
         this.app = app;
+    }
+
+    /**
+     * 处理请求参数解写
+     * @param param
+     * @param action
+     * @returns {function(express.Request, express.Response, any): void}
+     */
+    public handle(param:any[], action:(...args:any[])=>Promise<any>) {
+        return (req: express.Request, res: express.Response, next: any):void=>{
+            let args = param.map(function(value:ParamDesc){
+                if(value.body){
+                    return req.body;
+                }else if(value.query){
+                    let v:string = req.query[value.name];
+                    return value.array ? v.split(',') : v;
+                }else if(value.path){
+                    let a:string[] = req.path.split("/");
+                    return value.index ? a.splice(a.length - value.index - 1, 1) : a.pop();
+                }else if(value.form){
+                    return req.body[value.name];
+                }
+            });
+            args.push(req);
+            args.push(res);
+            action.apply(this, args).then((result: any)=>{
+                return this.__resultHandle(req, res, next, result)
+            }).catch(function(err:Error){
+                next(err);
+            });
+        }
+    }
+
+    protected __resultHandle(req: express.Request, res: express.Response, next: any, result: any){
+        return res.json(result)
     }
 }
 
 export default Controller
+
+
+

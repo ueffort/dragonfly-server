@@ -24,6 +24,7 @@ export class Record{
 export class Model{
 
     protected mysql: Mysql;
+    protected app: App;
     protected tableName: string;
     protected key:string = "id";
     protected createTime:string = "create_time";
@@ -32,6 +33,8 @@ export class Model{
     protected filed:string[];
 
     public constructor(app: App){
+        console.log("app", app);
+        this.app = app;
         this.mysql = app.mysql()
     }
 
@@ -39,7 +42,7 @@ export class Model{
         return new Record(data);
     }
 
-    private getTime(){
+    public getTime(){
         return new Date().getTime();
     }
 

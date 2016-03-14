@@ -8,7 +8,7 @@ import {Promise} from "../../app/tools/Promise";
 import Controller from "../../app/abstract/Controller";
 
 export class Auth extends Controller{
-    public static get(tokenStr:string):Promise<any>{
+    public get(tokenStr:string):Promise<any>{
         return token(this.app.mysql(), tokenStr).then(function(result:any){
             return {
                 token: result.token,
