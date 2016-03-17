@@ -3,6 +3,7 @@
  */
 
 /// <reference path="../../../../typings/redux/redux.d.ts" />
+/// <reference path="../../../../libs/ts/react-router-redux.d.ts" />
 
 import { combineReducers } from "redux";
 import PlayBook from "./PlayBook";

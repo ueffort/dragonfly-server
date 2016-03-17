@@ -2,11 +2,11 @@
  * Created by apple on 16/1/13.
  */
 
-/// <reference path="../typings/express-session/express-session.d.ts" />
+/// <reference path="../../typings/express-session/express-session.d.ts" />
 
 import * as session from"express-session";
 import * as express from "express";
-import App from "../app/App";
+import App from "../App";
 import {RequestHandler} from "express";
 class Dispatch{
 

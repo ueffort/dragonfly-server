@@ -3,7 +3,8 @@
  * Created by tutu on 15-12-18.
  */
 
-/// <reference path="typings/commander/commander.d.ts" />
+/// <reference path="./typings/commander/commander.d.ts" />
+
 import * as program from "commander";
 import CoreApp from "./core/App";
 import DataApp from "./data/App";
@@ -39,7 +40,7 @@ program
     .command("start <instance>")
     .description("start service [data|core|all]")
     .option("-d, --daemon", "run in backend")
-    .action(function(instance, options){
+    .action(function(instance: any, options: any){
         if (options.d) {
             return daemon();
         }
@@ -63,7 +64,7 @@ program
 /* 捕获所有命令,输出帮助信息 */
 program
     .command("*")
-    .action(function(options){
+    .action(function(options: any){
         program.help();
     });
 

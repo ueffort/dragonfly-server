@@ -16,7 +16,7 @@ var __DEV__ = config.DEBUG;
 var ts = require('gulp-typescript');
 
 gulp.task('ts', function () {
-    return gulp.src(['*.ts', 'core/**/*.ts', 'data/**/*.ts', 'module/**/*.ts'])
+    return gulp.src(['*.ts', 'core/**/*.ts', 'data/**/*.ts', 'app/**/*.ts'])
         .pipe(ts(require("./tsconfig").compilerOptions))
         .pipe(gulp.dest('/'));
 });
@@ -148,5 +148,5 @@ gulp.task("webpack-dev-server", function(callback) {
         });
 });
 
-gulp.task("init", ["sass", "webpack_clean", "webpack", "webpack_handle"]);
+gulp.task("init", ["ts", "sass", "webpack_clean", "webpack", "webpack_handle"]);
 

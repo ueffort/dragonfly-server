@@ -4,6 +4,7 @@
 
 /// <reference path="../../../../libs/ts/immutable.d.ts" />
 /// <reference path="../../../../libs/ts/common.d.ts" />
+/// <reference path="../../../../libs/ts/react-router-redux.d.ts" />
 /// <reference path="../../../../typings/react/react.d.ts" />
 /// <reference path="../../../../typings/react-redux/react-redux.d.ts" />
 /// <reference path="../../../../typings/react-router/react-router.d.ts" />

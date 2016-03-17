@@ -1,11 +1,14 @@
 /**
  * Created by tutu on 15-12-21.
  */
+
+/// <reference path="../../typings/protobufjs/protobufjs.d.ts" />
+
 import DataApp from "../App";
 import {Redis} from "../../app/tools/Redis";
 import {Promise} from "../../app/tools/Promise";
-import ProtoBuf = require("protobufjs");
-import fs = require("fs");
+import * as ProtoBuf from "protobufjs";
+import * as fs from "fs";
 import {RedisClient} from "redis";
 
 interface AgentConfig{

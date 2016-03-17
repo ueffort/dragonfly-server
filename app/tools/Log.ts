@@ -1,6 +1,10 @@
 /**
  * Created by tutu on 16-1-8.
  */
+
+/// <reference path="../../typings/express/express.d.ts" />
+/// <reference path="../../typings/bunyan/bunyan.d.ts" />
+
 import * as express from "express";
 import * as bunyan from "bunyan";
 
