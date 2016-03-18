@@ -15,6 +15,7 @@ interface ParamDesc {
     body?: boolean;
     query?: boolean;
     form?: boolean;
+    param?: boolean;
     /**
      * 参数在path中,位数按index计算
      */
@@ -45,7 +46,7 @@ class Controller{
      */
     public handle(param:any[], action:(...args:any[])=>Promise<any>) {
         return (req: express.Request, res: express.Response, next: any):void=>{
-            let args = param.map(function(value:ParamDesc){
+            let args = param.map((value:ParamDesc)=>{
                 if(value.body){
                     return req.body;
                 }else if(value.query){
@@ -56,13 +57,15 @@ class Controller{
                     return value.index ? a.splice(a.length - value.index - 1, 1) : a.pop();
                 }else if(value.form){
                     return req.body[value.name];
+                }else if(value.param){
+                    return req.params[value.name]
                 }
             });
             args.push(req);
             args.push(res);
             action.apply(this, args).then((result: any)=>{
                 return this.__resultHandle(req, res, next, result)
-            }).catch(function(err:Error){
+            }).catch((err:Error)=>{
                 next(err);
             });
         }

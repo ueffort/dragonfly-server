@@ -10,20 +10,11 @@ import CoreApp from "../App";
 import Dispatch from "../../app/abstract/Dispatch";
 import Api from "../controllers/api";
 import * as ErrorID from "../ErrorID";
-import * as bodyParser from "body-parser";
-import  * as session from "express-session";
+import Playbook from "../controllers/playbook";
 
 
 export default function routerHandle(app:CoreApp):express.Router{
     let router: express.Router = express.Router();
-
-    router.use(session({
-        secret: 'keyboard cat',
-        resave: false,
-        saveUninitialized: true,
-        cookie: { maxAge: 24*60*60*1000 }}));
-    router.use(bodyParser.urlencoded({ extended: true }));
-    router.use(bodyParser.json());
 
     // 全局登录验证
     router.use("/api/*", Dispatch.session(app,['/api/login', '/api/register'], function(session: any){
@@ -36,12 +27,22 @@ export default function routerHandle(app:CoreApp):express.Router{
     }));
 
     let api = new Api(app);
+    let playbook = new Playbook(app);
 
+    //登录,注册,登出
     router.post("/api/login", api.handle([{name:"email", form:true}, {name:"password", form:true}], api.login));
-
     router.post("/api/register", api.handle([{name:"email", form:true}, {name:"password", form:true}], api.register));
-
     router.post("/api/loginOut", api.handle([], api.loginOut));
+
+    //playbook 查看 配置,状态,列表
+    router.get("/api/playbook/setting/:type", playbook.handle([{name:"type", param:true}], playbook.playbookSetting));
+    router.get("/api/playbook/status/:id", playbook.handle([{name:"id", param:true}], playbook.playbookStatus));
+    router.get("/api/playbook/list", playbook.handle([{name:"limit", query:true}, {name:"start", query:true}, {name:"count", query:true}], playbook.playbookList));
+
+    //playbook 操作 添加,删除
+    router.post("/api/playbook/add", playbook.handle([{name:"type", form:true}, {name:"data", form:true}], playbook.playbookAdd));
+    router.post("/api/playbook/update", playbook.handle([{name:"id", form:true}, {name:"data", form:true}], playbook.playbookUpdate));
+    router.post("/api/playbook/delete", playbook.handle([{name:"id", form:true}], playbook.playbookDelete));
 
     return router;
 };

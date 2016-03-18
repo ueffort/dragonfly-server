@@ -3,6 +3,7 @@
  */
 import {Mysql} from "../../app/tools/Mysql";
 import App from "../../app/App";
+import {BaseModel, ModelHandle} from "./BaseModel";
 
 export class Record{
 
@@ -21,10 +22,8 @@ export class Record{
     }
 }
 
-export class Model{
+export class Model extends BaseModel{
 
-    protected mysql: Mysql;
-    protected app: App;
     protected tableName: string;
     protected key:string = "id";
     protected createTime:string = "create_time";
@@ -32,69 +31,75 @@ export class Model{
     protected deleteTime:string = "delete_time";
     protected filed:string[];
 
-    public constructor(app: App){
-        console.log("app", app);
-        this.app = app;
-        this.mysql = app.mysql()
-    }
-
-    protected formatData(data: any){
+    protected formatData(data: any):Record{
         return new Record(data);
     }
 
-    public getTime(){
-        return new Date().getTime();
-    }
-
-    public del(data: Record){
-        data.set(this.deleteTime, this.getTime);
+    public del(data: Record):Promise<any>{
+        data.set(this.deleteTime, BaseModel.getTime());
         return this.update(data);
     }
 
-    public get(data: Record){
-        let sql: string = "SELECT * FROM "+this.tableName+" WHERE "+this.key+" = "+data.get(this.key)+" AND "+this.deleteTime+"<=0";
-        return this.exec(sql).then((result: any[])=>{
-            let newResult: any[] = [];
-            for(let i=0;i<result.length;i++){
-                newResult[i] = this.formatData(result[i]);
-            }
-            return newResult;
+    public get(key: number):Promise<any>{
+        let modelHandle: ModelHandle = {
+            tableName: this.tableName,
+            select: true,
+            where: [[this.key, "=", key]]
+        };
+        return this.handle(modelHandle).then((result: any[])=>{
+            if(!result || result.length <= 0) return {};
+            return this.formatData(result[0]);
         });
     }
 
-    public update(data: Record){
-        data.set(this.updateTime, this.getTime);
-        let setSql = "";
-        for(let i=0;i<this.filed.length;i++){
-            if(this.filed[i] == this.key){
-                continue;
-            }
-            setSql += this.filed[i]+"="+data.get(this.filed[i]);
-            if(i != this.filed.length) setSql += " AND ";
-        }
-        let sql: string = "UPDATE "+this.tableName+" SET "+setSql+" WHERE "+this.key+" = "+data.get(this.key);
-        return this.exec(sql).then(()=>{return true});
-    }
-
-    public add(data: Record){
-        data.set(this.createTime, this.getTime);
-        let vals: any[] = [];
-        let keys: any[] = [];
-        keys = this.filed;
+    public update(data: Record):Promise<any>{
+        data.set(this.updateTime, BaseModel.getTime());
+        let keys: any[] = this.filed;
+        let values: any = {};
         for(let i=0;i<keys.length;i++){
             if(keys[i] == this.key){
                 keys.splice(i,1);
                 continue;
             }
-            vals.push(data.get(this.filed[i]))
+            values[keys[i]] = data.get(keys[i]);
         }
-        let sql: string = "INSERT INTO "+this.tableName+" ("+[...keys]+") VALUES ('"+[...vals]+"')";
-        return this.exec(sql).then((result: any)=>{data.set(this.key, result[this.key]); return data});
+        let modelHandle: ModelHandle = {
+            tableName: this.tableName,
+            update: true,
+            value: values,
+            filed: keys,
+            where: [[this.key, "=", data.get(this.key)]]
+        };
+        return this.handle(modelHandle).then(()=>{return true});
     }
 
-    protected exec(sql: string){
-        console.log(sql);
-        return this.mysql.promise(sql);
+    public add(data: Record):Promise<any>{
+        data.set(this.createTime, BaseModel.getTime());
+        let keys: any[] = this.filed;
+        let values: any = {};
+        for(let i=0;i<keys.length;i++){
+            if(keys[i] == this.key){
+                keys.splice(i,1);
+                continue;
+            }
+            values[keys[i]] = data.get(keys[i]);
+        }
+        let modelHandle: ModelHandle = {
+            tableName: this.tableName,
+            add: true,
+            value: values,
+            filed: keys
+        };
+        return this.handle(modelHandle).then((result: any)=>{data.set(this.key, result[this.key]); return data});
+    }
+
+    public save(data: Record):Promise<any>{
+        if(data.get(this.createTime)){
+            return this.update(data);
+        }else{
+            return this.add(data);
+        }
+
     }
 
 }

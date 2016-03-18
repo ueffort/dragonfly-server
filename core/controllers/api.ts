@@ -13,9 +13,10 @@ import CoreApp from "../App";
 
 export default class Api extends Controller{
 
-    public getApp(){
-        console.log(this.app);
+    protected __resultHandle(req: express.Request, res: express.Response, next: any, result: any){
+        return res.json(CoreApp.formatResult(result));
     }
+
     public login(email: string, password: string, req: express.Request, res: express.Response):Promise<any>{
         return new UserModel(this.app).login(email, password)
             .then((user: User)=>{
@@ -34,10 +35,6 @@ export default class Api extends Controller{
 
     public loginOut(req: express.Request, res: express.Response):Promise<any>{
         req.session["user"] = {};
-        return Promise.resolve(true);
-    }
-
-    protected __resultHandle(req: express.Request, res: express.Response, next: any, result: any){
-        return res.json(CoreApp.formatResult(result));
+        return Promise.resolve({});
     }
 }

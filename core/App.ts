@@ -10,6 +10,8 @@ import coreRouter from "./router/core";
 import webRouter from "./router/web";
 import * as path from "path";
 import * as ErrorID from "./ErrorID";
+import * as bodyParser from "body-parser";
+import  * as session from "express-session";
 
 class CoreApp extends App {
 
@@ -22,6 +24,13 @@ class CoreApp extends App {
     protected init(): void {
         this.express.set("views", path.join(__dirname, "views"));
         this.express.set("view engine", "ejs");
+        this.express.use(session({
+            secret: 'keyboard cat',
+            resave: false,
+            saveUninitialized: true,
+            cookie: { maxAge: 24*60*60*1000 }}));
+        this.express.use(bodyParser.urlencoded({ extended: true }));
+        this.express.use(bodyParser.json());
         this.express.use(coreRouter(this), webRouter(this));
 
         this.listen(this.config.CORE_CONFIG.PORT);
