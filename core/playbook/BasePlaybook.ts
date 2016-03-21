@@ -2,30 +2,29 @@
  * Created by tutu on 16-3-17.
  */
 
+///<reference path="../../typings/es6-promise/es6-promise.d.ts"/>
+
 import {Playbook as PlaybookRecord, PlaybookModel} from "../model/playbook";
 import App from "../../app/App";
+import {EventEmitter} from "events";
 
-const WAIT:number = 1;
-const ING:number = 2;
-const END:number = 3;
-const CANCEL:number = 4;
-const BREAK:number = 5;
+const WAIT:number = 1; //等待执行
+const ING:number = 2; //执行中
+const END:number = 3; //执行结束
+const CANCEL:number = 4; //取消执行
+const BREAK:number = 5; //中断执行
 
-const SCCESS:number = 1;
-const FAIL:number = 2;
+const SCCESS:number = 1; //执行成功
+const FAIL:number = 2; //执行失败
 
-const NORMAL:number = 1;
-const WARN:number = 2;
-const ERROR:number = 3;
+const NORMAL:number = 1; //正常
+const WARN:number = 2; //警告
+const ERROR:number = 3; //错误
 
-const UNKNOWN:number = 0;
+const UNKNOWN:number = 0; //未知
 
-const ALL_SCCESS:number = 1;
-const SOME_SCCESS:number = 2;
-const ALL_FAIL:number = 3;
-
-const SCRIPT:number = 1;
-const SCRIPTGROUP:number = 2;
+const GROUP_END:number = 1; //全部结束
+const GROUP_WAIT:number = 2; //等待
 
 
 export class Script{
@@ -34,36 +33,48 @@ export class Script{
     private handleState:number;
     private resultState:number;
     private params:any;
-    private des:string;
     private time:number;
-    private result:any;
+    private events:EventEmitter;
 
     public static NAME = "n";
     public static STATE = "s";
     public static H_STATE = "hs";
     public static R_STATE = "rs";
     public static PARAMS = "p";
-    public static DES = "d";
     public static TIME = "t";
 
-    constructor(data:any){
+    constructor(data:any, events:EventEmitter){
+        this.events = events;
+        this.events.emit("registerScript", this);
         this.name = data[Script.NAME] ? data[Script.NAME] : "";
         this.state = data[Script.STATE] ? data[Script.STATE] : UNKNOWN;
         this.handleState = data[Script.H_STATE] ? data[Script.H_STATE] : UNKNOWN;
         this.resultState = data[Script.R_STATE] ? data[Script.R_STATE] : UNKNOWN;
         this.params = data[Script.PARAMS] ? data[Script.PARAMS] : {};
-        this.des = data[Script.DES] ? data[Script.DES] : "";
         this.time = data[Script.TIME] ? data[Script.TIME] : UNKNOWN;
     }
 
-    public handle(action:(name:string, params:any)=>Promise<any>){
-        action(this.name, this.params);
+    public getName(){
+        return this.name;
     }
 
-    public setState(state:number, handleState?:number, resultState?:number){
+    public checkState(){
+        return this.state;
+    }
+
+    public start(){
+        this.events.emit("execScript", this.name);
+    }
+
+    private setState(state:number, handleState?:number, resultState?:number){
         this.state = state;
         if(handleState) this.handleState = handleState;
         if(resultState) this.resultState = resultState;
+    }
+
+    public end(handleState?:number, resultState?:number){
+        this.setState(END, handleState, resultState);
+        this.events.emit("scriptEnd");
     }
 
     public setParams(params:any){
@@ -71,23 +82,22 @@ export class Script{
     }
 
     public toFormat(){
-        return Script.format([this.name, this.state, this.handleState, this.resultState, this.params, this.des, this.time])
+        return Script.format([this.name, this.state, this.handleState, this.resultState, this.params, this.time])
     }
 
     public static initFormat(data:any){
-        return Script.format([data[Script.NAME], WAIT, UNKNOWN, UNKNOWN, {}, data[Script.DES], UNKNOWN])
+        return Script.format([data[Script.NAME], WAIT, UNKNOWN, UNKNOWN, {}, UNKNOWN])
     }
 
     private static format(data:any){
-        let n=Script.NAME,s=Script.STATE,hs=Script.H_STATE,rs=Script.R_STATE,p=Script.PARAMS,d=Script.DES,t=Script.TIME;
+        let n=Script.NAME,s=Script.STATE,hs=Script.H_STATE,rs=Script.R_STATE,p=Script.PARAMS,t=Script.TIME;
         let _format:any = {};
         _format[n] = data[0];
         _format[s] = data[1];
         _format[hs] = data[2];
         _format[rs] = data[3];
         _format[p] = data[4];
-        _format[d] = data[5];
-        _format[t] = data[6];
+        _format[t] = data[5];
         return _format;
     }
 }
@@ -96,7 +106,7 @@ export class ScriptGroup{
     private group:any[];
     private state:number;
     private type:number;
-    private num:number;
+    private events:EventEmitter;
 
     public static STATE = "s";
     public static GROUP = "g";
@@ -106,29 +116,57 @@ export class ScriptGroup{
     public static TYPE_LIST = 1;
     public static TYPE_PARALLEL = 2;
 
-    constructor(data:any){
+    constructor(data:any, events:EventEmitter){
+        this.events = events;
         this.group = data[ScriptGroup.GROUP] ? data[ScriptGroup.GROUP] : [];
         this.state = data[ScriptGroup.STATE] ? data[ScriptGroup.STATE] : UNKNOWN;
         this.type = data[ScriptGroup.TYPE] ? data[ScriptGroup.TYPE] : ScriptGroup.TYPE_LIST;
         for(let i in this.group){
             if(typeof i === "object"){
                 if(i[ScriptGroup.TYPE_GROUP] == 1){
-                    this.group[i] = new ScriptGroup(i);
+                    this.group[i] = new ScriptGroup(i, events);
                 }else{
-                    this.group[i] = new Script(i);
+                    this.group[i] = new Script(i, events);
                 }
             }
         }
     }
 
     public start(){
-        
+        for(let i in this.group){
+            if(i[ScriptGroup.TYPE_GROUP] == 1){
+                if(this.group[i].checkState() != GROUP_END){
+                    return this.group[i].start();
+                }
+            }else{
+                if(this.group[i].checkState() != END){
+                    this.group[i].start();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public checkState(){
+        for(let i in this.group){
+            if(i[ScriptGroup.TYPE_GROUP] == 1){
+                if(this.group[i].checkState() != GROUP_END){
+                    return this.state = GROUP_WAIT;
+                }
+            }else{
+                if(this.group[i].checkState() != END){
+                    return this.state = GROUP_WAIT;
+                }
+            }
+        }
+        return this.state = GROUP_END;
     }
 
     public toFormat(){
         let _group:any[] = [];
         for(let i in this.group){
-            _group.push(i.toFormat())
+            _group.push(i.toFormat());
         }
         return ScriptGroup.format([_group, this.state, this.type, 1]);
     }
@@ -160,22 +198,69 @@ export class ScriptGroup{
 
 export class ScriptDispatch{
     private script:ScriptGroup = null;
+    private events:EventEmitter = new EventEmitter();
+    private scriptList: any = {};
     constructor(script:any){
+        this.events.on("registerScript", this.registerScript);
+        this.events.on("execScript",this.execScript);
+        this.events.on("scriptEnd", this.scriptEnd);
         if(script[ScriptGroup.TYPE_GROUP] == 1){
-            this.script = new ScriptGroup(script)
+            this.script = new ScriptGroup(script, this.events);
+        }
+    }
+
+    private execScript(name:string){
+        this.events.emit("scriptHandle", this.scriptList[name]);
+    }
+
+    private registerScript(script:Script){
+        this.scriptList[script.getName()] = script;
+    }
+
+    private scriptEnd(){
+        if(this.script){
+            this.script.checkState();
         }
     }
 
     public start(){
-
+        if(!this.doScript()){
+            this.end();
+        }
     }
 
-    public end(){
-
+    private end(){
+        this.events.emit("end");
+        this.events.removeAllListeners();
     }
 
     public next(){
+        if(!this.doScript()){
+            this.end();
+        }
+    }
 
+    public setParams(scriptName:string, params:any){
+        if(this.scriptList[scriptName]){
+            this.scriptList[scriptName].setParams(params);
+        }
+    }
+
+    private doScript(){
+        if(this.script){
+            if(this.script.start()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public onEnd(callback:()=>any){
+        this.events.on("end", callback)
+    }
+
+    public onHandle(callback:(script:Script)=>any){
+        this.events.on("scriptHandle", callback);
     }
 
     public toFormat(){
@@ -186,6 +271,11 @@ export class ScriptDispatch{
         let _result = {};
         if(data[ScriptGroup.TYPE_GROUP] == 1){
             _result = ScriptGroup.initFormat(data);
+        }else{
+            let _initScriptGroup:any = {};
+            _initScriptGroup[ScriptGroup.TYPE_GROUP] = 1;
+            _initScriptGroup[ScriptGroup.GROUP] = [data];
+            _result = ScriptGroup.initFormat(_initScriptGroup);
         }
         return _result;
     }
@@ -202,6 +292,9 @@ export class BasePlaybook{
 
     private scriptDispatch:ScriptDispatch;
 
+    private scriptResolve:(value: any) => any | Thenable<any>;
+    private scriptReject:(error: any) => any | Thenable<any>;
+
     constructor(app: App, playbook?: PlaybookRecord){
         this.app = app;
         if(playbook){
@@ -212,11 +305,11 @@ export class BasePlaybook{
 
         }
         this.playbookModel = new PlaybookModel(app);
-        this.init();
+        this.doInit();
     }
 
-    protected init(){
-
+    protected doInit(){
+        return;
     }
 
     private initPlaybook(){
@@ -228,22 +321,33 @@ export class BasePlaybook{
 
     public start(){
         this.scriptDispatch = new ScriptDispatch(this.playbookRecord.script);
+        this.scriptDispatch.onHandle(this.handle);
+        this.scriptDispatch.onEnd(this.end);
+        this.scriptDispatch.start();
+        return new Promise((resolve, reject)=>{
+            this.scriptResolve = resolve;
+            this.scriptReject = reject;
+        });
     }
 
-    private save(){
+    private handle(script:Script){
+        return Promise.resolve(this.doHandle(script)).then(()=>{
+            this.scriptDispatch.next();
+        });
+    }
+
+    private end(){
+        this.save().then(()=>{
+            this.scriptResolve(this);
+        });
+    }
+
+    protected doHandle(script:Script){
+        return true;
+    }
+
+    private save():Promise<any>{
         return this.playbookModel.save(this.playbookRecord);
-    }
-
-    private next(){
-
-    }
-
-    private done(){
-
-    }
-
-    protected scriptHandleResult(scriptName:string, params: any, result:any){
-        return result;
     }
 
 }

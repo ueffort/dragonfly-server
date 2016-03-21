@@ -11,11 +11,14 @@ import webRouter from "./router/web";
 import * as path from "path";
 import * as ErrorID from "./ErrorID";
 import * as bodyParser from "body-parser";
-import  * as session from "express-session";
+import * as session from "express-session";
+import Task from "./handle/Task";
 
 class CoreApp extends App {
 
     protected name = "core";
+
+    private _task = Task;
 
     constructor() {
         super();
@@ -34,6 +37,15 @@ class CoreApp extends App {
         this.express.use(coreRouter(this), webRouter(this));
 
         this.listen(this.config.CORE_CONFIG.PORT);
+        this.taskHandle();
+    }
+
+    public task(): Task {
+        return this._task;
+    }
+
+    private taskHandle(): void {
+        this._task = Task.getInstance(this).start();
     }
 
     /**
