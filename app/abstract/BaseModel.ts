@@ -13,6 +13,8 @@ export interface ModelHandle{
     where?:any[];
     filed?:string[];
     value?:any;
+    limit?:string;
+    order?:string;
 }
 
 export class BaseModel{
@@ -42,13 +44,24 @@ export class BaseModel{
             sql = `INSERT INTO ${modelHandle.tableName} ${this._addValue(modelHandle.value, modelHandle.filed)}`;
         }else if(modelHandle.select){
             if(!modelHandle.where) error = "[DB] SELECT SQL where not empty";
-            sql = `SELECT ${this._filed(modelHandle.filed)} FROM ${modelHandle.tableName} WHERE ${this._where(modelHandle.where)}`;
+            if(modelHandle.limit) modelHandle.limit = `LIMIT ${modelHandle.limit}`;
+            if(modelHandle.order) modelHandle.order = `ORDER BY ${modelHandle.order}`;
+            sql = `SELECT ${this._filed(modelHandle.filed)} FROM ${modelHandle.tableName} WHERE ${this._where(modelHandle.where)} ${modelHandle.order} ${modelHandle.limit}`;
         }else if(modelHandle.update){
             if(!modelHandle.where || !modelHandle.value) error = "[DB] UPDATE SQL where or value not empty";
             sql = `UPDATE ${modelHandle.tableName} SET ${this._setValue(modelHandle.value, modelHandle.filed)} WHERE ${this._where(modelHandle.where)}`;
         }else{
             error = "[DB] SQL TYPE not empty"
         }
+        if(error) return Promise.reject(new Error(`${error} ERROR SQL: ${sql}`));
+        return this.exec(sql);
+    }
+
+    protected count(modelHandle: ModelHandle):Promise<number>{
+        let sql = "";
+        let error = "";
+        if(!modelHandle.where) error = "[DB] SELECT COUNT SQL where not empty";
+        sql = `SELECT COUNT FROM ${modelHandle.tableName} WHERE ${this._where(modelHandle.where)}`;
         if(error) return Promise.reject(new Error(`${error} ERROR SQL: ${sql}`));
         return this.exec(sql);
     }

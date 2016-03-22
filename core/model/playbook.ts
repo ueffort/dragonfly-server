@@ -3,8 +3,10 @@
  */
 import {Mysql} from "../../app/tools/Mysql";
 import CoreApp from "../App";
+import * as Constant from "../Constant";
 import {Record, Model} from "../../app/abstract/Model";
 import {md5} from "../../app/tools/StringHandle";
+import {ModelHandle} from "../../app/abstract/BaseModel";
 
 export class Playbook extends Record{
 
@@ -22,8 +24,15 @@ export class Playbook extends Record{
     get state(){
         return this.get("state");
     }
-    set state(status:number){
-        this.set("state", status);
+    set state(state:number){
+        this.set("state", state);
+    }
+
+    get time(){
+        return this.get("time");
+    }
+    set time(time:number){
+        this.set("time", status);
     }
 
     private _result:any = null;
@@ -59,9 +68,14 @@ export class PlaybookModel extends Model{
 
     public key: string = "id";
 
-    public filed: string[] = ["id", "type", "state", "script", "result", "create_time", "update_time", "delete_time"];
+    public filed: string[] = ["id", "type", "state", "time", "script", "result", "create_time", "update_time", "delete_time"];
 
     protected formatData(data: any){
         return new Playbook(data);
+    }
+
+    public getWaitPlayBook():Promise<Playbook[]>{
+        let where = [["state", "=", Constant.WAIT]];
+        return this.getList(where);
     }
 }

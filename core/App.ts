@@ -9,7 +9,7 @@ import * as express from "express";
 import coreRouter from "./router/core";
 import webRouter from "./router/web";
 import * as path from "path";
-import * as ErrorID from "./ErrorID";
+import * as Constant from "./Constant";
 import * as bodyParser from "body-parser";
 import * as session from "express-session";
 import Task from "./handle/Task";
@@ -67,18 +67,18 @@ class CoreApp extends App {
         let result: any = {};
         if(err){
             switch (err.name){
-                case ErrorID.NO_FIND:
-                    result.status = ErrorID.NO_FIND_STATUS;
+                case Constant.NO_FIND:
+                    result.status = Constant.NO_FIND_STATUS;
                     break;
-                case ErrorID.NEED_LOGIN:
-                    result.status = ErrorID.NEED_LOGIN_STATUS;
+                case Constant.NEED_LOGIN:
+                    result.status = Constant.NEED_LOGIN_STATUS;
                     break;
                 default:
-                    result.status = ErrorID.OTHER_ERROR_STATUS;
+                    result.status = Constant.OTHER_ERROR_STATUS;
                     break;
             }
         }else{
-            result.status = ErrorID.SUCCESS_STATUS;
+            result.status = Constant.SUCCESS_STATUS;
         }
         result.message = err ? err.message : "success";
         result.data = data ? data : {};

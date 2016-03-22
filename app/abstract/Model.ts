@@ -35,21 +35,48 @@ export class Model extends BaseModel{
         return new Record(data);
     }
 
-    public del(data: Record):Promise<any>{
+    public del(data: Record):Promise<Record>{
         data.set(this.deleteTime, BaseModel.getTime());
         return this.update(data);
     }
 
-    public get(key: number):Promise<any>{
+    public get(key: number):Promise<Record>{
         let modelHandle: ModelHandle = {
             tableName: this.tableName,
             select: true,
-            where: [[this.key, "=", key]]
+            where: [[this.key, "=", key]],
+            order: `${this.key} DESC`,
+            limit: "0,1"
         };
         return this.handle(modelHandle).then((result: any[])=>{
             if(!result || result.length <= 0) return {};
             return this.formatData(result[0]);
         });
+    }
+    public getList(where:any[] = [], startNum:number = 0, count:number = 100):Promise<Record[]>{
+        let modelHandle: ModelHandle = {
+            tableName: this.tableName,
+            select: true,
+            where: where,
+            order: `${this.key} DESC`,
+            limit: `${startNum}, ${count}`
+        };
+        return this.handle(modelHandle).then((result: any[])=>{
+            if(!result || result.length <= 0) return [];
+            for(let i in result){
+                result[i] = this.formatData(result[i]);
+            }
+            return result;
+        });
+    }
+
+    public getCount(where:any[] = []):Promise<number>{
+        let modelHandle: ModelHandle = {
+            tableName: this.tableName,
+            select: true,
+            where: where
+        };
+        return this.count(modelHandle);
     }
 
     public update(data: Record):Promise<any>{
