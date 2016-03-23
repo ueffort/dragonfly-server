@@ -8,8 +8,6 @@ import {Playbook, PlaybookModel} from "../model/playbook";
 import CoreApp from "../App";
 import * as Constant from "../Constant";
 import {EventEmitter} from "events";
-import {TaskResult} from "../handle/Task";
-import {END} from "../Constant";
 
 export class Script{
     private name:string;
@@ -431,34 +429,24 @@ export class BasePlaybook{
     }
 
     private end(){
-        let result:TaskResult = {
-            code:Constant.TASK_OVER,
-            message:"脚本完成"
-        };
         this.playbook.state = Constant.END;
 
         if(this.repeat){
             this.playbook.state = Constant.WAIT;
             this.playbook.script = ScriptDispatch.initFormat(this.scripts);
             this.playbook.time = this.playbook.time + this.repeatTime;
-            result["time"] = this.playbook.time;
-            result["code"] = Constant.TASK_AGAIN;
         }
 
         this.saveScript().then(()=>{
-            this.scriptResolve(result);
+            this.scriptResolve(this.playbook);
         });
     }
 
     private cancel(error?:Error){
         if(!error){
             this.playbook.state = Constant.CANCEL;
-            let result:TaskResult = {
-                code:Constant.TASK_CANCEL,
-                message:"脚本中断"
-            };
             this.saveScript().then(()=>{
-                this.scriptResolve(result);
+                this.scriptResolve(this.playbook);
             });
         }else{
             this.playbook.state = Constant.BREAK;

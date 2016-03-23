@@ -69,20 +69,16 @@ export default class Task {
         if(this.playbookList.length > 0){
             let playbookId = Number(this.playbookList.shift());
             new PlaybookModel(this.app).get(playbookId)
-                .then((playbook:PlaybookRecord)=>{
+                .then((playbook:Playbook)=>{
                     return new BasePlaybook(this.app, playbook).start();
                 })
-                .then((result:TaskResult)=>{
-                    if(result.code == Constant.TASK_AGAIN){
-                        if(result.time > 0){
-                            this.events.emit("addTime", Constant.TASK_TYPE_PLAYBOOK, playbookId, result.time);
-                        }else{
-                            this.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookId);
-                        }
+                .then((playbook:Playbook)=>{
+                    if(playbook.time > new Date().getTime()){
+                        this.events.emit("addTime", Constant.TASK_TYPE_PLAYBOOK, playbook.id, playbook.time)
                     }
                     this.events.emit("next");
                 })
-                .catch((result:any)=>{
+                .catch((error:Error)=>{
                     this.events.emit("next");
                 });
             this.ing = true;
