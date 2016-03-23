@@ -44,7 +44,7 @@ export class Model extends BaseModel{
         let modelHandle: ModelHandle = {
             tableName: this.tableName,
             select: true,
-            where: [[this.key, "=", key]],
+            where: [[this.key, "=", key], [this.deleteTime, "=", 0]],
             order: `${this.key} DESC`,
             limit: "0,1"
         };
@@ -54,7 +54,7 @@ export class Model extends BaseModel{
         });
     }
     public getList(where:any[] = [], startNum:number = 0, count:number = 100):Promise<Record[]>{
-        where.push([this.deleteTime, ">", 0]);
+        where.push([this.deleteTime, "=", 0]);
         let modelHandle: ModelHandle = {
             tableName: this.tableName,
             select: true,
@@ -72,7 +72,7 @@ export class Model extends BaseModel{
     }
 
     public getCount(where:any[] = []):Promise<number>{
-        where.push([this.deleteTime, ">", 0]);
+        where.push([this.deleteTime, "=", 0]);
         let modelHandle: ModelHandle = {
             tableName: this.tableName,
             select: true,
