@@ -349,6 +349,7 @@ export class BasePlaybook{
     private scriptReject:(error: any) => any | Thenable<any>;
 
     private scriptHandleFun:(script: Script) => Promise<ScriptResult>;
+    private initFun:()=>{};
 
     constructor(app: CoreApp, playbook?: Playbook){
         this.app = app;
@@ -363,12 +364,37 @@ export class BasePlaybook{
         this.setHandleFun(BasePlaybook.doHandle);
     }
 
-    protected doInit(){
-        return;
+    public getPlaybookInfo(){
+        return {}
     }
 
-    private setHandleFun(fun:(script: Script) => Promise<ScriptResult>){
+    public setParam(param:any){
+        this.playbook.param = param;
+        return this;
+    }
+
+    public reset(){
+        this.playbook.state = Constant.WAIT;
+        this.playbook.script = ScriptDispatch.initFormat(this.scripts);
+        this.playbook.time = 0;
+    }
+
+    public stop(){
+        this.playbook.state = Constant.WAIT;
+    }
+
+    protected setInfoFun(fun:()=>{}){
+        this.initFun = fun;
+        return this;
+    }
+
+    protected setHandleFun(fun:(script: Script) => Promise<ScriptResult>){
         this.scriptHandleFun = fun;
+        return this;
+    }
+
+    public isRepeat(){
+        return this.repeat;
     }
 
     private initPlaybook(){
@@ -376,8 +402,9 @@ export class BasePlaybook{
         this.playbook.type = this.typeName;
         this.playbook.script = ScriptDispatch.initFormat(this.scripts);
         this.playbook.result = {};
+        this.playbook.param = {};
         this.playbook.time = 0;
-        this.doInit();
+        if(this.initFun) this.initFun();
     }
 
     public start(){
@@ -432,9 +459,8 @@ export class BasePlaybook{
         this.playbook.state = Constant.END;
 
         if(this.repeat){
-            this.playbook.state = Constant.WAIT;
-            this.playbook.script = ScriptDispatch.initFormat(this.scripts);
-            this.playbook.time = this.playbook.time + this.repeatTime;
+            this.reset();
+            this.playbook.time = new Date().getTime() + this.repeatTime;
         }
 
         this.saveScript().then(()=>{
@@ -467,7 +493,7 @@ export class BasePlaybook{
         return Promise.resolve(result);
     }
 
-    private save():Promise<any>{
+    public save():Promise<any>{
         return this.playbookModel.save(this.playbook);
     }
 

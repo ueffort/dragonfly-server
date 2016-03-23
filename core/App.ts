@@ -18,7 +18,7 @@ class CoreApp extends App {
 
     protected name = "core";
 
-    private _task = Task;
+    private _task: Task;
 
     constructor() {
         super();
@@ -54,7 +54,7 @@ class CoreApp extends App {
     protected errorHandle(): void {
         this.express.use((req: express.Request, res: express.Response, next: any)=>{
             let error = new Error("no find!");
-            error.name = ErrorID.NO_FIND;
+            error.name = Constant.NO_FIND;
             res.status(200).json(CoreApp.formatResult({}, error));
         });
         this.express.use((err: Error, req: express.Request, res: express.Response, next: any)=>{

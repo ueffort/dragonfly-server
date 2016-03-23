@@ -60,6 +60,19 @@ export class Playbook extends Record{
         this._script = script;
         this.set("script", JSON.stringify(this._script));
     }
+
+    private _param:any = null;
+
+    get param(){
+        if(!this._param){
+            this._param = JSON.parse(this.get("param"));
+        }
+        return this._param;
+    }
+    set param(param:any){
+        this._param = param;
+        this.set("param", JSON.stringify(this._param));
+    }
 }
 
 export class PlaybookModel extends Model{
@@ -68,7 +81,7 @@ export class PlaybookModel extends Model{
 
     public key: string = "id";
 
-    public filed: string[] = ["id", "type", "state", "time", "script", "result", "create_time", "update_time", "delete_time"];
+    public filed: string[] = ["id", "type", "state", "time", "script", "param", "result", "create_time", "update_time", "delete_time"];
 
     protected formatData(data: any){
         return new Playbook(data);

@@ -20,6 +20,10 @@ export class Record{
     set(key: string, val: any): any{
         this.data[key] = val;
     }
+
+    public toJson(){
+        return this.data;
+    }
 }
 
 export class Model extends BaseModel{
@@ -33,6 +37,22 @@ export class Model extends BaseModel{
 
     protected formatData(data: any):Record{
         return new Record(data);
+    }
+
+    public delByKey(key: number):Promise<any>{
+        let data:any = {};
+        data[this.deleteTime] = BaseModel.getTime();
+        return this.updateByKey(key, data);
+    }
+
+    public updateByKey(key: number, data:any):Promise<any>{
+        let modelHandle: ModelHandle = {
+            tableName: this.tableName,
+            update: true,
+            value: data,
+            where: [[this.key, "=", key]]
+        };
+        return this.handle(modelHandle).then(()=>{});
     }
 
     public del(data: Record):Promise<Record>{
@@ -53,14 +73,14 @@ export class Model extends BaseModel{
             return this.formatData(result[0]);
         });
     }
-    public getList(where:any[] = [], startNum:number = 0, count:number = 100):Promise<Record[]>{
+    public getList(where:any[] = [], startNum:number = 0, num:number = 100):Promise<Record[]>{
         where.push([this.deleteTime, "=", 0]);
         let modelHandle: ModelHandle = {
             tableName: this.tableName,
             select: true,
             where: where,
             order: `${this.key} DESC`,
-            limit: `${startNum}, ${count}`
+            limit: `${startNum}, ${num}`
         };
         return this.handle(modelHandle).then((result: any[])=>{
             if(!result || result.length <= 0) return [];
@@ -81,7 +101,7 @@ export class Model extends BaseModel{
         return this.count(modelHandle);
     }
 
-    public update(data: Record):Promise<any>{
+    public update(data: Record):Promise<Record>{
         data.set(this.updateTime, BaseModel.getTime());
         let keys: any[] = this.filed;
         let values: any = {};
@@ -99,10 +119,10 @@ export class Model extends BaseModel{
             filed: keys,
             where: [[this.key, "=", data.get(this.key)]]
         };
-        return this.handle(modelHandle).then(()=>{return true});
+        return this.handle(modelHandle).then(()=>{return data});
     }
 
-    public add(data: Record):Promise<any>{
+    public add(data: Record):Promise<Record>{
         data.set(this.createTime, BaseModel.getTime());
         let keys: any[] = this.filed;
         let values: any = {};

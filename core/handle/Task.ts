@@ -12,35 +12,31 @@ import {BasePlaybook} from "../playbook/BasePlaybook";
 import {Playbook, PlaybookModel} from "../model/playbook";
 import {Logger} from "bunyan";
 
-export interface TaskResult{
-    code:number;
-    message:string;
-    time?:number;
-}
-
 export default class Task {
 
-    private static instance:Task = null;
+    private static instance: Task = null;
     private app: CoreApp = null;
     private logger: Logger = null;
-    private events: EventEmitter = new EventEmitter();
+    public events: EventEmitter = new EventEmitter();
     private playbookList: BasePlaybook[] = [];
-    private ing:boolean = false;
+    private timeList: any = {};
+    private ing: boolean = false;
 
-    constructor(app: CoreApp) {
+    constructor(app: CoreApp){
         this.app = app;
         this.logger = this.app.logger;
     }
 
-    public static getInstance(app: CoreApp): Task {
+    public static getInstance(app:CoreApp): Task{
         if (!this.instance) {
             this.instance = new Task(app);
         }
         return this.instance;
     }
 
-    public start(): Task {
+    public start():Task{
         this.events.on("add", this.add);
+        this.events.on("delete", this.del);
         this.events.on("addTime", this.addTime);
         this.events.on("next", this.next);
         this.init();
@@ -69,16 +65,16 @@ export default class Task {
         if(this.playbookList.length > 0){
             let playbookId = Number(this.playbookList.shift());
             new PlaybookModel(this.app).get(playbookId)
-                .then((playbook:Playbook)=>{
+                .then((playbook: Playbook)=>{
                     return new BasePlaybook(this.app, playbook).start();
                 })
-                .then((playbook:Playbook)=>{
+                .then((playbook: Playbook)=>{
                     if(playbook.time > new Date().getTime()){
                         this.events.emit("addTime", Constant.TASK_TYPE_PLAYBOOK, playbook.id, playbook.time)
                     }
                     this.events.emit("next");
                 })
-                .catch((error:Error)=>{
+                .catch((error: Error)=>{
                     this.events.emit("next");
                 });
             this.ing = true;
@@ -95,7 +91,18 @@ export default class Task {
         return this.ing;
     }
 
-    private add(type: number, data:any){
+    private del(type: number, data: any){
+        //if(type == Constant.TASK_TYPE_PLAYBOOK){
+        //    let index = this.playbookList.indexOf(data);
+        //    if(index > 0) this.playbookList.splice(this.playbookList.indexOf(data), 1);
+        //}
+        let timeIndex = this.getTimeIndex(type, data);
+        let timeKey = this.timeList[this.getTimeIndex(type, data)];
+        clearTimeout(timeKey);
+        delete this.timeList[timeIndex];
+    }
+
+    private add(type: number, data: any){
         let ing = this.isDoing();
         if(type == Constant.TASK_TYPE_PLAYBOOK){
             this.playbookList.push(data)
@@ -103,15 +110,23 @@ export default class Task {
         if(!ing) this.handleTask();
     }
 
-    private addTime(type: number, data:any, time:number){
+    private addTime(type: number, data: any, time: number){
         let nowTime = new Date().getTime();
         let _time = time - nowTime;
         if(_time > 0){
-            setTimeout(()=>{
+            let timeKey = setTimeout(()=>{
                 this.events.emit("add", type, data);
-            }, _time)
+                delete this.timeList[this.getTimeIndex(type, data)];
+            }, _time);
+            this.timeList[this.getTimeIndex(type, data)] = timeKey;
         }else{
             this.events.emit("add", type ,data);
+        }
+    }
+
+    private getTimeIndex(type: number, data: any){
+        if(type == Constant.TASK_TYPE_PLAYBOOK){
+            return data;
         }
     }
 }

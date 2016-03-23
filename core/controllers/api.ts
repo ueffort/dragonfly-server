@@ -13,7 +13,12 @@ import CoreApp from "../App";
 
 export default class Api extends Controller{
 
-    protected __resultHandle(req: express.Request, res: express.Response, next: any, result: any){
+    constructor(app:CoreApp){
+        super(app);
+        this.setResultFun(this.resultHandle)
+    }
+
+    private resultHandle(req: express.Request, res: express.Response, next: any, result: any){
         return res.json(CoreApp.formatResult(result));
     }
 

@@ -9,7 +9,7 @@ import * as express from "express";
 import CoreApp from "../App";
 import Dispatch from "../../app/abstract/Dispatch";
 import Api from "../controllers/api";
-import * as ErrorID from "../ErrorID";
+import * as Constant from "../Constant";
 import Playbook from "../controllers/playbook";
 
 
@@ -22,7 +22,7 @@ export default function routerHandle(app:CoreApp):express.Router{
         if(user["email"]){
             return Promise.resolve(true);
         }else{
-            throw new Error("need login").name =  ErrorID.NEED_LOGIN;
+            throw new Error("need login").name =  Constant.NEED_LOGIN;
         }
     }));
 
@@ -37,12 +37,14 @@ export default function routerHandle(app:CoreApp):express.Router{
     //playbook 查看 配置,状态,列表
     router.get("/api/playbook/setting/:type", playbook.handle([{name:"type", param:true}], playbook.playbookSetting));
     router.get("/api/playbook/status/:id", playbook.handle([{name:"id", param:true}], playbook.playbookStatus));
-    router.get("/api/playbook/list", playbook.handle([{name:"limit", query:true}, {name:"start", query:true}, {name:"count", query:true}], playbook.playbookList));
+    router.get("/api/playbook/list", playbook.handle([{name:"num", query:true}, {name:"start", query:true}, {name:"count", query:true}], playbook.playbookList));
 
-    //playbook 操作 添加,删除
-    router.post("/api/playbook/add", playbook.handle([{name:"type", form:true}, {name:"data", form:true}], playbook.playbookAdd));
-    router.post("/api/playbook/update", playbook.handle([{name:"id", form:true}, {name:"data", form:true}], playbook.playbookUpdate));
+    //playbook 操作 添加,删除,重启
+    router.post("/api/playbook/add", playbook.handle([{name:"type", form:true}, {name:"param", form:true}], playbook.playbookAdd));
+    router.post("/api/playbook/update", playbook.handle([{name:"id", form:true}, {name:"param", form:true}], playbook.playbookUpdate));
     router.post("/api/playbook/delete", playbook.handle([{name:"id", form:true}], playbook.playbookDelete));
+    router.post("/api/playbook/restart", playbook.handle([{name:"id", form:true}], playbook.playbookRestart));
+    router.post("/api/playbook/stop", playbook.handle([{name:"id", form:true}], playbook.playbookStop));
 
     return router;
 };

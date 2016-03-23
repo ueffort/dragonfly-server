@@ -28,7 +28,8 @@ export const WAIT:number = 1; //等待执行
 export const ING:number = 2; //执行中
 export const END:number = 3; //执行结束
 export const CANCEL:number = 4; //取消执行
-export const BREAK:number = 5; //中断执行
+export const BREAK:number = 5; //错误中断
+export const STOP:number = 6; //停止执行
 
 export const UNKNOWN:number = 0; //未知
 

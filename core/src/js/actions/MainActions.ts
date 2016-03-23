@@ -7,7 +7,7 @@
 import * as ActionTypes from "../constants/ActionTypes";
 import { push } from 'react-router-redux';
 import Ajax from "../../../../app/tools/Ajax";
-import * as ErrorID from "../../../ErrorID";
+import * as Constant from "../../../Constant";
 
 export function ajaxHandle(url:string, data: any, dispatch: Redux.Dispatch):Promise<any>{
     dispatch(load());
@@ -16,9 +16,9 @@ export function ajaxHandle(url:string, data: any, dispatch: Redux.Dispatch):Prom
             dispatch(loaded());
             if(!result) return Promise.reject(false);
             let status = result.status;
-            if(status == ErrorID.SUCCESS_STATUS){
+            if(status == Constant.SUCCESS_STATUS){
                 return result.data;
-            }else if(status == ErrorID.NEED_LOGIN_STATUS){
+            }else if(status == Constant.NEED_LOGIN_STATUS){
                 dispatch(loginOut());
                 dispatch(router("/login"));
             }else{

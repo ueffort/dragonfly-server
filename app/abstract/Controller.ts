@@ -32,10 +32,16 @@ interface ParamDesc {
 
 class Controller{
     protected app:App;
+    private resultFun:(req: express.Request, res: express.Response, next: any, result: any)=>{};
 
 
     public constructor(app: App){
         this.app = app;
+        this.setResultFun(this.__resultHandle);
+    }
+
+    protected setResultFun(fun:(req: express.Request, res: express.Response, next: any, result: any)=>{}){
+        this.resultFun = fun;
     }
 
     /**
@@ -64,14 +70,14 @@ class Controller{
             args.push(req);
             args.push(res);
             action.apply(this, args).then((result: any)=>{
-                return this.__resultHandle(req, res, next, result)
+                return this.resultFun(req, res, next, result)
             }).catch((err:Error)=>{
                 next(err);
             });
         }
     }
 
-    protected __resultHandle(req: express.Request, res: express.Response, next: any, result: any){
+    private __resultHandle(req: express.Request, res: express.Response, next: any, result: any){
         return res.json(result)
     }
 }
