@@ -2,7 +2,7 @@
  * Created by tutu on 16-1-4.
  */
 var should = require('should');
-var App = require('../../app/App').default;
+var App = require('app/App').default;
 var request = require('supertest');
 
 describe('App', function () {

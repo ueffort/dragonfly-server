@@ -28,7 +28,7 @@ export class BaseModel{
     }
 
     public static getTime():number{
-        return new Date().getTime();
+        return new Date().getTime()/1000;
     }
 
     protected exec(sql: string):Promise<any>{
@@ -85,10 +85,10 @@ export class BaseModel{
         let filedTmp:any[] = [];
         if(filed.length>0){
             for(let i in filed){
-                let v = value[filed[i]] ? value[filed[i]] : "";
+                let v = value[filed[i]] !== "undefined" ? true : false;
                 if (v){
                     filedTmp.push(this._f(filed[i]));
-                    tmp.push(this._v(v));
+                    tmp.push(this._v(value[filed[i]]));
                 }
             }
         }else{
@@ -104,9 +104,9 @@ export class BaseModel{
         let tmp:any[] = [];
         if(filed.length>0){
             for(let i in filed){
-                let v = value[filed[i]] ? value[filed[i]] : "";
+                let v = value[filed[i]] !== "undefined" ? true : false;
                 if (v){
-                    tmp.push(`${this._f(filed[i])}=${this._v(v)}`);
+                    tmp.push(`${this._f(filed[i])}=${this._v(value[filed[i]])}`);
                 }
             }
         }else{
@@ -118,6 +118,9 @@ export class BaseModel{
     }
 
     private _filed(filed:any[]=[]):string{
+        for(let i in filed){
+            filed[i] = this._f(filed[i])
+        }
         return filed.length>0 ? filed.join(",") : "*";
     }
 

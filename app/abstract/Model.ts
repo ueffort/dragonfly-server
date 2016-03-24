@@ -52,7 +52,13 @@ export class Model extends BaseModel{
             value: data,
             where: [[this.key, "=", key]]
         };
-        return this.handle(modelHandle).then(()=>{});
+        return this.handle(modelHandle).then((result: any)=>{
+            if(result["changedRows"] > 0){
+                return data;
+            }else{
+                throw new Error("Model sql handle change 0");
+            }
+        });
     }
 
     public del(data: Record):Promise<Record>{
@@ -119,7 +125,13 @@ export class Model extends BaseModel{
             filed: keys,
             where: [[this.key, "=", data.get(this.key)]]
         };
-        return this.handle(modelHandle).then(()=>{return data});
+        return this.handle(modelHandle).then((result: any)=>{
+            if(result["changedRows"] > 0){
+                return data;
+            }else{
+                throw new Error("Model sql handle change 0");
+            }
+        });
     }
 
     public add(data: Record):Promise<Record>{
@@ -139,7 +151,10 @@ export class Model extends BaseModel{
             value: values,
             filed: keys
         };
-        return this.handle(modelHandle).then((result: any)=>{data.set(this.key, result[this.key]); return data});
+        return this.handle(modelHandle).then((result: any)=>{
+            data.set(this.key, result["insertId"]);
+            return data;
+        });
     }
 
     public save(data: Record):Promise<any>{
