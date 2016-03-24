@@ -14,7 +14,7 @@ export class Record{
     }
 
     get(key: string): any{
-        return this.data[key] ? this.data[key] : "";
+        return this.data[key] === "undefined" ? "" : this.data[key];
     }
 
     set(key: string, val: any): any{
@@ -36,12 +36,22 @@ export class Model extends BaseModel{
     protected filed:string[];
 
     protected formatData(data: any):Record{
-        return new Record(data);
+        let record:any = {};
+        for(let i in data){
+            record[i] = data[i];
+        }
+        return new Record(record);
     }
 
     public delByKey(key: number):Promise<any>{
         let data:any = {};
         data[this.deleteTime] = BaseModel.getTime();
+        return this.updateByKey(key, data);
+    }
+
+    public recoveryByKey(key: number):Promise<any>{
+        let data:any = {};
+        data[this.deleteTime] = 0;
         return this.updateByKey(key, data);
     }
 
@@ -63,6 +73,11 @@ export class Model extends BaseModel{
 
     public del(data: Record):Promise<Record>{
         data.set(this.deleteTime, BaseModel.getTime());
+        return this.update(data);
+    }
+
+    public recovery(data: Record):Promise<Record>{
+        data.set(this.deleteTime, 0);
         return this.update(data);
     }
 
@@ -113,7 +128,6 @@ export class Model extends BaseModel{
         let values: any = {};
         for(let i=0;i<keys.length;i++){
             if(keys[i] == this.key){
-                keys.splice(i,1);
                 continue;
             }
             values[keys[i]] = data.get(keys[i]);
@@ -122,7 +136,6 @@ export class Model extends BaseModel{
             tableName: this.tableName,
             update: true,
             value: values,
-            filed: keys,
             where: [[this.key, "=", data.get(this.key)]]
         };
         return this.handle(modelHandle).then((result: any)=>{
@@ -140,7 +153,6 @@ export class Model extends BaseModel{
         let values: any = {};
         for(let i=0;i<keys.length;i++){
             if(keys[i] == this.key){
-                keys.splice(i,1);
                 continue;
             }
             values[keys[i]] = data.get(keys[i]);
@@ -148,8 +160,7 @@ export class Model extends BaseModel{
         let modelHandle: ModelHandle = {
             tableName: this.tableName,
             add: true,
-            value: values,
-            filed: keys
+            value: values
         };
         return this.handle(modelHandle).then((result: any)=>{
             data.set(this.key, result["insertId"]);

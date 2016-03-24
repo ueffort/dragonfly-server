@@ -28,7 +28,7 @@ export class BaseModel{
     }
 
     public static getTime():number{
-        return new Date().getTime()/1000;
+        return parseInt(new Date().getTime()/1000);
     }
 
     protected exec(sql: string):Promise<any>{
@@ -38,7 +38,7 @@ export class BaseModel{
 
     protected handle(modelHandle: ModelHandle):Promise<any>{
         let sql = "";
-        let error = "";
+        let error:any = null;
         if(modelHandle.add){
             if(!modelHandle.value && !modelHandle.filed) error = "[DB] INSERT SQL value and filed not empty";
             sql = `INSERT INTO ${modelHandle.tableName} ${this._addValue(modelHandle.value, modelHandle.filed)}`;
@@ -58,16 +58,15 @@ export class BaseModel{
     }
 
     protected count(modelHandle: ModelHandle):Promise<number>{
-        let sql = "";
-        let error = "";
+        let error:any = null;
         if(!modelHandle.where) error = "[DB] SELECT COUNT SQL where not empty";
-        sql = `SELECT COUNT FROM ${modelHandle.tableName} WHERE ${this._where(modelHandle.where)}`;
+        let sql = `SELECT COUNT FROM ${modelHandle.tableName} WHERE ${this._where(modelHandle.where)}`;
         if(error) return Promise.reject(new Error(`${error} ERROR SQL: ${sql}`));
         return this.exec(sql);
     }
 
     private _v(v:any){
-        let _v:any = "";
+        let _v:any = "''";
         if(typeof v === "string"){
             _v = `'${v}'`;
         }else if(typeof v === "number"){

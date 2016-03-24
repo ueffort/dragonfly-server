@@ -1,7 +1,7 @@
 /**
  * Created by tutu on 16-3-24.
  */
-var should = require('should');
+require('should');
 var App = require('app/App').default;
 var Model = require('app/abstract/BaseModel').BaseModel;
 
@@ -15,7 +15,7 @@ describe('BaseModel', function () {
             var modelHandle = {
                 add: true,
                 tableName: 'test',
-                filed:["test1", "test2", "test3"],
+                filed:["test1", "test2"],
                 value:{test1: "test", test2: 1, test3:new Date().getTime()/1000}
             };
             model.handle(modelHandle).then(function(result){
@@ -52,7 +52,7 @@ describe('BaseModel', function () {
             var modelHandle = {
                 update: true,
                 tableName: 'test',
-                filed:["test1", "test2", "test3"],
+                filed:["test1", "test2"],
                 where:[["id", "=", id1]],
                 value:{test1: "test", test2: 2, test3:new Date().getTime()/1000}
             };

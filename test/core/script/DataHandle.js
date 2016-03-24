@@ -2,8 +2,8 @@
  * Created by tutu on 16-3-9.
  */
 
-var dataHandle = require("../../../core/script/DataHandle").default;
-var should = require('should');
+var dataHandle = require("../../../core/script/Data").default;
+require('should');
 
 describe('dataHandle', function () {
     it('getAuth', function (done) {

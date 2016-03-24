@@ -23,8 +23,8 @@ export class User extends Record{
     get state(){
         return this.get("state");
     }
-    set state(status: string){
-        this.set("status", status);
+    set state(status: number){
+        this.set("state", status);
     }
 
     get password(){
@@ -51,7 +51,11 @@ export class UserModel extends Model{
     public filed: string[] = ["id", "email", "password", "state", "token", "create_time", "update_time", "delete_time"];
 
     protected formatData(data: any){
-        return new User(data);
+        let record:any = {};
+        for(let i in data){
+            record[i] = data[i];
+        }
+        return new User(record);
     }
 
     private static formatPassword(password: string){
@@ -59,20 +63,15 @@ export class UserModel extends Model{
     }
 
     public login(email: string, password: string){
-        return this.getUserByName(email, UserModel.formatPassword(password))
-            .then((user: User)=>{
-                return user
-            });
+        return this.getUserByName(email, UserModel.formatPassword(password));
     }
 
     public register(email: string, password: string){
         let user = new User();
         user.email = email;
         user.password = UserModel.formatPassword(password);
-        return this.add(user)
-            .then((user: User)=>{
-                return user
-            });
+        user.state = 1;
+        return this.add(user);
     }
 
     private getUserByName(email: string, password: string){
@@ -82,6 +81,7 @@ export class UserModel extends Model{
             where: [
                 ["email", "=", email],
                 ["password", "=", password],
+                ["state", "=", 1],
                 [this.deleteTime, "<=", 0]
             ]
         };
