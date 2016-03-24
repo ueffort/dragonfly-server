@@ -22,7 +22,6 @@ export class Script{
     public static STATE = "s";
     public static H_STATE = "hs";
     public static R_STATE = "rs";
-    public static PARAMS = "p";
     public static OVER_TIME = "ot";
 
     constructor(data:any, events:EventEmitter){
@@ -32,7 +31,6 @@ export class Script{
         this.state = data[Script.STATE] ? data[Script.STATE] : Constant.WAIT;
         this.handleState = data[Script.H_STATE] ? data[Script.H_STATE] : Constant.UNKNOWN;
         this.resultState = data[Script.R_STATE] ? data[Script.R_STATE] : Constant.UNKNOWN;
-        this.params = data[Script.PARAMS] ? data[Script.PARAMS] : {};
         this.overTime = data[Script.OVER_TIME] ? data[Script.OVER_TIME] : Constant.UNKNOWN;
     }
 
@@ -65,6 +63,7 @@ export class Script{
         this.state = state;
         if(handleState) this.handleState = handleState;
         if(resultState) this.resultState = resultState;
+        this.overTime = new Date().getTime()
     }
 
     public end(resultState?:number){
@@ -72,27 +71,22 @@ export class Script{
         this.events.emit("scriptSaveEnd");
     }
 
-    public setParams(params:any){
-        this.params = params;
-    }
-
     public toFormat(){
-        return Script.format([this.name, this.state, this.handleState, this.resultState, this.params, this.overTime])
+        return Script.format([this.name, this.state, this.handleState, this.resultState, this.overTime])
     }
 
     public static initFormat(data:any){
-        return Script.format([data["name"], Constant.WAIT, Constant.UNKNOWN, Constant.UNKNOWN, {}, Constant.UNKNOWN])
+        return Script.format([data["name"], Constant.WAIT, Constant.UNKNOWN, Constant.UNKNOWN, Constant.UNKNOWN])
     }
 
     private static format(data:any){
-        let n=Script.NAME,s=Script.STATE,hs=Script.H_STATE,rs=Script.R_STATE,p=Script.PARAMS,ot=Script.OVER_TIME;
+        let n=Script.NAME,s=Script.STATE,hs=Script.H_STATE,rs=Script.R_STATE,ot=Script.OVER_TIME;
         let _format:any = {};
         _format[n] = data[0];
         _format[s] = data[1];
         _format[hs] = data[2];
         _format[rs] = data[3];
-        _format[p] = data[4];
-        _format[ot] = data[5];
+        _format[ot] = data[4];
         return _format;
     }
 }
@@ -215,8 +209,6 @@ export class ScriptDispatch{
     private scriptList: any = {};
     constructor(script:any){
         this.events.on("registerScript", this.registerScript);
-        this.events.on("execScript",this.execScript);
-        this.events.on("scriptSaveEnd", this.scriptSaveEnd);
         if(script[ScriptGroup.LIST]){
             this.script = new ScriptGroup(script, this.events);
         }
@@ -232,16 +224,15 @@ export class ScriptDispatch{
 
     private scriptSaveEnd(){
         if(this.script){
-            if(this.script.checkState() == Constant.GROUP_END){
-                this.events.emit("scriptEnd");
-            }
+            this.script.checkState();
+            this.events.emit("scriptEnd");
         }
     }
 
     public start(){
-        if(!this.doScript()){
-            this.end();
-        }
+        this.events.on("execScript",this.execScript);
+        this.events.on("scriptSaveEnd", this.scriptSaveEnd);
+        this.next();
     }
 
     private end(){
@@ -274,12 +265,6 @@ export class ScriptDispatch{
 
     public getScript(name:string){
         return this.scriptList[name]
-    }
-
-    public setParams(scriptName:string, params:any){
-        if(this.scriptList[scriptName]){
-            this.scriptList[scriptName].setParams(params);
-        }
     }
 
     private doScript(){
@@ -362,10 +347,6 @@ export class BasePlaybook{
         }
         this.playbookModel = new PlaybookModel(app);
         this.setHandleFun(BasePlaybook.doHandle);
-    }
-
-    public getPlaybookInfo(){
-        return {}
     }
 
     public setParam(param:any){

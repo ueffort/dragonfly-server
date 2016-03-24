@@ -44,8 +44,8 @@ export class BaseModel{
             sql = `INSERT INTO ${modelHandle.tableName} ${this._addValue(modelHandle.value, modelHandle.filed)}`;
         }else if(modelHandle.select){
             if(!modelHandle.where) error = "[DB] SELECT SQL where not empty";
-            if(modelHandle.limit) modelHandle.limit = `LIMIT ${modelHandle.limit}`;
-            if(modelHandle.order) modelHandle.order = `ORDER BY ${modelHandle.order}`;
+            modelHandle.limit = modelHandle.limit ? `LIMIT ${modelHandle.limit}` : "";
+            modelHandle.order = modelHandle.order ? `ORDER BY ${modelHandle.order}` : "";
             sql = `SELECT ${this._filed(modelHandle.filed)} FROM ${modelHandle.tableName} WHERE ${this._where(modelHandle.where)} ${modelHandle.order} ${modelHandle.limit}`;
         }else if(modelHandle.update){
             if(!modelHandle.where || !modelHandle.value) error = "[DB] UPDATE SQL where or value not empty";

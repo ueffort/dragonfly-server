@@ -8,10 +8,10 @@ import * as express from "express";
 import {Promise} from "../../app/tools/Promise";
 import Controller from "../../app/abstract/Controller";
 import {UserModel} from "../model/user";
-import {User} from "../model/user";
+import {User as UserRecord} from "../model/user";
 import CoreApp from "../App";
 
-export default class Api extends Controller{
+export default class User extends Controller{
 
     constructor(app:CoreApp){
         super(app);
@@ -24,17 +24,17 @@ export default class Api extends Controller{
 
     public login(email: string, password: string, req: express.Request, res: express.Response):Promise<any>{
         return new UserModel(this.app).login(email, password)
-            .then((user: User)=>{
-                if(user.email) req.session["user"] = {email: user.email};
-                return {email: user.email};
+            .then((userRecord: UserRecord)=>{
+                if(userRecord.email) req.session["user"] = {email: userRecord.email};
+                return {email: userRecord.email};
             });
     }
 
     public register(email: string, password: string, req: express.Request, res: express.Response):Promise<any>{
         return new UserModel(this.app).register(email, password)
-            .then((user: User)=>{
-                if(user.email) req.session["user"] = {email: user.email};
-                return {email: user.email};
+            .then((userRecord: UserRecord)=>{
+                if(userRecord.email) req.session["user"] = {email: userRecord.email};
+                return {email: userRecord.email};
             });
     }
 

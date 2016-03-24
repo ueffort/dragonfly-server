@@ -55,7 +55,7 @@ export class UserModel extends Model{
     }
 
     private static formatPassword(password: string){
-        return md5(password);
+        return md5(md5(password));
     }
 
     public login(email: string, password: string){

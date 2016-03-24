@@ -19,7 +19,7 @@ export function ajaxHandle(url:string, data: any, dispatch: Redux.Dispatch):Prom
             if(status == Constant.SUCCESS_STATUS){
                 return result.data;
             }else if(status == Constant.NEED_LOGIN_STATUS){
-                dispatch(loginOut());
+                dispatch({type: ActionTypes.LOGINOUT});
                 dispatch(router("/login"));
             }else{
                 dispatch(message(result.message));
@@ -28,42 +28,8 @@ export function ajaxHandle(url:string, data: any, dispatch: Redux.Dispatch):Prom
         }).catch(function(){
             dispatch(loaded());
         });
-
 }
 
-export function login(email: string, password: string) {
-    return function(dispatch: Redux.Dispatch, getState?: () => {}){
-        ajaxHandle("/api/login", {email: email, password: password}, dispatch)
-            .then((result: any)=>{
-                    dispatch({type: ActionTypes.LOGIN, value: {email: result.email}});
-                    dispatch(router("/"));
-            });
-    };
-}
-
-export function register(email: string, password: string) {
-    return function(dispatch: Redux.Dispatch, getState?: () => {}){
-        ajaxHandle("/api/register", {email: email, password: password}, dispatch)
-            .then((result: any)=>{
-                dispatch({type: ActionTypes.REGISTER, value: {email: result.email}});
-                dispatch(router("/"));
-            });
-    };
-}
-
-export function loginOut(){
-    return function(dispatch: Redux.Dispatch, getState?: () => {}){
-        ajaxHandle("/api/loginOut", {}, dispatch)
-            .then(()=>{
-                dispatch({ type: ActionTypes.LOGINOUT });
-                dispatch(router("/login"));
-            });
-    };
-    return function(dispatch: Redux.Dispatch, getState?: () => {}){
-        dispatch({ type: ActionTypes.LOGINOUT });
-        dispatch(router("/login"));
-    };
-}
 export function message(message: string){
     return { type: ActionTypes.MESSAGE, value: message };
 }

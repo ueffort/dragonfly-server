@@ -12,7 +12,7 @@
 
 import * as React from "react";
 import { Provider } from "react-redux";
-import MainStore from "../store/MainStore";
+import MainStore from "../store/Main";
 import DevTools from "./DevTools";
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';

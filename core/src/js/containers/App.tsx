@@ -9,7 +9,9 @@
 import * as React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import * as MainAction from "../actions/MainActions";
+import * as MainAction from "../actions/Main";
+import * as UserAction from "../actions/User";
+import * as PlaybookAction from "../actions/Playbook";
 import Loading from "./Loading";
 import Header from "./Header";
 import Left from "./Left";
@@ -22,8 +24,11 @@ interface AppProp {
     loading?: any;
     user?: any;
     style?: any;
-    actions?: any;
     params?: any;
+    mainActions?: any;
+    userActions?: any;
+    playbookActions?: any;
+
 }
 
 class App extends React.Component<AppProp, any> {
@@ -35,7 +40,7 @@ class App extends React.Component<AppProp, any> {
 
     private init(){
         if(!this.props.user.email){
-            this.props.actions.router("login");
+            this.props.mainActions.router("login");
         }
     }
 
@@ -57,17 +62,17 @@ class App extends React.Component<AppProp, any> {
             <div>
                 <Header title={this.props.playbook[0].name}
                         user={this.props.user}
-                        loginOutAction={this.props.actions.loginOut}
-                        menuAction={this.props.actions.leftShow}/>
+                        loginOutAction={this.props.userActions.loginOut}
+                        menuAction={this.props.mainActions.leftShow}/>
                 <Left show={this.props.style.left}
-                      showAction={this.props.actions.leftShow}
-                      routerAction={this.props.actions.router}/>
+                      showAction={this.props.mainActions.leftShow}
+                      routerAction={this.props.mainActions.router}/>
                 <Content playbook={this.props.playbook}
-                         routerAction={this.props.actions.router}
+                         routerAction={this.props.mainActions.router}
                          id={this.props.params.id}
                          type={this.props.params.type}/>
                 <Loading loading={this.props.loading.isLoad}/>
-                <Message message={this.props.style.message} closeAction={this.props.actions.message}/>
+                <Message message={this.props.style.message} closeAction={this.props.mainActions.message}/>
             </div>
         );
     }
@@ -84,7 +89,9 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
     return {
-        actions: bindActionCreators(MainAction, dispatch)
+        mainActions: bindActionCreators(MainAction, dispatch),
+        userActions: bindActionCreators(UserAction, dispatch),
+        playbookActions: bindActionCreators(PlaybookAction, dispatch)
     };
 }
 

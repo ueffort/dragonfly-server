@@ -7,10 +7,15 @@ import App from "../../app/App";
 export default class PlayBookFactory{
     private static playbookTypeList:any = {};
 
-    public static getPlaybook(app:App, typeName:string):BasePlaybook{
+    public static getPlaybook(typeName:string):any{
         if(!PlayBookFactory.playbookTypeList[typeName]){
-            let playbook = require(`./${typeName}Playbook`).default;
-            PlayBookFactory.playbookTypeList[typeName] = new playbook(app);
+            let playbook:any = null;
+            try {
+                playbook = require(`./${typeName}Playbook`).default;
+            }catch (error){
+                playbook = null;
+            }
+            PlayBookFactory.playbookTypeList[typeName] = playbook;
         }
         return PlayBookFactory.playbookTypeList[typeName];
     }

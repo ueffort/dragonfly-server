@@ -27,20 +27,14 @@ export default class Playbook extends Controller{
         return res.json(CoreApp.formatResult(result));
     }
 
-    public playbookSetting(type: string = "Base", req: express.Request, res: express.Response):Promise<any>{
-        let playbook:BasePlaybook = PlayBookFactory.getPlaybook(this.app, type);
-        let setting = playbook.getPlaybookInfo();
-        return Promise.resolve(setting);
-    }
-
-    public playbookStatus(id: number, req: express.Request, res: express.Response):Promise<any>{
+    public state(id: number, req: express.Request, res: express.Response):Promise<any>{
         let playbookModel = new PlaybookModel(this.app);
         return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
             return playbookRecord.toJson();
         });
     }
 
-    public playbookList(num: number = 20, start: number = 0, count: boolean = false, req: express.Request, res: express.Response):Promise<any>{
+    public list(num: number = 20, start: number = 0, count: boolean = false, req: express.Request, res: express.Response):Promise<any>{
         let list:any[] = [];
         let playbookModel = new PlaybookModel(this.app);
         list.push(playbookModel.getList([], start, num).then((playbookRecordList:PlaybookRecord[])=>{
@@ -60,24 +54,28 @@ export default class Playbook extends Controller{
         });
     }
 
-    public playbookAdd(type: string, param: any, req: express.Request, res: express.Response):Promise<any>{
-        let playbook:BasePlaybook = PlayBookFactory.getPlaybook(this.app, type);
-        playbook.setParam(param);
-        return playbook.save().then((playbookRecord:PlaybookRecord)=>{
+    public add(type: string, param: any, req: express.Request, res: express.Response):Promise<any>{
+        let playbookType = PlayBookFactory.getPlaybook(type);
+        if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
+        playbookType = new playbookType(this.app);
+        playbookType.setParam(param);
+        return playbookType.save().then((playbookRecord:PlaybookRecord)=>{
             let task = this.app.task();
             task.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookRecord.id);
             return playbookRecord.toJson();
         });
     }
 
-    public playbookUpdate(id: number, param: any, req: express.Request, res: express.Response):Promise<any>{
+    public update(id: number, param: any, req: express.Request, res: express.Response):Promise<any>{
         let playbookModel = new PlaybookModel(this.app);
         return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
             if(playbookRecord.state == Constant.ING || playbookRecord.state == Constant.WAIT)
                 throw new Error("playbook 执行中不允许修改");
-            let playbook:BasePlaybook = PlayBookFactory.getPlaybook(this.app, playbookRecord.type);
-            playbook.setParam(param).reset();
-            return playbook.save().then((playbookRecord:PlaybookRecord)=>{
+            let playbookType = PlayBookFactory.getPlaybook(playbookRecord.type);
+            if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
+            playbookType = new playbookType(this.app);
+            playbookType.setParam(param).reset();
+            return playbookType.save().then((playbookRecord:PlaybookRecord)=>{
                 let task = this.app.task();
                 task.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookRecord.id);
                 return playbookRecord.toJson();
@@ -85,7 +83,7 @@ export default class Playbook extends Controller{
         });
     }
 
-    public playbookDelete(id: number, req: express.Request, res: express.Response):Promise<any>{
+    public delete(id: number, req: express.Request, res: express.Response):Promise<any>{
         let playbookModel = new PlaybookModel(this.app);
         return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
             if(playbookRecord.state == Constant.ING || playbookRecord.state == Constant.WAIT)
@@ -96,14 +94,16 @@ export default class Playbook extends Controller{
         });
     }
 
-    public playbookRestart(id: number, req: express.Request, res: express.Response):Promise<any>{
+    public restart(id: number, req: express.Request, res: express.Response):Promise<any>{
         let playbookModel = new PlaybookModel(this.app);
         return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
             if(playbookRecord.state == Constant.ING || playbookRecord.state != Constant.WAIT)
                 throw new Error("playbook 执行中不允许重启");
-            let playbook:BasePlaybook = PlayBookFactory.getPlaybook(this.app, playbookRecord.type);
-            playbook.reset();
-            return playbook.save().then((playbookRecord:PlaybookRecord)=>{
+            let playbookType = PlayBookFactory.getPlaybook(playbookRecord.type);
+            if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
+            playbookType = new playbookType(this.app);
+            playbookType.reset();
+            return playbookType.save().then((playbookRecord:PlaybookRecord)=>{
                 let task = this.app.task();
                 task.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookRecord.id);
                 return playbookRecord.toJson();
@@ -111,16 +111,18 @@ export default class Playbook extends Controller{
         });
     }
 
-    public playbookStop(id: number, req: express.Request, res: express.Response):Promise<any>{
+    public stop(id: number, req: express.Request, res: express.Response):Promise<any>{
         let playbookModel = new PlaybookModel(this.app);
         return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
             if(playbookRecord.state != Constant.WAIT)
                 throw new Error("playbook 排队中才允许暂停");
-            let playbook:BasePlaybook = PlayBookFactory.getPlaybook(this.app, playbookRecord.type);
-            if(!playbook.isRepeat())
+            let playbookType = PlayBookFactory.getPlaybook(playbookRecord.type);
+            if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
+            playbookType = new playbookType(this.app);
+            if(!playbookType.isRepeat())
                 throw new Error("playbook 不允许暂停");
-            playbook.stop();
-            return playbook.save().then((playbookRecord:PlaybookRecord)=>{
+            playbookType.stop();
+            return playbookType.save().then((playbookRecord:PlaybookRecord)=>{
                 let task = this.app.task();
                 task.events.emit("delete", Constant.TASK_TYPE_PLAYBOOK, playbookRecord.id);
                 return playbookRecord.toJson();

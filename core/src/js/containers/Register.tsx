@@ -9,24 +9,26 @@
 import * as React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import * as MainAction from "../actions/MainActions";
+import * as MainAction from "../actions/Main";
+import * as UserAction from "../actions/User";
 import Loading from "./Loading";
 import Paper = require('material-ui/lib/paper');
 import TextField = require('material-ui/lib/text-field');
 import FlatButton = require('material-ui/lib/flat-button');
-import {md5} from "../../../../app/tools/StringHandle";
 import Message from "./Message";
 
 interface RegisterProp {
     loading?: any;
     user?: any;
     style?: any;
-    actions?: any;
+    mainActions?: any;
+    userActions?: any;
 }
 
 interface RegisterState {
     email?: string;
     password?: string;
+    passwordS?: string;
 }
 
 class Register extends React.Component<RegisterProp, RegisterState> {
@@ -50,18 +52,21 @@ class Register extends React.Component<RegisterProp, RegisterState> {
                             hintText="name@limei.com"
                             floatingLabelText="email"
                             type="text"
+                            onChange={this.__email.bind(this)}
                         />
                         <br/>
                         <TextField
                             hintText="******"
                             floatingLabelText="Password"
                             type="password"
+                            onChange={this.__password.bind(this)}
                         />
                         <br/>
                         <TextField
                             hintText="******"
                             floatingLabelText="Password"
                             type="password"
+                            onChange={this.__passwordS.bind(this)}
                         />
                         <div style={buttonStyle}>
                             <FlatButton style={{float: "left"}}
@@ -77,7 +82,7 @@ class Register extends React.Component<RegisterProp, RegisterState> {
                     </Paper>
                 </div>
                 <Loading loading={this.props.loading.isLoad}/>
-                <Message message={this.props.style.message} closeAction={this.props.actions.message}/>
+                <Message message={this.props.style.message} closeAction={this.props.mainActions.message}/>
             </div>
         );
     }
@@ -89,12 +94,16 @@ class Register extends React.Component<RegisterProp, RegisterState> {
         this.setState({password: event.target.value})
     }
 
+    private __passwordS(event: any){
+        this.setState({passwordS: event.target.value})
+    }
+
     private __login(){
-        this.props.actions.router("login");
+        this.props.mainActions.router("login");
     }
 
     private __register(){
-        this.props.actions.register(this.state.email, md5(this.state.password));
+        this.props.userActions.register(this.state.email, this.state.password);
     }
 }
 
@@ -108,7 +117,8 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
     return {
-        actions: bindActionCreators(MainAction, dispatch)
+        mainActions: bindActionCreators(MainAction, dispatch),
+        userActions: bindActionCreators(UserAction, dispatch)
     };
 }
 

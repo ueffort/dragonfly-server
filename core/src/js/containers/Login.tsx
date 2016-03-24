@@ -9,19 +9,20 @@
 import * as React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import * as MainAction from "../actions/MainActions";
+import * as MainAction from "../actions/Main";
+import * as UserAction from "../actions/User";
 import Loading from "./Loading";
 import Paper = require('material-ui/lib/paper');
 import TextField = require('material-ui/lib/text-field');
 import FlatButton = require('material-ui/lib/flat-button');
-import {md5} from "../../../../app/tools/StringHandle";
 import Message from "./Message";
 
 interface LoginProp {
     loading?: any;
     user?: any;
     style?: any;
-    actions?: any;
+    mainActions?: any;
+    userActions?: any;
 }
 
 interface LoginState {
@@ -39,7 +40,7 @@ class Login extends React.Component<LoginProp, LoginState> {
 
     private init(){
         if(this.props.user.email){
-            this.props.actions.router("/");
+            this.props.mainActions.router("/");
         }
     }
 
@@ -80,7 +81,7 @@ class Login extends React.Component<LoginProp, LoginState> {
                     </Paper>
                 </div>
                 <Loading loading={this.props.loading.isLoad}/>
-                <Message message={this.props.style.message} closeAction={this.props.actions.message}/>
+                <Message message={this.props.style.message} closeAction={this.props.mainActions.message}/>
             </div>
         );
     }
@@ -94,11 +95,11 @@ class Login extends React.Component<LoginProp, LoginState> {
     }
 
     private __login(){
-        this.props.actions.login(this.state.email, md5(this.state.password));
+        this.props.userActions.login(this.state.email, this.state.password);
     }
 
     private __register(){
-        this.props.actions.router("register");
+        this.props.mainActions.router("register");
     }
 }
 
@@ -112,7 +113,8 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
     return {
-        actions: bindActionCreators(MainAction, dispatch)
+        mainActions: bindActionCreators(MainAction, dispatch),
+        userActions: bindActionCreators(UserAction, dispatch)
     };
 }
 
