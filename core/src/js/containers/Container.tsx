@@ -51,8 +51,8 @@ class Container extends React.Component<ContainerProp, any> {
         return (
             <Router history={this.getHistory(store)}>
                 <Route path="/" component={App}/>
-                <Route path="/playbook/:id" component={App}/>
-                <Route path="/addPlaybook/:typeId" component={App}/>
+                <Route path="/checkPlaybook/:id" component={App}/>
+                <Route path="/addPlaybook/:type" component={App}/>
                 <Route path="login" component={Login}/>
                 <Route path="register" component={Register}/>
                 <Route path="*" component={Error}/>

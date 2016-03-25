@@ -19,10 +19,12 @@ export default function routerHandle(app:CoreApp):express.Router{
     // 全局登录验证
     router.use("/api/*", Dispatch.session(app,['/api/login', '/api/register'], function(session: any){
         let user = session["user"];
-        if(user["email"]){
+        if(typeof user == "object" && user["email"]){
             return Promise.resolve(true);
         }else{
-            throw new Error("need login").name =  Constant.NEED_LOGIN;
+            let error = new Error("need login");
+            error.name = Constant.NEED_LOGIN;
+            throw error;
         }
     }));
 
@@ -35,7 +37,7 @@ export default function routerHandle(app:CoreApp):express.Router{
     router.post("/api/loginOut", user.handle([], user.loginOut));
 
     //playbook 查看 状态,列表
-    router.get("/api/playbook/state/:id", playbook.handle([{name:"id", param:true}], playbook.state));
+    router.get("/api/playbook/get/:id", playbook.handle([{name:"id", param:true}], playbook.state));
     router.get("/api/playbook/list", playbook.handle([{name:"num", query:true}, {name:"start", query:true}, {name:"count", query:true}], playbook.list));
 
     //playbook 操作 添加,删除,重启

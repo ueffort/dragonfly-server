@@ -8,9 +8,11 @@ import CoreApp from "../App";
 import * as Constant from "../Constant";
 import {Promise} from "../../app/tools/Promise";
 import {EventEmitter} from "events";
-import {BasePlaybook} from "../playbook/BasePlaybook";
+import {Base as BasePlaybook} from "../playbook/Base";
 import {Playbook, PlaybookModel} from "../model/playbook";
 import {Logger} from "bunyan";
+import {getTime} from "../../app/tools/Util";
+import {Factory as PlaybookFactory} from "../playbook/Factory";
 
 export default class Task {
 
@@ -35,10 +37,10 @@ export default class Task {
     }
 
     public start():Task{
-        this.events.on("add", this.add);
-        this.events.on("delete", this.del);
-        this.events.on("addTime", this.addTime);
-        this.events.on("next", this.next);
+        this.events.on("add", this.add.bind(this));
+        this.events.on("delete", this.del.bind(this));
+        this.events.on("addTime", this.addTime.bind(this));
+        this.events.on("next", this.next.bind(this));
         this.init();
         return this;
     }
@@ -53,7 +55,6 @@ export default class Task {
                     this.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookList[i].id);
                 }
             }
-            this.handleTask()
         });
     }
 
@@ -66,10 +67,14 @@ export default class Task {
             let playbookId = Number(this.playbookList.shift());
             new PlaybookModel(this.app).get(playbookId)
                 .then((playbook: Playbook)=>{
-                    return new BasePlaybook(this.app, playbook).start();
+                    if(!PlaybookFactory.isHasPlaybook(playbook.type)) return Promise.reject(new Error("playbook type 不存在"));
+                    let playbookType = PlaybookFactory.getPlaybook(playbook.type);
+                    if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
+                    playbookType = new playbookType(this.app);
+                    return new playbookType(this.app, playbook).start();
                 })
                 .then((playbook: Playbook)=>{
-                    if(playbook.time > new Date().getTime()){
+                    if(playbook.time > getTime()){
                         this.events.emit("addTime", Constant.TASK_TYPE_PLAYBOOK, playbook.id, playbook.time)
                     }
                     this.events.emit("next");
@@ -111,7 +116,7 @@ export default class Task {
     }
 
     private addTime(type: number, data: any, time: number){
-        let nowTime = new Date().getTime();
+        let nowTime = getTime();
         let _time = time - nowTime;
         if(_time > 0){
             let timeKey = setTimeout(()=>{

@@ -21,8 +21,8 @@ interface RegisterProp {
     loading?: any;
     user?: any;
     style?: any;
-    mainActions?: any;
-    userActions?: any;
+    mainAction?: any;
+    userAction?: any;
 }
 
 interface RegisterState {
@@ -82,7 +82,7 @@ class Register extends React.Component<RegisterProp, RegisterState> {
                     </Paper>
                 </div>
                 <Loading loading={this.props.loading.isLoad}/>
-                <Message message={this.props.style.message} closeAction={this.props.mainActions.message}/>
+                <Message message={this.props.style.message} mainAction={this.props.mainAction}/>
             </div>
         );
     }
@@ -99,11 +99,11 @@ class Register extends React.Component<RegisterProp, RegisterState> {
     }
 
     private __login(){
-        this.props.mainActions.router("login");
+        this.props.mainAction.router("login");
     }
 
     private __register(){
-        this.props.userActions.register(this.state.email, this.state.password);
+        this.props.userAction.register(this.state.email, this.state.password);
     }
 }
 
@@ -117,8 +117,8 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
     return {
-        mainActions: bindActionCreators(MainAction, dispatch),
-        userActions: bindActionCreators(UserAction, dispatch)
+        mainAction: bindActionCreators(MainAction, dispatch),
+        userAction: bindActionCreators(UserAction, dispatch)
     };
 }
 

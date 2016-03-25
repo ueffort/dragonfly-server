@@ -8,13 +8,13 @@ import {Playbook, PlaybookModel} from "../model/playbook";
 import CoreApp from "../App";
 import * as Constant from "../Constant";
 import {EventEmitter} from "events";
+import {getTime} from "../../app/tools/Util";
 
 export class Script{
     private name:string;
     private state:number;
     private handleState:number;
     private resultState:number;
-    private params:any;
     private overTime:number;
     private events:EventEmitter;
 
@@ -26,12 +26,16 @@ export class Script{
 
     constructor(data:any, events:EventEmitter){
         this.events = events;
-        this.events.emit("registerScript", this);
         this.name = data[Script.NAME] ? data[Script.NAME] : "";
         this.state = data[Script.STATE] ? data[Script.STATE] : Constant.WAIT;
         this.handleState = data[Script.H_STATE] ? data[Script.H_STATE] : Constant.UNKNOWN;
         this.resultState = data[Script.R_STATE] ? data[Script.R_STATE] : Constant.UNKNOWN;
         this.overTime = data[Script.OVER_TIME] ? data[Script.OVER_TIME] : Constant.UNKNOWN;
+    }
+
+    public init(){
+        this.events.emit("registerScript", this);
+        return this;
     }
 
     public getName(){
@@ -63,7 +67,7 @@ export class Script{
         this.state = state;
         if(handleState) this.handleState = handleState;
         if(resultState) this.resultState = resultState;
-        this.overTime = new Date().getTime()
+        this.overTime = getTime()
     }
 
     public end(resultState?:number){
@@ -110,19 +114,17 @@ export class ScriptGroup{
         this.state = data[ScriptGroup.STATE] ? data[ScriptGroup.STATE] : Constant.WAIT;
         this.type = data[ScriptGroup.TYPE] ? data[ScriptGroup.TYPE] : ScriptGroup.TYPE_LIST;
         for(let i in this.group){
-            if(typeof i === "object"){
-                if(i[ScriptGroup.LIST]){
-                    this.group[i] = new ScriptGroup(i, events);
-                }else{
-                    this.group[i] = new Script(i, events);
-                }
+            if(this.group[i][ScriptGroup.LIST]){
+                this.group[i] = new ScriptGroup(this.group[i], events);
+            }else{
+                this.group[i] = new Script(this.group[i], events).init();
             }
         }
     }
 
     public start(){
         for(let i in this.group){
-            if(i[ScriptGroup.LIST]){
+            if(this.group[i][ScriptGroup.LIST]){
                 if(this.group[i].checkState() == Constant.GROUP_WAIT || this.group[i].checkState() == Constant.GROUP_ING){
                     return this.group[i].start();
                 }
@@ -174,23 +176,21 @@ export class ScriptGroup{
     public toFormat(){
         let _group:any[] = [];
         for(let i in this.group){
-            _group.push(i.toFormat());
+            _group.push(this.group[i].toFormat());
         }
         return ScriptGroup.format([_group, this.state, this.type, 1]);
     }
 
     public static initFormat(data:any){
         let _group:any[] = [];
-        for(let i in data["list"]){
-            if(typeof i === "object"){
-                if(i["list"]){
-                    _group.push(ScriptGroup.initFormat(i))
-                }else{
-                    _group.push(Script.initFormat(i))
-                }
+        if(data["list"]){
+            for(let i in data["list"]){
+                _group.push(ScriptGroup.initFormat(data["list"][i]))
             }
+            return ScriptGroup.format([Constant.GROUP_WAIT, _group, ScriptGroup.TYPE_LIST])
+        }else{
+            return Script.initFormat(data);
         }
-        return ScriptGroup.format([_group, Constant.GROUP_WAIT, ScriptGroup.TYPE_LIST, 1])
     }
 
     private static format(data:any[]){
@@ -208,21 +208,24 @@ export class ScriptDispatch{
     private events:EventEmitter = new EventEmitter();
     private scriptList: any = {};
     constructor(script:any){
-        this.events.on("registerScript", this.registerScript);
+        this.events.on("registerScript", this.registerScript.bind(this));
         if(script[ScriptGroup.LIST]){
             this.script = new ScriptGroup(script, this.events);
         }
     }
 
     private execScript(name:string){
+        console.log("dispath","execScript");
         this.events.emit("scriptHandle", this.getScript(name));
     }
 
     private registerScript(script:Script){
+        console.log("dispath","registerScript");
         this.scriptList[script.getName()] = script;
     }
 
     private scriptSaveEnd(){
+        console.log("dispath","scriptSaveEnd");
         if(this.script){
             this.script.checkState();
             this.events.emit("scriptEnd");
@@ -230,14 +233,17 @@ export class ScriptDispatch{
     }
 
     public start(){
-        this.events.on("execScript",this.execScript);
-        this.events.on("scriptSaveEnd", this.scriptSaveEnd);
+        console.log("dispath","start");
+        this.events.on("execScript",this.execScript.bind(this));
+        this.events.on("scriptSaveEnd", this.scriptSaveEnd.bind(this));
         this.next();
     }
 
     private end(){
+        console.log("dispath","end");
+        console.log(this.events);
         this.events.emit("end");
-        this.events.removeAllListeners();
+        //this.events.removeAllListeners();
     }
 
     public cancel(error?:Error){
@@ -245,16 +251,18 @@ export class ScriptDispatch{
             this.script.cancel();
         }
         this.events.emit("cancel", error);
-        this.events.removeAllListeners();
+        //this.events.removeAllListeners();
     }
 
     public next(){
+        console.log("dispath","next");
         if(!this.doScript()){
             this.end();
         }
     }
 
     public scriptEnd(scriptName:string, resultState:number){
+        console.log("dispath","scriptEnd");
         this.getScript(scriptName).end(resultState);
     }
 
@@ -268,6 +276,7 @@ export class ScriptDispatch{
     }
 
     private doScript(){
+        console.log("dispath","doScript");
         if(this.script){
             if(this.script.start()){
                 return true;
@@ -293,6 +302,7 @@ export class ScriptDispatch{
     }
 
     public toFormat(){
+        console.log("displath", "toFormat");
         return this.script ? this.script.toFormat() : {};
     }
 
@@ -310,23 +320,21 @@ export class ScriptDispatch{
 }
 
 export interface ScriptResult{
-    state:number;
-    handleState:number;
     resultState:number;
     data:any;
     command:number;
 }
 
-export class BasePlaybook{
+export class Base{
 
     protected app: CoreApp;
     protected playbook: Playbook;
     protected playbookModel: PlaybookModel;
 
-    protected typeName:string = "base";
-    protected scripts:any = {};
-    protected repeat:boolean = false;
-    protected repeatTime:number = 0;
+    protected name: string = "base";
+    protected scripts: any = {};
+    protected repeat: boolean = false;
+    protected repeatTime: number = 0;
 
     private scriptDispatch:ScriptDispatch;
 
@@ -334,7 +342,6 @@ export class BasePlaybook{
     private scriptReject:(error: any) => any | Thenable<any>;
 
     private scriptHandleFun:(script: Script) => Promise<ScriptResult>;
-    private initFun:()=>{};
 
     constructor(app: CoreApp, playbook?: Playbook){
         this.app = app;
@@ -342,11 +349,10 @@ export class BasePlaybook{
             this.playbook = playbook;
         }else{
             this.playbook = new Playbook();
-            this.initPlaybook();
 
         }
         this.playbookModel = new PlaybookModel(app);
-        this.setHandleFun(BasePlaybook.doHandle);
+        this.setHandleFun(Base.doHandle);
     }
 
     public setParam(param:any){
@@ -364,11 +370,6 @@ export class BasePlaybook{
         this.playbook.state = Constant.WAIT;
     }
 
-    protected setInfoFun(fun:()=>{}){
-        this.initFun = fun;
-        return this;
-    }
-
     protected setHandleFun(fun:(script: Script) => Promise<ScriptResult>){
         this.scriptHandleFun = fun;
         return this;
@@ -378,22 +379,25 @@ export class BasePlaybook{
         return this.repeat;
     }
 
-    private initPlaybook(){
-        this.playbook.state = Constant.WAIT;
-        this.playbook.type = this.typeName;
-        this.playbook.script = ScriptDispatch.initFormat(this.scripts);
-        this.playbook.result = {};
-        this.playbook.param = {};
-        this.playbook.time = 0;
-        if(this.initFun) this.initFun();
+    protected init(){
+        console.log("Base","init");
+        if(!this.playbook.id){
+            this.playbook.state = Constant.WAIT;
+            this.playbook.type = this.name;
+            this.playbook.script = ScriptDispatch.initFormat(this.scripts);
+            this.playbook.result = {};
+            this.playbook.param = {};
+            this.playbook.time = 0;
+        }
     }
 
     public start(){
+        console.log("Base","start");
         this.scriptDispatch = new ScriptDispatch(this.playbook.script);
-        this.scriptDispatch.onScriptHandle(this.scriptHandle);
-        this.scriptDispatch.onEnd(this.end);
-        this.scriptDispatch.onCancel(this.cancel);
-        this.scriptDispatch.onScriptEnd(this.scriptEnd);
+        this.scriptDispatch.onScriptHandle(this.scriptHandle.bind(this));
+        this.scriptDispatch.onEnd(this.end.bind(this));
+        this.scriptDispatch.onCancel(this.cancel.bind(this));
+        this.scriptDispatch.onScriptEnd(this.scriptEnd.bind(this));
         this.scriptDispatch.start();
         this.playbook.state = Constant.ING;
         return new Promise((resolve, reject)=>{
@@ -403,7 +407,10 @@ export class BasePlaybook{
     }
 
     private addResult(scriptName:string, result:any){
-        this.playbook.result[scriptName] = result;
+        console.log("Base","addResult");
+        let _result = this.playbook.result;
+        _result[scriptName] = result;
+        this.playbook.result = _result;
     }
 
     protected getResult(scriptName:string){
@@ -411,10 +418,12 @@ export class BasePlaybook{
     }
 
     private scriptHandle(script:Script){
+        console.log("Base","scriptHandle");
         return Promise.resolve(this.scriptHandleFun(script))
             .then((result:ScriptResult)=>{
                 this.addResult(script.getName(), result.data);
                 this.scriptDispatch.scriptEnd(script.getName(), result.resultState);
+                console.log("next");
                 if(result.command == Constant.SCRIPT_CANCEL_COMMAND){
                     this.scriptDispatch.cancel();
                 }else{
@@ -428,20 +437,23 @@ export class BasePlaybook{
     }
 
     private saveScript(){
+        console.log("Base","saveScript");
         this.playbook.script = this.scriptDispatch.toFormat();
         return this.save();
     }
 
     private scriptEnd(){
-        return this.saveScript();
+        console.log("Base","scriptEnd");
+        this.saveScript();
     }
 
     private end(){
+        console.log("Base","end");
         this.playbook.state = Constant.END;
 
         if(this.repeat){
             this.reset();
-            this.playbook.time = new Date().getTime() + this.repeatTime;
+            this.playbook.time = getTime() + this.repeatTime;
         }
 
         this.saveScript().then(()=>{
@@ -465,8 +477,6 @@ export class BasePlaybook{
 
     private static doHandle(script:Script):Promise<ScriptResult>{
         let result:ScriptResult = {
-            state: Constant.END,
-            handleState: Constant.SUCCESS,
             resultState: Constant.NORMAL,
             command: Constant.SCRIPT_NEXT_COMMAND,
             data: {}
@@ -475,6 +485,7 @@ export class BasePlaybook{
     }
 
     public save():Promise<any>{
+        console.log("Base","save");
         return this.playbookModel.save(this.playbook);
     }
 

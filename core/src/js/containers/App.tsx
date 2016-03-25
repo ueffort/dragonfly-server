@@ -25,10 +25,9 @@ interface AppProp {
     user?: any;
     style?: any;
     params?: any;
-    mainActions?: any;
-    userActions?: any;
-    playbookActions?: any;
-
+    mainAction?: any;
+    userAction?: any;
+    playbookAction?: any;
 }
 
 class App extends React.Component<AppProp, any> {
@@ -40,7 +39,7 @@ class App extends React.Component<AppProp, any> {
 
     private init(){
         if(!this.props.user.email){
-            this.props.mainActions.router("login");
+            this.props.mainAction.router("/login");
         }
     }
 
@@ -60,19 +59,18 @@ class App extends React.Component<AppProp, any> {
     public render() {
         return (
             <div>
-                <Header title={this.props.playbook[0].name}
-                        user={this.props.user}
-                        loginOutAction={this.props.userActions.loginOut}
-                        menuAction={this.props.mainActions.leftShow}/>
+                <Header user={this.props.user}
+                        mainAction={this.props.mainAction}/>
                 <Left show={this.props.style.left}
-                      showAction={this.props.mainActions.leftShow}
-                      routerAction={this.props.mainActions.router}/>
+                      mainAction={this.props.mainAction}
+                      playbook={this.props.playbook}/>
                 <Content playbook={this.props.playbook}
-                         routerAction={this.props.mainActions.router}
+                         mainAction={this.props.mainAction}
+                         playbookAction={this.props.playbookAction}
                          id={this.props.params.id}
                          type={this.props.params.type}/>
                 <Loading loading={this.props.loading.isLoad}/>
-                <Message message={this.props.style.message} closeAction={this.props.mainActions.message}/>
+                <Message message={this.props.style.message} mainAction={this.props.mainAction}/>
             </div>
         );
     }
@@ -89,9 +87,9 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
     return {
-        mainActions: bindActionCreators(MainAction, dispatch),
-        userActions: bindActionCreators(UserAction, dispatch),
-        playbookActions: bindActionCreators(PlaybookAction, dispatch)
+        mainAction: bindActionCreators(MainAction, dispatch),
+        userAction: bindActionCreators(UserAction, dispatch),
+        playbookAction: bindActionCreators(PlaybookAction, dispatch)
     };
 }
 

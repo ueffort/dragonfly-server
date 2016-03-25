@@ -13,12 +13,12 @@ import LeftNav = require('material-ui/lib/left-nav');
 import MenuItem = require('material-ui/lib/menus/menu-item');
 import Menu = require('material-ui/lib/menus/menu');
 import RaisedButton = require('material-ui/lib/raised-button');
-
+import {playbookData} from "../reducers/PlayBook";
 
 interface LeftProp {
     show?: boolean;
-    showAction?: any;
-    routerAction?: any;
+    mainAction?: any;
+    playbook: playbookData;
 }
 
 class Left extends React.Component<LeftProp, any> {
@@ -46,11 +46,12 @@ class Left extends React.Component<LeftProp, any> {
                     width={width}
                     style={style}
                     open={open}
-                    onRequestChange={this.props.showAction}
+                    onRequestChange={this.props.mainAction.leftShow}
                 ><Menu onChange={this.__click.bind(this)}
                        autoWidth={false} width={width}>
-                    <MenuItem value="1">Menu Item</MenuItem>
-                    <MenuItem value="2">Menu Item 2</MenuItem>
+                    {this.props.playbook.typeList.map((row: any, index: number)=>(
+                        <MenuItem value={row} key={index}>{this.props.playbook.typeMap[row]["title"]}</MenuItem>
+                        ))}
                 </Menu>
                 </LeftNav>
             </div>
@@ -58,8 +59,8 @@ class Left extends React.Component<LeftProp, any> {
     }
 
     private __click(event: any, value: any){
-        this.props.showAction();
-        this.props.routerAction("/playbook/"+value);
+        this.props.mainAction.leftShow();
+        this.props.mainAction.router("/addPlaybook/"+value);
     }
 }
 

@@ -3,22 +3,49 @@
  */
 
 import * as ActionTypes from "../constants/ActionTypes";
+import {getTypeList, getTypeMap} from "../../../playbook/Config";
+import objectAssign = require("object-assign");
 
-const initialValue = [
-    {"name": "test", "status": "loading"},
-    {"name": "test", "status": "loading"},
-    {"name": "test", "status": "loading"},
-    {"name": "test", "status": "loading"},
-    {"name": "test", "status": "loading"},
-    {"name": "test", "status": "loading"},
-    {"name": "test", "status": "loading"},
-    {"name": "test", "status": "loading"},
-    {"name": "test", "status": "loading"},
-    {"name": "test", "status": "loading"}
-];
+export interface playbookData{
+    map: any,
+    typeMap: any,
+    typeList: string[],
+    topIdList: number[],
+    count: number
+}
+
+const initialValue: playbookData = {
+    map: {},
+    typeMap: getTypeMap(),
+    typeList: getTypeList(),
+    topIdList: [],
+    count: 0
+
+};
 
 function PlayBook(state = initialValue, action: any) {
-    return state;
+    switch (action.type) {
+        case ActionTypes.ADD_PLAYBOOK:
+            state.topIdList.unshift(action.value.id);
+            state.map[action.value.id] = action.value;
+            return objectAssign({}, state);
+        case ActionTypes.UPDATE_PLAYBOOK:
+            state.map[action.value.id] = action.value;
+            return objectAssign({}, state);
+        case ActionTypes.UPDATE_PLAYBOOK_LIST:
+            state.count = action.value.count;
+            state.topIdList = [];
+            for(let i in action.value.list){
+                state.map[action.value.list[i].id] = action.value.list[i];
+                state.topIdList.push(action.value.list[i].id);
+            }
+            return objectAssign({}, state);
+        case ActionTypes.DELETE_PLAYBOOK:
+            delete state.map[action.value.id];
+            return objectAssign({}, state);
+        default:
+            return state;
+    }
 }
 
 export default PlayBook

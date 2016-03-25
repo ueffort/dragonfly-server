@@ -9,10 +9,16 @@ import { push } from 'react-router-redux';
 import Ajax from "../../../../app/tools/Ajax";
 import * as Constant from "../../../Constant";
 
-export function ajaxHandle(url:string, data: any, dispatch: Redux.Dispatch):Promise<any>{
+export function ajaxHandle(method: string, url:string, data: any, dispatch: Redux.Dispatch):Promise<any>{
     dispatch(load());
-    return Ajax.post(url, data)
-        .then((result: any)=>{
+    let handle = Promise.reject(new Error("请求错误"));
+    if(method == "post"){
+        handle = Ajax.post(url, data);
+    }else if(method == "get"){
+        handle = Ajax.get(url, data);
+    }
+
+    return handle.then((result: any)=>{
             dispatch(loaded());
             if(!result) return Promise.reject(false);
             let status = result.status;
@@ -25,8 +31,9 @@ export function ajaxHandle(url:string, data: any, dispatch: Redux.Dispatch):Prom
                 dispatch(message(result.message));
             }
             return Promise.reject(false);
-        }).catch(function(){
+        }).catch(function(error){
             dispatch(loaded());
+            return Promise.reject(false);
         });
 }
 

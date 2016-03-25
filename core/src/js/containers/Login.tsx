@@ -21,8 +21,8 @@ interface LoginProp {
     loading?: any;
     user?: any;
     style?: any;
-    mainActions?: any;
-    userActions?: any;
+    mainAction?: any;
+    userAction?: any;
 }
 
 interface LoginState {
@@ -32,7 +32,7 @@ interface LoginState {
 
 class Login extends React.Component<LoginProp, LoginState> {
 
-    constructor(props: any, context: LoginState) {
+    constructor(props: LoginProp, context: LoginState) {
         super(props, context);
         this.state = {email: "", password: ""};
         this.init();
@@ -40,7 +40,7 @@ class Login extends React.Component<LoginProp, LoginState> {
 
     private init(){
         if(this.props.user.email){
-            this.props.mainActions.router("/");
+            this.props.mainAction.router("/");
         }
     }
 
@@ -81,7 +81,7 @@ class Login extends React.Component<LoginProp, LoginState> {
                     </Paper>
                 </div>
                 <Loading loading={this.props.loading.isLoad}/>
-                <Message message={this.props.style.message} closeAction={this.props.mainActions.message}/>
+                <Message message={this.props.style.message} mainAction={this.props.mainAction}/>
             </div>
         );
     }
@@ -95,11 +95,11 @@ class Login extends React.Component<LoginProp, LoginState> {
     }
 
     private __login(){
-        this.props.userActions.login(this.state.email, this.state.password);
+        this.props.userAction.login(this.state.email, this.state.password);
     }
 
     private __register(){
-        this.props.mainActions.router("register");
+        this.props.mainAction.router("register");
     }
 }
 
@@ -113,8 +113,8 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
     return {
-        mainActions: bindActionCreators(MainAction, dispatch),
-        userActions: bindActionCreators(UserAction, dispatch)
+        mainAction: bindActionCreators(MainAction, dispatch),
+        userAction: bindActionCreators(UserAction, dispatch)
     };
 }
 

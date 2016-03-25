@@ -3,7 +3,6 @@
  */
 
 var dataHandle = require("../../../core/script/Data").default;
-require('should');
 
 describe('dataHandle', function () {
     it('getAuth', function (done) {

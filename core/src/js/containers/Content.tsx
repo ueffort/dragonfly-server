@@ -14,11 +14,14 @@ import TableRowColumn = require('material-ui/lib/table/table-row-column');
 import TableBody = require('material-ui/lib/table/table-body');
 import Dialog = require('material-ui/lib/dialog');
 import Platform from "../../../../app/tools/Platform";
+import PlaybookFactory from "./PlaybookFactory";
+import {playbookData} from "../reducers/PlayBook";
 
 
 interface ContentProp {
-    playbook?: any;
-    routerAction?: any;
+    playbook: playbookData;
+    mainAction: any;
+    playbookAction: any;
     id?: number;
     type?: string;
 }
@@ -27,25 +30,29 @@ class Content extends React.Component<ContentProp, any> {
 
     constructor(props: any, context: any) {
         super(props);
+        this.props.playbookAction.list(100, 0);
     }
 
     render() {
         let dialogOpen = false;
         if(this.props.id) dialogOpen = true;
+        if(this.props.type) dialogOpen = true;
         let style = {paddingLeft: 300, paddingTop: 64};
         if(Platform.getPlatform().isMobile()){
             style.paddingLeft = 0;
         }
         return (
             <div style={style}>
-
                 <Dialog
-                    title="Dialog With Actions"
                     modal={false}
                     open={dialogOpen}
-                    onRequestClose={this.__close.bind(this)}
-                >
-                    The actions in this window were passed in as an array of React objects.
+                    onRequestClose={this.__close.bind(this)}>
+                    <PlaybookFactory
+                        type={this.props.type}
+                        id={this.props.id}
+                        playbook={this.props.playbook}
+                        playbookAction={this.props.playbookAction}>
+                    </PlaybookFactory>
                 </Dialog>
                 <Table onCellClick={this.__click.bind(this)}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
@@ -56,11 +63,11 @@ class Content extends React.Component<ContentProp, any> {
                         </TableRow>
                     </TableHeader>
                     <TableBody displayRowCheckbox={false} showRowHover={true}>
-                        {this.props.playbook.map( (row: any, index: number) => (
-                        <TableRow key={index} selectable={true}>
-                            <TableRowColumn>{index}</TableRowColumn>
-                            <TableRowColumn>{row.name}</TableRowColumn>
-                            <TableRowColumn>{row.status}</TableRowColumn>
+                        {this.props.playbook.topIdList.map( (row: any, index: number) => (
+                        <TableRow key={this.props.playbook.map[row].id} selectable={true}>
+                            <TableRowColumn>{this.props.playbook.map[row].id}</TableRowColumn>
+                            <TableRowColumn>{this.props.playbook.map[row].type}</TableRowColumn>
+                            <TableRowColumn>{this.props.playbook.map[row].state}</TableRowColumn>
                         </TableRow>
                             ))}
                     </TableBody>
@@ -70,11 +77,11 @@ class Content extends React.Component<ContentProp, any> {
     }
 
     private __close(){
-        this.props.routerAction("/");
+        this.props.mainAction.router("/");
     }
 
     private __click(row: number, cell: number){
-        this.props.routerAction("/playbook/"+row);
+        this.props.mainAction.router("/checkPlaybook/"+this.props.playbook.topIdList[row]);
     }
 }
 

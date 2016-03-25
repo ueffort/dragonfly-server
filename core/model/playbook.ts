@@ -32,7 +32,7 @@ export class Playbook extends Record{
         return this.get("time");
     }
     set time(time:number){
-        this.set("time", status);
+        this.set("time", time);
     }
 
     private _result:any = null;

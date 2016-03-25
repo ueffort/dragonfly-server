@@ -60,7 +60,7 @@ export class BaseModel{
     protected count(modelHandle: ModelHandle):Promise<number>{
         let error:any = null;
         if(!modelHandle.where) error = "[DB] SELECT COUNT SQL where not empty";
-        let sql = `SELECT COUNT FROM ${modelHandle.tableName} WHERE ${this._where(modelHandle.where)}`;
+        let sql = `SELECT COUNT(*) FROM ${modelHandle.tableName} WHERE ${this._where(modelHandle.where)}`;
         if(error) return Promise.reject(new Error(`${error} ERROR SQL: ${sql}`));
         return this.exec(sql);
     }

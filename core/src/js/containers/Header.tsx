@@ -16,9 +16,7 @@ import MenuItem = require('material-ui/lib/menus/menu-item');
 
 
 interface HeaderProp {
-    title: string;
-    menuAction?: any;
-    loginOutAction?: any;
+    mainAction?: any;
     user: any;
 }
 
@@ -37,7 +35,7 @@ class Header extends React.Component<HeaderProp, any> {
             <AppBar
                 style={{position:"fixed"}}
                 title="内部工具"
-                iconElementLeft={<IconButton style={leftMenuStyle} onTouchTap={this.props.menuAction}><NavigationMenu /></IconButton>}
+                iconElementLeft={<IconButton style={leftMenuStyle} onTouchTap={this.props.mainAction.leftShow}><NavigationMenu /></IconButton>}
                 iconElementRight={
                   <IconMenu
                     iconButtonElement={
@@ -47,7 +45,6 @@ class Header extends React.Component<HeaderProp, any> {
                     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                   >
                     <MenuItem primaryText={this.props.user.email} />
-                    <MenuItem primaryText="退出" onTouchTap={this.props.loginOutAction} />
                   </IconMenu>
             }
             />

@@ -10,7 +10,7 @@ import {ajaxHandle, router} from "./Main";
 
 export function login(email: string, password: string) {
     return function(dispatch: Redux.Dispatch, getState?: () => {}){
-        ajaxHandle("/api/login", {email: email, password: password}, dispatch)
+        ajaxHandle("post", "/api/login", {email: email, password: password}, dispatch)
             .then((result: any)=>{
                     dispatch({type: ActionTypes.LOGIN, value: {email: result.email}});
                     dispatch(router("/"));
@@ -20,7 +20,7 @@ export function login(email: string, password: string) {
 
 export function register(email: string, password: string) {
     return function(dispatch: Redux.Dispatch, getState?: () => {}){
-        ajaxHandle("/api/register", {email: email, password: password}, dispatch)
+        ajaxHandle("post", "/api/register", {email: email, password: password}, dispatch)
             .then((result: any)=>{
                 dispatch({type: ActionTypes.REGISTER, value: {email: result.email}});
                 dispatch(router("/"));
@@ -30,7 +30,7 @@ export function register(email: string, password: string) {
 
 export function loginOut(){
     return function(dispatch: Redux.Dispatch, getState?: () => {}){
-        ajaxHandle("/api/loginOut", {}, dispatch)
+        ajaxHandle("post", "/api/loginOut", {}, dispatch)
             .then(()=>{
                 dispatch({ type: ActionTypes.LOGINOUT });
                 dispatch(router("/login"));

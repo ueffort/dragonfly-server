@@ -8,8 +8,8 @@ import * as express from "express";
 import {Promise} from "../../app/tools/Promise";
 import Controller from "../../app/abstract/Controller";
 import CoreApp from "../App";
-import PlayBookFactory from "../playbook/PlayBookFactory";
-import {BasePlaybook} from "../playbook/BasePlaybook";
+import {Factory as PlaybookFactory} from "../playbook/Factory";
+import {Base as BasePlaybook} from "../playbook/Base";
 import {PlaybookModel} from "../model/playbook";
 import {Playbook as PlaybookRecord} from "../model/playbook";
 import * as Constant from "../Constant";
@@ -27,7 +27,7 @@ export default class Playbook extends Controller{
         return res.json(CoreApp.formatResult(result));
     }
 
-    public state(id: number, req: express.Request, res: express.Response):Promise<any>{
+    public get(id: number, req: express.Request, res: express.Response):Promise<any>{
         let playbookModel = new PlaybookModel(this.app);
         return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
             return playbookRecord.toJson();
@@ -55,7 +55,8 @@ export default class Playbook extends Controller{
     }
 
     public add(type: string, param: any, req: express.Request, res: express.Response):Promise<any>{
-        let playbookType = PlayBookFactory.getPlaybook(type);
+        if(!PlaybookFactory.isHasPlaybook(type)) return Promise.reject(new Error("playbook type 不存在"));
+        let playbookType = PlaybookFactory.getPlaybook(type);
         if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
         playbookType = new playbookType(this.app);
         playbookType.setParam(param);
@@ -71,7 +72,8 @@ export default class Playbook extends Controller{
         return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
             if(playbookRecord.state == Constant.ING || playbookRecord.state == Constant.WAIT)
                 throw new Error("playbook 执行中不允许修改");
-            let playbookType = PlayBookFactory.getPlaybook(playbookRecord.type);
+            if(!PlaybookFactory.isHasPlaybook(playbookRecord.type)) return Promise.reject(new Error("playbook type 不存在"));
+            let playbookType = PlaybookFactory.getPlaybook(playbookRecord.type);
             if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
             playbookType = new playbookType(this.app);
             playbookType.setParam(param).reset();
@@ -99,7 +101,8 @@ export default class Playbook extends Controller{
         return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
             if(playbookRecord.state == Constant.ING || playbookRecord.state != Constant.WAIT)
                 throw new Error("playbook 执行中不允许重启");
-            let playbookType = PlayBookFactory.getPlaybook(playbookRecord.type);
+            if(!PlaybookFactory.isHasPlaybook(playbookRecord.type)) return Promise.reject(new Error("playbook type 不存在"));
+            let playbookType = PlaybookFactory.getPlaybook(playbookRecord.type);
             if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
             playbookType = new playbookType(this.app);
             playbookType.reset();
@@ -116,7 +119,8 @@ export default class Playbook extends Controller{
         return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
             if(playbookRecord.state != Constant.WAIT)
                 throw new Error("playbook 排队中才允许暂停");
-            let playbookType = PlayBookFactory.getPlaybook(playbookRecord.type);
+            if(!PlaybookFactory.isHasPlaybook(playbookRecord.type)) return Promise.reject(new Error("playbook type 不存在"));
+            let playbookType = PlaybookFactory.getPlaybook(playbookRecord.type);
             if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
             playbookType = new playbookType(this.app);
             if(!playbookType.isRepeat())

@@ -10,7 +10,7 @@ import Snackbar = require('material-ui/lib/snackbar');
 
 interface MessageProp {
     message: string;
-    closeAction?: any;
+    mainAction?: any;
 }
 
 class Message extends React.Component<MessageProp, any> {
@@ -36,7 +36,7 @@ class Message extends React.Component<MessageProp, any> {
 
     private __requestClose(event: string){
         if(event == "timeout"){
-            this.props.closeAction();
+            this.props.mainAction.message();
         }
     }
 }
