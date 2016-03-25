@@ -30,6 +30,7 @@
 1. npm run start data  单独启动data服务,占用8181端口
 2. npm run api-edit    启动data的swagger-edit服务,占用8182端口
 3. npm run start core  单独启动core服务,占用8080端口,依赖data服务
+4. npm run dev         开启测试模式
 > 测试环境/线上环境
 2. npm run start all   同时开启data+core服务
 

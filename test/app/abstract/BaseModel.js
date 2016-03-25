@@ -131,4 +131,21 @@ describe('BaseModel', function () {
             });
         });
     });
+    describe("select", function () {
+        it('count -> filed and where', function (done) {
+            var app = new App();
+            var model = new Model(app);
+            var modelHandle = {
+                tableName: 'test',
+                where:[["id", ">", id1]]
+            };
+            model.count(modelHandle).then(function(result){
+                console.log(result);
+                done();
+            }).catch(function(error){
+                console.log(error);
+                done();
+            });
+        });
+    });
 });
