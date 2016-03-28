@@ -28,7 +28,9 @@ export class BaseModel{
     }
 
     public static getTime():number{
-        return parseInt(new Date().getTime()/1000);
+        let _time: number = new Date().getTime();
+        _time = Math.ceil(_time/1000);
+        return _time;
     }
 
     protected exec(sql: string):Promise<any>{
@@ -129,7 +131,11 @@ export class BaseModel{
             if(typeof where[i] === "string"){
                 tmp.push(where[i]);
             }else if(typeof where[i] === "object"){
-                tmp.push(`${this._f(where[i][0])}${where[i][1]}${this._v(where[i][2])}`);
+                if(where[i][1] == "in"){
+                    tmp.push(`${this._f(where[i][0])} ${where[i][1]} (${where[i][2]})`);
+                }else{
+                    tmp.push(`${this._f(where[i][0])} ${where[i][1]} ${this._v(where[i][2])}`);
+                }
             }
         }
         return tmp.join(" AND ");

@@ -846,6 +846,11 @@ declare namespace __MaterialUI {
         export import NavigationChevronRight = __MaterialUI.NavigationChevronRight;
     }
 
+    interface ContentProps extends React.Props<ContentAdd> {
+    }
+    export class ContentAdd extends React.Component<ContentProps, {}> {
+    }
+
     interface NavigationMenuProps extends React.Props<NavigationMenu> {
     }
     export class NavigationMenu extends React.Component<NavigationMenuProps, {}> {
@@ -1819,6 +1824,11 @@ declare module 'material-ui/lib/slider' {
 declare module 'material-ui/lib/svg-icon' {
     import SvgIcon = __MaterialUI.SvgIcon;
     export = SvgIcon;
+}
+
+declare module 'material-ui/lib/svg-icons/content/add' {
+    import ContentAdd = __MaterialUI.ContentAdd;
+    export = ContentAdd;
 }
 
 declare module 'material-ui/lib/svg-icons/navigation/menu' {

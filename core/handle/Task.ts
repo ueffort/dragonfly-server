@@ -14,14 +14,18 @@ import {Logger} from "bunyan";
 import {getTime} from "../../app/tools/Util";
 import {Factory as PlaybookFactory} from "../playbook/Factory";
 
+interface TaskData{
+    type: number;
+    data: any;
+}
+
 export default class Task {
 
     private static instance: Task = null;
     private app: CoreApp = null;
     private logger: Logger = null;
     public events: EventEmitter = new EventEmitter();
-    private playbookList: BasePlaybook[] = [];
-    private timeList: any = {};
+    private taskList: TaskData[] = [];
     private ing: boolean = false;
 
     constructor(app: CoreApp){
@@ -38,7 +42,6 @@ export default class Task {
 
     public start():Task{
         this.events.on("add", this.add.bind(this));
-        this.events.on("delete", this.del.bind(this));
         this.events.on("addTime", this.addTime.bind(this));
         this.events.on("next", this.next.bind(this));
         this.init();
@@ -47,45 +50,97 @@ export default class Task {
 
     private init(){
         let playbookModel = new PlaybookModel(this.app);
-        playbookModel.getWaitPlayBook().then((playbookList:Playbook[])=>{
+        playbookModel.getWaitPlaybook().then((playbookList:Playbook[])=>{
             for(let i in playbookList){
-                if(playbookList[i].time > 0){
-                    this.events.emit("addTime", Constant.TASK_TYPE_PLAYBOOK, playbookList[i].id, playbookList[i].time);
-                }else{
-                    this.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookList[i].id);
-                }
+                this.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookList[i].id);
             }
         });
+        this.events.emit("add", Constant.TASK_TYPE_AUTOPLAYBOOK);
     }
 
     private handleTask(){
-        this.handlePlayBookTask();
-    }
-
-    private handlePlayBookTask(){
-        if(this.playbookList.length > 0){
-            let playbookId = Number(this.playbookList.shift());
-            new PlaybookModel(this.app).get(playbookId)
-                .then((playbook: Playbook)=>{
-                    if(!PlaybookFactory.isHasPlaybook(playbook.type)) return Promise.reject(new Error("playbook type 不存在"));
-                    let playbookType = PlaybookFactory.getPlaybook(playbook.type);
-                    if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
-                    playbookType = new playbookType(this.app);
-                    return new playbookType(this.app, playbook).start();
-                })
-                .then((playbook: Playbook)=>{
-                    if(playbook.time > getTime()){
-                        this.events.emit("addTime", Constant.TASK_TYPE_PLAYBOOK, playbook.id, playbook.time)
-                    }
-                    this.events.emit("next");
-                })
-                .catch((error: Error)=>{
-                    this.events.emit("next");
-                });
+        if(this.taskList.length > 0){
             this.ing = true;
+            let task: TaskData = this.taskList.shift();
+            if (task.type == Constant.TASK_TYPE_PLAYBOOK){
+                this.handlePlaybookTask(task.data)
+                    .then((playbook: Playbook)=>{
+                        this.events.emit("next");
+                    })
+                    .catch((error: Error)=>{
+                        this.events.emit("next");
+                    });
+            }else if(task.type == Constant.TASK_TYPE_AUTOPLAYBOOK){
+                this.handleAutoPlaybook()
+                    .then(()=>{
+                        this.events.emit("next");
+                    })
+                    .catch((error: Error)=>{
+                        this.events.emit("next");
+                    });
+            }else if(task.type == Constant.TASK_TYPE_ADDPLAYBOOK){
+                this.handleAddPlaybook(task.data)
+                    .then((playbook: Playbook)=>{
+                        this.events.emit("next");
+                    })
+                    .catch((error: Error)=>{
+                        this.events.emit("next");
+                    });
+            }
         }else{
             this.ing = false;
         }
+    }
+
+    private handleAutoPlaybook(){
+        let settingMap = PlaybookFactory.getPlaybookSettingMap();
+        let p: Promise<any>[]= [];
+        let playbookModel = new PlaybookModel(this.app);
+        for(let i in settingMap){
+            if(settingMap[i].auto){
+                p.push(playbookModel.getTypeLastPlaybook(settingMap[i].name, true));
+            }
+        }
+        return Promise.all(p).then((playbookList:Playbook[])=>{
+            let typeList: any = {};
+            for(let i in playbookList){
+                typeList[playbookList[i].type] = playbookList[i];
+            }
+            for(let i in settingMap){
+                if(settingMap[i].auto){
+                    if(typeList[i]){
+                        if(getTime() - typeList[i].updateTime > settingMap[i].autoTime){
+                            this.events.emit("add", Constant.TASK_TYPE_ADDPLAYBOOK, i);
+                        }
+                    }else{
+                        this.events.emit("add", Constant.TASK_TYPE_ADDPLAYBOOK, i);
+                    }
+                }
+            }
+            this.events.emit("addTime", getTime()+60, Constant.TASK_TYPE_AUTOPLAYBOOK);
+        });
+    }
+
+    private handleAddPlaybook(type: string):Promise<Playbook>{
+        if(!PlaybookFactory.isHasPlaybook(type)) return Promise.reject(new Error("playbook type 不存在"));
+        let playbookType = PlaybookFactory.getPlaybook(type);
+        if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
+        playbookType = new playbookType(this.app);
+        playbookType.setAuto(true);
+        return playbookType.save().then((playbook:Playbook)=>{
+            this.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbook.id);
+            return playbook;
+        });
+    }
+
+    private handlePlaybookTask(playbookId: number):Promise<Playbook>{
+        return new PlaybookModel(this.app).get(playbookId)
+            .then((playbook: Playbook)=>{
+                if(!PlaybookFactory.isHasPlaybook(playbook.type)) return Promise.reject(new Error("playbook type 不存在"));
+                let playbookType = PlaybookFactory.getPlaybook(playbook.type);
+                if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
+                return new playbookType(this.app, playbook).start();
+            });
     }
 
     private next(){
@@ -96,42 +151,24 @@ export default class Task {
         return this.ing;
     }
 
-    private del(type: number, data: any){
-        //if(type == Constant.TASK_TYPE_PLAYBOOK){
-        //    let index = this.playbookList.indexOf(data);
-        //    if(index > 0) this.playbookList.splice(this.playbookList.indexOf(data), 1);
-        //}
-        let timeIndex = this.getTimeIndex(type, data);
-        let timeKey = this.timeList[this.getTimeIndex(type, data)];
-        clearTimeout(timeKey);
-        delete this.timeList[timeIndex];
-    }
-
     private add(type: number, data: any){
-        let ing = this.isDoing();
-        if(type == Constant.TASK_TYPE_PLAYBOOK){
-            this.playbookList.push(data)
-        }
-        if(!ing) this.handleTask();
+        let taskData: TaskData = {
+            type: type,
+            data: data
+        };
+        this.taskList.push(taskData);
+        if(!this.isDoing()) this.handleTask();
     }
 
-    private addTime(type: number, data: any, time: number){
+    private addTime(time: number, type: number, data: any){
         let nowTime = getTime();
         let _time = time - nowTime;
         if(_time > 0){
-            let timeKey = setTimeout(()=>{
+            setTimeout(()=>{
                 this.events.emit("add", type, data);
-                delete this.timeList[this.getTimeIndex(type, data)];
-            }, _time);
-            this.timeList[this.getTimeIndex(type, data)] = timeKey;
+            }, _time*1000);
         }else{
             this.events.emit("add", type ,data);
-        }
-    }
-
-    private getTimeIndex(type: number, data: any){
-        if(type == Constant.TASK_TYPE_PLAYBOOK){
-            return data;
         }
     }
 }

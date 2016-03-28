@@ -35,7 +35,21 @@ class Register extends React.Component<RegisterProp, RegisterState> {
 
     constructor(props: any, context: any) {
         super(props, context);
-        this.state = {email: "", password: ""};
+        this.state = {email: "", password: "", passwords: ""};
+    }
+
+    private init(){
+        if(this.props.user.email){
+            this.props.mainAction.router("/");
+        }
+    }
+
+    public componentDidMount() {
+        this.init();
+    }
+
+    public componentWillUnmount() {
+
     }
 
     public render () {
@@ -103,7 +117,13 @@ class Register extends React.Component<RegisterProp, RegisterState> {
     }
 
     private __register(){
-        this.props.userAction.register(this.state.email, this.state.password);
+        if(!this.state.password){
+            this.props.mainAction.message("密码不能为空");
+        }else if(this.state.password != this.state.passwordS){
+            this.props.mainAction.message("重复密码不一致");
+        }else{
+            this.props.userAction.register(this.state.email, this.state.password);
+        }
     }
 }
 

@@ -18,6 +18,7 @@ import {playbookData} from "../reducers/PlayBook";
 interface LeftProp {
     show?: boolean;
     mainAction?: any;
+    playbookAction?: any;
     playbook: playbookData;
 }
 
@@ -49,9 +50,13 @@ class Left extends React.Component<LeftProp, any> {
                     onRequestChange={this.props.mainAction.leftShow}
                 ><Menu onChange={this.__click.bind(this)}
                        autoWidth={false} width={width}>
-                    {this.props.playbook.typeList.map((row: any, index: number)=>(
-                        <MenuItem value={row} key={index}>{this.props.playbook.typeMap[row]["title"]}</MenuItem>
-                        ))}
+                    <MenuItem checked={this.props.playbook.type == "all"} value="all" key={-1}>全部</MenuItem>
+                    {this.props.playbook.typeList.map((row: any, index: number)=>{
+                        let checked = this.props.playbook.type == this.props.playbook.typeMap[row]["name"] ? true : false;
+                        return (<MenuItem checked={checked} value={row} key={index}>
+                            {this.props.playbook.typeMap[row]["title"]}
+                        </MenuItem>)
+                        })}
                 </Menu>
                 </LeftNav>
             </div>
@@ -60,7 +65,7 @@ class Left extends React.Component<LeftProp, any> {
 
     private __click(event: any, value: any){
         this.props.mainAction.leftShow();
-        this.props.mainAction.router("/addPlaybook/"+value);
+        this.props.playbookAction.selectType(value);
     }
 }
 

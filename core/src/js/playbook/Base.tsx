@@ -22,6 +22,15 @@ class Base extends React.Component<PlaybookProp, any> {
         super(props, context);
     }
 
+    public componentDidMount() {
+        if(this.props.id && !this.props.playbook){
+            this.props.action.get(this.props.id);
+        }
+    }
+
+    public componentWillUnmount() {
+    }
+
     public render () {
         return (
             <div>出错啦!!</div>

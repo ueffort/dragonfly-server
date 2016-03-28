@@ -3,21 +3,29 @@
  */
 
 export interface setting{
-    global: boolean;
     title: string;
     name: string;
+    auto: boolean;
+    autoTime?: number;
 }
 
 export function getTypeMap(){
     return {
         demo: {
-            global: false,
             title: "Demo",
-            name: "demo"
+            name: "demo",
+            auto: false,
+            autoTime: 30
+        },
+        demo1: {
+            title: "Demo1",
+            name: "demo1",
+            auto: false,
+            autoTime: 30
         }
     }
 }
 
 export function getTypeList(){
-    return ["demo"]
+    return ["demo", "demo1"]
 }

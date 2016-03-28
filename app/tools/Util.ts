@@ -3,5 +3,7 @@
  */
 
 export function getTime():number{
-    return parseInt(new Date().getTime()/1000);
+    let _time: number = new Date().getTime();
+    _time = Math.ceil(_time/1000);
+    return _time;
 }

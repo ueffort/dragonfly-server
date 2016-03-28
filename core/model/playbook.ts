@@ -28,11 +28,11 @@ export class Playbook extends Record{
         this.set("state", state);
     }
 
-    get time(){
-        return this.get("time");
+    get auto(){
+        return this.get("auto");
     }
-    set time(time:number){
-        this.set("time", time);
+    set auto(auto:number){
+        this.set("auto", auto);
     }
 
     private _result:any = null;
@@ -81,14 +81,35 @@ export class PlaybookModel extends Model{
 
     public key: string = "id";
 
-    public filed: string[] = ["id", "type", "state", "time", "script", "param", "result", "create_time", "update_time", "delete_time"];
+    public filed: string[] = ["id", "type", "auto", "state", "script", "param", "result", "create_time", "update_time", "delete_time"];
 
     protected formatData(data: any){
-        return new Playbook(data);
+        let record:any = {};
+        for(let i in data){
+            record[i] = data[i];
+        }
+        return new Playbook(record);
     }
 
-    public getWaitPlayBook():Promise<Playbook[]>{
-        let where = [["state", "=", Constant.WAIT]];
+    public getWaitPlaybook():Promise<Playbook[]>{
+        let where = [["state", "in", `${Constant.WAIT},${Constant.ING}`]];
         return this.getList(where);
+    }
+
+    public getTypeLastPlaybook(type: string, auto: boolean){
+        let modelHandle: ModelHandle = {
+            tableName: this.tableName,
+            select: true,
+            where: [["type", "=", type]],
+            order: `${this.updateTime} DESC`,
+            limit: "0,1"
+        };
+        if(auto){
+            modelHandle.where.push(["auto", "=", "1"]);
+        }
+        return this.handle(modelHandle).then((result: any[])=>{
+            if(!result || result.length <= 0) return {};
+            return this.formatData(result[0]);
+        });
     }
 }

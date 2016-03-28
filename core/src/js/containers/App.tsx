@@ -34,7 +34,6 @@ class App extends React.Component<AppProp, any> {
 
     constructor(props: any, context: any) {
         super(props, context);
-        this.init();
     }
 
     private init(){
@@ -49,6 +48,7 @@ class App extends React.Component<AppProp, any> {
     }
 
     public componentDidMount() {
+        this.init();
         window.addEventListener("resize", this.updateDimensions.bind(this));
     }
 
@@ -63,6 +63,7 @@ class App extends React.Component<AppProp, any> {
                         mainAction={this.props.mainAction}/>
                 <Left show={this.props.style.left}
                       mainAction={this.props.mainAction}
+                      playbookAction={this.props.playbookAction}
                       playbook={this.props.playbook}/>
                 <Content playbook={this.props.playbook}
                          mainAction={this.props.mainAction}

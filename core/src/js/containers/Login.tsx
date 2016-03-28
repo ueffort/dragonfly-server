@@ -35,13 +35,20 @@ class Login extends React.Component<LoginProp, LoginState> {
     constructor(props: LoginProp, context: LoginState) {
         super(props, context);
         this.state = {email: "", password: ""};
-        this.init();
     }
 
     private init(){
         if(this.props.user.email){
             this.props.mainAction.router("/");
         }
+    }
+
+    public componentDidMount() {
+        this.init();
+    }
+
+    public componentWillUnmount() {
+
     }
 
     public render () {

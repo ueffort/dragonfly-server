@@ -37,15 +37,12 @@ export default function routerHandle(app:CoreApp):express.Router{
     router.post("/api/loginOut", user.handle([], user.loginOut));
 
     //playbook 查看 状态,列表
-    router.get("/api/playbook/get/:id", playbook.handle([{name:"id", param:true}], playbook.state));
-    router.get("/api/playbook/list", playbook.handle([{name:"num", query:true}, {name:"start", query:true}, {name:"count", query:true}], playbook.list));
+    router.get("/api/playbook/get/:id", playbook.handle([{name:"id", param:true}], playbook.get));
+    router.get("/api/playbook/list", playbook.handle([{name:"num", query:true}, {name:"start", query:true}, {name:"type", query:true}, {name:"count", query:true}], playbook.list));
 
     //playbook 操作 添加,删除,重启
     router.post("/api/playbook/add", playbook.handle([{name:"type", form:true}, {name:"param", form:true}], playbook.add));
-    router.post("/api/playbook/update", playbook.handle([{name:"id", form:true}, {name:"param", form:true}], playbook.update));
     router.post("/api/playbook/delete", playbook.handle([{name:"id", form:true}], playbook.delete));
-    router.post("/api/playbook/restart", playbook.handle([{name:"id", form:true}], playbook.restart));
-    router.post("/api/playbook/stop", playbook.handle([{name:"id", form:true}], playbook.stop));
 
     return router;
 };

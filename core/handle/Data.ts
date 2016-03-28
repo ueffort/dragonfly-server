@@ -15,7 +15,7 @@ const PATH = 4;
 
 const config = jsonFile.read("app/config");
 
-export default class DataHandle{
+export default class Data{
 
     public static formatData(url: string, data: any[]){
         let option: any = {}, baseUrl: string = url, uri: string = "";

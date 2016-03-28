@@ -9,7 +9,7 @@ import * as Constant from "../Constant";
 
 export default class Demo extends Base{
 
-    protected name: string = "demo";
+    protected name: string = "demo1";
     protected scripts: any = {name: "test"};
     protected repeat: boolean = false;
     protected repeatTime: number = 0;

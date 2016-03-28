@@ -32,7 +32,7 @@ export class Factory{
         if(!Factory.playbookTypeSettingMap){
             Factory.findPlaybook();
         }
-        return Factory.playbookTypeListMap;
+        return Factory.playbookTypeSettingMap;
     }
 
     public static getPlaybookSetting(typeName:string):any{

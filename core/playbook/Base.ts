@@ -215,17 +215,14 @@ export class ScriptDispatch{
     }
 
     private execScript(name:string){
-        console.log("dispath","execScript");
         this.events.emit("scriptHandle", this.getScript(name));
     }
 
     private registerScript(script:Script){
-        console.log("dispath","registerScript");
         this.scriptList[script.getName()] = script;
     }
 
     private scriptSaveEnd(){
-        console.log("dispath","scriptSaveEnd");
         if(this.script){
             this.script.checkState();
             this.events.emit("scriptEnd");
@@ -233,17 +230,14 @@ export class ScriptDispatch{
     }
 
     public start(){
-        console.log("dispath","start");
         this.events.on("execScript",this.execScript.bind(this));
         this.events.on("scriptSaveEnd", this.scriptSaveEnd.bind(this));
         this.next();
     }
 
     private end(){
-        console.log("dispath","end");
-        console.log(this.events);
         this.events.emit("end");
-        //this.events.removeAllListeners();
+        this.events.removeAllListeners();
     }
 
     public cancel(error?:Error){
@@ -251,18 +245,16 @@ export class ScriptDispatch{
             this.script.cancel();
         }
         this.events.emit("cancel", error);
-        //this.events.removeAllListeners();
+        this.events.removeAllListeners();
     }
 
     public next(){
-        console.log("dispath","next");
         if(!this.doScript()){
             this.end();
         }
     }
 
     public scriptEnd(scriptName:string, resultState:number){
-        console.log("dispath","scriptEnd");
         this.getScript(scriptName).end(resultState);
     }
 
@@ -276,7 +268,6 @@ export class ScriptDispatch{
     }
 
     private doScript(){
-        console.log("dispath","doScript");
         if(this.script){
             if(this.script.start()){
                 return true;
@@ -302,7 +293,6 @@ export class ScriptDispatch{
     }
 
     public toFormat(){
-        console.log("displath", "toFormat");
         return this.script ? this.script.toFormat() : {};
     }
 
@@ -333,8 +323,6 @@ export class Base{
 
     protected name: string = "base";
     protected scripts: any = {};
-    protected repeat: boolean = false;
-    protected repeatTime: number = 0;
 
     private scriptDispatch:ScriptDispatch;
 
@@ -360,14 +348,9 @@ export class Base{
         return this;
     }
 
-    public reset(){
-        this.playbook.state = Constant.WAIT;
-        this.playbook.script = ScriptDispatch.initFormat(this.scripts);
-        this.playbook.time = 0;
-    }
-
-    public stop(){
-        this.playbook.state = Constant.WAIT;
+    public setAuto(auto: boolean){
+        this.playbook.auto = auto ? 1 : 0;
+        return this;
     }
 
     protected setHandleFun(fun:(script: Script) => Promise<ScriptResult>){
@@ -375,31 +358,26 @@ export class Base{
         return this;
     }
 
-    public isRepeat(){
-        return this.repeat;
-    }
-
     protected init(){
-        console.log("Base","init");
         if(!this.playbook.id){
             this.playbook.state = Constant.WAIT;
             this.playbook.type = this.name;
             this.playbook.script = ScriptDispatch.initFormat(this.scripts);
             this.playbook.result = {};
             this.playbook.param = {};
-            this.playbook.time = 0;
+            this.playbook.auto = 0;
         }
     }
 
     public start(){
-        console.log("Base","start");
         this.scriptDispatch = new ScriptDispatch(this.playbook.script);
         this.scriptDispatch.onScriptHandle(this.scriptHandle.bind(this));
         this.scriptDispatch.onEnd(this.end.bind(this));
         this.scriptDispatch.onCancel(this.cancel.bind(this));
         this.scriptDispatch.onScriptEnd(this.scriptEnd.bind(this));
-        this.scriptDispatch.start();
         this.playbook.state = Constant.ING;
+        this.save();
+        this.scriptDispatch.start();
         return new Promise((resolve, reject)=>{
             this.scriptResolve = resolve;
             this.scriptReject = reject;
@@ -407,7 +385,6 @@ export class Base{
     }
 
     private addResult(scriptName:string, result:any){
-        console.log("Base","addResult");
         let _result = this.playbook.result;
         _result[scriptName] = result;
         this.playbook.result = _result;
@@ -418,12 +395,10 @@ export class Base{
     }
 
     private scriptHandle(script:Script){
-        console.log("Base","scriptHandle");
         return Promise.resolve(this.scriptHandleFun(script))
             .then((result:ScriptResult)=>{
                 this.addResult(script.getName(), result.data);
                 this.scriptDispatch.scriptEnd(script.getName(), result.resultState);
-                console.log("next");
                 if(result.command == Constant.SCRIPT_CANCEL_COMMAND){
                     this.scriptDispatch.cancel();
                 }else{
@@ -437,24 +412,16 @@ export class Base{
     }
 
     private saveScript(){
-        console.log("Base","saveScript");
         this.playbook.script = this.scriptDispatch.toFormat();
         return this.save();
     }
 
     private scriptEnd(){
-        console.log("Base","scriptEnd");
         this.saveScript();
     }
 
     private end(){
-        console.log("Base","end");
         this.playbook.state = Constant.END;
-
-        if(this.repeat){
-            this.reset();
-            this.playbook.time = getTime() + this.repeatTime;
-        }
 
         this.saveScript().then(()=>{
             this.scriptResolve(this.playbook);
@@ -485,7 +452,6 @@ export class Base{
     }
 
     public save():Promise<any>{
-        console.log("Base","save");
         return this.playbookModel.save(this.playbook);
     }
 

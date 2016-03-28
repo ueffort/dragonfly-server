@@ -21,6 +21,18 @@ export class Record{
         this.data[key] = val;
     }
 
+    get creativeTime(){
+        return this.get("creative_time");
+    }
+
+    get updateTime(){
+        return this.get("update_time");
+    }
+
+    get deleteTime(){
+        return this.get("delete_time");
+    }
+
     public toJson(){
         return this.data;
     }

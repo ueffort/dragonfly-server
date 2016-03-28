@@ -13,6 +13,8 @@ export const SUCCESS_STATUS = 200;
 
 // Task 任务类型
 export const TASK_TYPE_PLAYBOOK = 1; // playbook
+export const TASK_TYPE_ADDPLAYBOOK = 2; // 添加playbook
+export const TASK_TYPE_AUTOPLAYBOOK = 3; // 查询自动playbook
 
 // Task 任务执行返回状态
 export const TASK_OVER = 1; // 任务完成

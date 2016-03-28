@@ -34,23 +34,26 @@ export default class Playbook extends Controller{
         });
     }
 
-    public list(num: number = 20, start: number = 0, count: boolean = false, req: express.Request, res: express.Response):Promise<any>{
-        let list:any[] = [];
+    public list(num: number = 20, start: number = 0, type: string, count: boolean = false, req: express.Request, res: express.Response):Promise<any>{
         let playbookModel = new PlaybookModel(this.app);
-        list.push(playbookModel.getList([], start, num).then((playbookRecordList:PlaybookRecord[])=>{
+        let list:any[] = [];
+        let where: any[] = [];
+        if(type != "all"){
+            where.push(["type", "=", type]);
+        }
+        list.push(playbookModel.getList(where, start, num).then((playbookRecordList:PlaybookRecord[])=>{
             let result:any[] = [];
             for(let i in playbookRecordList){
                 result.push(playbookRecordList[i].toJson())
             }
             return result;
         }));
-        if(count) list.push(playbookModel.getCount());
+        if(count) list.push(playbookModel.getCount(where));
         return Promise.all(list).then((results:any[])=>{
             let result:any = {};
             result["list"] = results[0];
             if(count) result["count"] = results[1];
             return result;
-
         });
     }
 
@@ -59,29 +62,11 @@ export default class Playbook extends Controller{
         let playbookType = PlaybookFactory.getPlaybook(type);
         if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
         playbookType = new playbookType(this.app);
-        playbookType.setParam(param);
+        playbookType.setParam(JSON.parse(param));
         return playbookType.save().then((playbookRecord:PlaybookRecord)=>{
             let task = this.app.task();
             task.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookRecord.id);
             return playbookRecord.toJson();
-        });
-    }
-
-    public update(id: number, param: any, req: express.Request, res: express.Response):Promise<any>{
-        let playbookModel = new PlaybookModel(this.app);
-        return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
-            if(playbookRecord.state == Constant.ING || playbookRecord.state == Constant.WAIT)
-                throw new Error("playbook 执行中不允许修改");
-            if(!PlaybookFactory.isHasPlaybook(playbookRecord.type)) return Promise.reject(new Error("playbook type 不存在"));
-            let playbookType = PlaybookFactory.getPlaybook(playbookRecord.type);
-            if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
-            playbookType = new playbookType(this.app);
-            playbookType.setParam(param).reset();
-            return playbookType.save().then((playbookRecord:PlaybookRecord)=>{
-                let task = this.app.task();
-                task.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookRecord.id);
-                return playbookRecord.toJson();
-            });
         });
     }
 
@@ -91,45 +76,7 @@ export default class Playbook extends Controller{
             if(playbookRecord.state == Constant.ING || playbookRecord.state == Constant.WAIT)
                 throw new Error("playbook 执行中不允许删除");
             return playbookModel.delByKey(id).then(()=>{
-                return {};
-            });
-        });
-    }
-
-    public restart(id: number, req: express.Request, res: express.Response):Promise<any>{
-        let playbookModel = new PlaybookModel(this.app);
-        return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
-            if(playbookRecord.state == Constant.ING || playbookRecord.state != Constant.WAIT)
-                throw new Error("playbook 执行中不允许重启");
-            if(!PlaybookFactory.isHasPlaybook(playbookRecord.type)) return Promise.reject(new Error("playbook type 不存在"));
-            let playbookType = PlaybookFactory.getPlaybook(playbookRecord.type);
-            if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
-            playbookType = new playbookType(this.app);
-            playbookType.reset();
-            return playbookType.save().then((playbookRecord:PlaybookRecord)=>{
-                let task = this.app.task();
-                task.events.emit("add", Constant.TASK_TYPE_PLAYBOOK, playbookRecord.id);
-                return playbookRecord.toJson();
-            });
-        });
-    }
-
-    public stop(id: number, req: express.Request, res: express.Response):Promise<any>{
-        let playbookModel = new PlaybookModel(this.app);
-        return playbookModel.get(id).then((playbookRecord:PlaybookRecord)=>{
-            if(playbookRecord.state != Constant.WAIT)
-                throw new Error("playbook 排队中才允许暂停");
-            if(!PlaybookFactory.isHasPlaybook(playbookRecord.type)) return Promise.reject(new Error("playbook type 不存在"));
-            let playbookType = PlaybookFactory.getPlaybook(playbookRecord.type);
-            if(!playbookType) return Promise.reject(new Error("playbook type 选择错误"));
-            playbookType = new playbookType(this.app);
-            if(!playbookType.isRepeat())
-                throw new Error("playbook 不允许暂停");
-            playbookType.stop();
-            return playbookType.save().then((playbookRecord:PlaybookRecord)=>{
-                let task = this.app.task();
-                task.events.emit("delete", Constant.TASK_TYPE_PLAYBOOK, playbookRecord.id);
-                return playbookRecord.toJson();
+                return {id: id};
             });
         });
     }
