@@ -35,7 +35,7 @@ class Register extends React.Component<RegisterProp, RegisterState> {
 
     constructor(props: any, context: any) {
         super(props, context);
-        this.state = {email: "", password: "", passwords: ""};
+        this.state = {email: "", password: "", passwordS: ""};
     }
 
     private init(){
