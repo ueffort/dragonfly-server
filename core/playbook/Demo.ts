@@ -11,8 +11,6 @@ export default class Demo extends Base{
 
     protected name: string = "demo";
     protected scripts: any = {name: "test"};
-    protected repeat: boolean = false;
-    protected repeatTime: number = 0;
 
     constructor(app:CoreApp, playbook?: Playbook){
         super(app, playbook);

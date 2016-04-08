@@ -22,7 +22,7 @@ export default function routerHandle(app: CoreApp){
         let resource = jsonFile.read("app/resource");
         let dev = app.config.DEBUG ? true : false;
         res.render("index", {dev: dev, data: JSON.stringify(data), resource: resource, resUrl:function(url: string){
-            return dev ? "http://localhost:9090/" + url : url + "?" + md5String;
+            return dev ? app.config.CORE_CONFIG.HOST + ":" + app.config.CORE_CONFIG.STATIC_PORT + "/" + url : url + "?" + md5String;
         }});
     });
     return router;
