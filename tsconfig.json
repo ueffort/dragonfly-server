@@ -4,9 +4,12 @@
     "target": "es5",
     "sourceMap": true,
     "noImplicitAny": true,
-    "outFile": ".",
     "jsx": "react"
   },
+  "filesGlob": [
+    "./**/*.ts",
+    "!./node_modules/**/*.ts"
+  ],
   "exclude": [
     "node_modules"
   ]

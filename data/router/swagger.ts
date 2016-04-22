@@ -3,7 +3,7 @@
  */
 
 /// <reference path="../../libs/ts/swagger-tools.d.ts" />
-/// <reference path="../../libs/ts/js-yaml.d.ts" />
+/// <reference path="../../typings/js-yaml/js-yaml.d.ts" />
 import * as express from "express";
 import * as swaggerTools from "swagger-tools";
 import * as yaml from "js-yaml";

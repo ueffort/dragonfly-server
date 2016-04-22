@@ -11,16 +11,8 @@ var clean = require('gulp-clean');
 var shell = require('gulp-shell');
 var __DEV__ = config.DEBUG;
 
-
 //编译ts文件
-var ts = require('gulp-typescript');
-
-gulp.task('ts', function () {
-    return gulp.src(['*.ts', 'core/**/*.ts', 'data/**/*.ts', 'app/**/*.ts'])
-        .pipe(ts(require("./tsconfig").compilerOptions))
-        .pipe(gulp.dest('/'));
-});
-
+gulp.task('ts', shell.task([path.join(__dirname, "./node_modules/typescript/bin/tsc")]));
 
 //编译sass文件,并压缩
 var sass = require('gulp-sass');
@@ -124,7 +116,7 @@ function webpackConfig (){
 }
 var webpack_config = new webpackConfig();
 //清除文件
-gulp.task("webpack_clean", function(){
+gulp.task("webpack_clean", ["ts"], function(){
     gulp.src('./static/js/*.js')
         .pipe(clean());
 });
